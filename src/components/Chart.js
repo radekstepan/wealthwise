@@ -3,16 +3,25 @@ import * as d3 from 'd3';
 import {
   Pane
 } from 'evergreen-ui';
+import estimate from '../modules/estimate';
 import './chart.less';
 
 const graph = async (ref, wrapper) => {
-  // read data from csv and format variables
-  let data = await d3.csv('https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv');
-  var parseTime = d3.timeParse("%Y-%m-%d");
-
-  data.forEach((d) => {
-    d.date = parseTime(d.date);
-    d.value = +d.value;
+  const data = estimate({
+    years: 25,
+    price: 500000,
+    downpayment: 0.2,
+    maintenance: 400,
+    taxes: 200,
+    insurance: 200,
+    rent: 2000,
+    rates: {
+      expenses: 0.03,
+      interest: 0.035,
+      rent: 0.02, // rent increases
+      appreciation: 0.02,
+      market: 0.03 // stock market return
+    }
   });
 
   // set the dimensions and margins of the graph
@@ -30,11 +39,11 @@ const graph = async (ref, wrapper) => {
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
   // add X axis and Y axis
-  var x = d3.scaleTime().range([0, width]);
+  var x = d3.scaleLinear().range([0, width]);
   var y = d3.scaleLinear().range([height, 0]);
 
-  x.domain(d3.extent(data, (d) => { return d.date; }));
-  y.domain([0, d3.max(data, (d) => { return d.value; })]);
+  x.domain([0, 25 * 12]); // months
+  y.domain([-500000, 2000000]); // $
 
   svg.append("g")
     .attr("transform", `translate(0, ${height})`)
@@ -43,19 +52,28 @@ const graph = async (ref, wrapper) => {
   svg.append("g")
     .call(d3.axisLeft(y));
     
-  // add the Line
-  var valueLine = d3.line()
-  .x((d) => { return x(d.date); })
-  .y((d) => { return y(d.value); });
+  const buy = d3.line()
+    .x((d, i) => x(i))
+    .y(d => y(d.buy));
+  const rent = d3.line()
+    .x((d, i) => x(i))
+    .y(d => y(d.rent));
 
   svg.append("path")
     .data([data])
     .attr("class", "line")
     .attr("fill", "none")
     .attr("stroke", "#2952CC")
-    .attr("stroke-width", 1.5)
-    .attr("d", valueLine);
+    .attr("stroke-width", 1)
+    .attr("d", buy);
 
+  svg.append("path")
+    .data([data])
+    .attr("class", "line")
+    .attr("fill", "none")
+    .attr("stroke", "#A73636")
+    .attr("stroke-width", 1)
+    .attr("d", rent);
 }
 
 export default function Chart() {

@@ -16,6 +16,13 @@ export default function Form() {
       </Pane>
       <Pane>
         <TextInputField
+          label="Property appreciation"
+          description="yearly"
+          defaultValue="2%"
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
           label="Downpayment"
           placeholder="%"
           defaultValue="20%"
@@ -59,9 +66,30 @@ export default function Form() {
       </Pane>
       <Pane>
         <TextInputField
+          label="Expenses increases"
+          description="yearly maintenance, taxes and insurance"
+          defaultValue="3%"
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
           label="Rent"
           description="monthly"
           defaultValue="2000"
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
+          label="Rent increases"
+          description="yearly"
+          defaultValue="2%"
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
+          label="Investment return"
+          description="yearly"
+          defaultValue="3%"
         />
       </Pane>
     </>

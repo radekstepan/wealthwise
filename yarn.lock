@@ -957,6 +957,14 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.7.4.tgz#f14932887422c9056b15a8d222a9074a7dfa2831"
   integrity sha512-fxfMSBMX3tlIbKUdtGKxqB1fyrH6gVrX39Gsv3y8lRYKUqlgDt3UMqQyGnR1bQMa2B8aGnhLZokZgg8vT0Le+A==
 
+"@formulajs/formulajs@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@formulajs/formulajs/-/formulajs-3.1.1.tgz#b1e9c359e65978eb080288193cc7b09f8c08e93b"
+  integrity sha512-0JJM4q5nEE1+hOdN+08Pfz9C/Z88hbwLfRcmDWQog9AoSm11FDkq17PJzpklVidmjCajAJzFmuGIMz/lWnojsA==
+  dependencies:
+    bessel "^1.0.2"
+    jstat "^1.9.5"
+
 "@hot-loader/react-dom@^17.0.2+4.13.0":
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/@hot-loader/react-dom/-/react-dom-17.0.2.tgz#0b24e484093e8f97eb5c72bebdda44fc20bc8400"
@@ -1503,6 +1511,11 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
+
+bessel@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bessel/-/bessel-1.0.2.tgz#828812291e0b62e94959cdea43fac186e8a7202d"
+  integrity sha512-Al3nHGQGqDYqqinXhQzmwmcRToe/3WyBv4N8aZc5Pef8xw2neZlR9VPi84Sa23JtgWcucu18HxVZrnI0fn2etw==
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -3009,6 +3022,11 @@ json5@^2.1.2:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
   integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
+
+jstat@^1.9.5:
+  version "1.9.5"
+  resolved "https://registry.yarnpkg.com/jstat/-/jstat-1.9.5.tgz#9941741566f683624ddeb56f5ba60ed8c29b374e"
+  integrity sha512-cWnp4vObF5GmB2XsIEzxI/1ZTcYlcfNqxQ/9Fp5KFUa0Jf/4tO0ZkGVnqoEHDisJvYgvn5n3eWZbd2xTVJJPUQ==
 
 kind-of@^6.0.2:
   version "6.0.3"
