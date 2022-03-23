@@ -14,5 +14,8 @@ export default {
       appreciation: 2,
       market: 3 // stock market return
     }
+  },
+  graph: {
+    animation: 500 // ms
   }
 }

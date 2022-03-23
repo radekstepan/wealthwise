@@ -14,7 +14,7 @@ export default function Form({form, setForm}) {
           value={form.price}
           onChange={e => setForm(d => ({
             ...d,
-            price: e.target.value
+            price: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -27,7 +27,7 @@ export default function Form({form, setForm}) {
             ...d,
             rates: {
               ...d.rates,
-              appreciation: e.target.value
+              appreciation: Number(e.target.value)
             }
           }))}
         />
@@ -39,7 +39,7 @@ export default function Form({form, setForm}) {
           value={form.downpayment}
           onChange={e => setForm(d => ({
             ...d,
-            downpayment: e.target.value
+            downpayment: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -52,7 +52,7 @@ export default function Form({form, setForm}) {
             ...d,
             rates: {
               ...d.rates,
-              interest: e.target.value
+              interest: Number(e.target.value)
             }
           }))}
         />
@@ -64,7 +64,7 @@ export default function Form({form, setForm}) {
           value={form.years}
           onChange={e => setForm(d => ({
             ...d,
-            years: e.target.value
+            years: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -75,7 +75,7 @@ export default function Form({form, setForm}) {
           value={form.maintenance}
           onChange={e => setForm(d => ({
             ...d,
-            maintenance: e.target.value
+            maintenance: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -86,7 +86,7 @@ export default function Form({form, setForm}) {
           value={form.taxes}
           onChange={e => setForm(d => ({
             ...d,
-            taxes: e.target.value
+            taxes: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -97,7 +97,7 @@ export default function Form({form, setForm}) {
           value={form.insurance}
           onChange={e => setForm(d => ({
             ...d,
-            insurance: e.target.value
+            insurance: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -110,7 +110,7 @@ export default function Form({form, setForm}) {
             ...d,
             rates: {
               ...d.rates,
-              expenses: e.target.value
+              expenses: Number(e.target.value)
             }
           }))}
         />
@@ -122,7 +122,7 @@ export default function Form({form, setForm}) {
           value={form.rent}
           onChange={e => setForm(d => ({
             ...d,
-            rent: e.target.value
+            rent: Number(e.target.value)
           }))}
         />
       </Pane>
@@ -135,7 +135,7 @@ export default function Form({form, setForm}) {
             ...d,
             rates: {
               ...d.rates,
-              rent: e.target.value
+              rent: Number(e.target.value)
             }
           }))}
         />
@@ -144,12 +144,12 @@ export default function Form({form, setForm}) {
         <TextInputField
           label="Investment return"
           description="% yearly"
-          value={form.rates.market0}
+          value={form.rates.market}
           onChange={e => setForm(d => ({
             ...d,
             rates: {
               ...d.rates,
-              market: e.target.value
+              market: Number(e.target.value)
             }
           }))}
         />
