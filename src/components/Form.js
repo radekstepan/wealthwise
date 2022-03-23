@@ -4,92 +4,154 @@ import {
   TextInputField,
 } from 'evergreen-ui';
 
-export default function Form() {
+export default function Form({form, setForm}) {
   return (
     <>
       <Pane>
         <TextInputField
           label="Price"
           placeholder="Property price"
-          defaultValue={500000}
+          value={form.price}
+          onChange={e => setForm(d => ({
+            ...d,
+            price: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Property appreciation"
-          description="yearly"
-          defaultValue="2%"
+          description="% yearly"
+          value={form.rates.appreciation}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              appreciation: e.target.value
+            }
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Downpayment"
-          placeholder="%"
-          defaultValue="20%"
+          description="% of the purchase price"
+          value={form.downpayment}
+          onChange={e => setForm(d => ({
+            ...d,
+            downpayment: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Interest Rate"
-          placeholder="%"
           description="yearly mortgage interest rate"
-          defaultValue="3.5%"
+          value={form.rates.interest}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              interest: e.target.value
+            }
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Mortgage Term"
           description="years"
-          defaultValue="25"
+          value={form.years}
+          onChange={e => setForm(d => ({
+            ...d,
+            years: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Maintenance"
           description="monthly maintenance/strata fees"
-          defaultValue="400"
+          value={form.maintenance}
+          onChange={e => setForm(d => ({
+            ...d,
+            maintenance: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Property Taxes"
           description="monthly"
-          defaultValue="200"
+          value={form.taxes}
+          onChange={e => setForm(d => ({
+            ...d,
+            taxes: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Homeowner's Insurance"
           description="monthly"
-          defaultValue="200"
+          value={form.insurance}
+          onChange={e => setForm(d => ({
+            ...d,
+            insurance: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Expenses increases"
-          description="yearly maintenance, taxes and insurance"
-          defaultValue="3%"
+          description="% yearly maintenance, taxes and insurance"
+          value={form.rates.expenses}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              expenses: e.target.value
+            }
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Rent"
           description="monthly"
-          defaultValue="2000"
+          value={form.rent}
+          onChange={e => setForm(d => ({
+            ...d,
+            rent: e.target.value
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Rent increases"
-          description="yearly"
-          defaultValue="2%"
+          description="% yearly"
+          value={form.rates.rent}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              rent: e.target.value
+            }
+          }))}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Investment return"
-          description="yearly"
-          defaultValue="3%"
+          description="% yearly"
+          value={form.rates.market0}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              market: e.target.value
+            }
+          }))}
         />
       </Pane>
     </>

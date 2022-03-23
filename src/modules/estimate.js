@@ -3,17 +3,19 @@ import * as fn from '@formulajs/formulajs';
 const range = count => Array(count).fill(true).map((_, i) => i);
 
 export default function estimate(opts) {
-  let expenses = opts.price * opts.downpayment;
+  let {price, maintenance, taxes, insurance, rent} = opts;
+  let expenses = price * (opts.downpayment / 100);
   let portfolio = expenses;
 
-  const payment = fn.PMT( // principal and interest
-    opts.rates.interest / 12,
+  // monthly principal and interest
+  const payment = fn.PMT(
+    opts.rates.interest / 100 / 12,
     opts.years * 12,
-    -opts.price * (1 - opts.downpayment)
+    -opts.price * (1 - (opts.downpayment / 100))
   );
 
   // monthly compount market return
-  const market = fn.NOMINAL(opts.rates.market, 12) / 12;
+  const market = fn.NOMINAL(opts.rates.market / 100, 12) / 12;
 
   const data = [];
 
@@ -22,11 +24,11 @@ export default function estimate(opts) {
     for (const month in range(12)) {
       let monthly = 0;
 
-      monthly += opts.maintenance;
-      monthly += opts.taxes;
-      monthly += opts.insurance;
+      monthly += maintenance;
+      monthly += taxes;
+      monthly += insurance;
       monthly += payment; // NOTE make sure not to overpay if > 25 years
-      monthly -= opts.rent;
+      monthly -= rent;
 
       portfolio += monthly; // invest the money
       portfolio *= 1 + market; // get the return
@@ -35,16 +37,16 @@ export default function estimate(opts) {
       mortgage -= payment;  // NOTE make sure not to overpay if > 25 years
       
       data.push({
-        buy: (opts.price * 0.95) - mortgage - expenses,
+        buy: (price * 0.95) - mortgage - expenses,
         rent: portfolio - expenses
       });
     }
 
-    opts.maintenance *= 1 + opts.rates.expenses;
-    opts.taxes *= 1 + opts.rates.expenses;
-    opts.insurance *= 1 + opts.rates.expenses;
-    opts.rent *= 1 + opts.rates.rent;
-    opts.price *= 1 + opts.rates.appreciation;
+    maintenance *= 1 + (opts.rates.expenses / 100);
+    taxes *= 1 + (opts.rates.expenses / 100);
+    insurance *= 1 + (opts.rates.expenses / 100);
+    rent *= 1 + (opts.rates.rent / 100);
+    price *= 1 + (opts.rates.appreciation / 100);
   }
 
   return data;

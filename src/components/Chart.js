@@ -3,26 +3,16 @@ import * as d3 from 'd3';
 import {
   Pane
 } from 'evergreen-ui';
+import currency from 'currency.js';
 import estimate from '../modules/estimate';
 import './chart.less';
 
-const graph = async (ref, wrapper) => {
-  const data = estimate({
-    years: 25,
-    price: 500000,
-    downpayment: 0.2,
-    maintenance: 400,
-    taxes: 200,
-    insurance: 200,
-    rent: 2000,
-    rates: {
-      expenses: 0.03,
-      interest: 0.035,
-      rent: 0.02, // rent increases
-      appreciation: 0.02,
-      market: 0.03 // stock market return
-    }
-  });
+const graph = async (ref, form) => {
+  const root = d3.select(ref);
+  root.select('svg').remove();
+  const wrapper = root.node().getBoundingClientRect();
+
+  const data = estimate(form);
 
   // set the dimensions and margins of the graph
   var margin = {top: 20, right: 20, bottom: 50, left: 70 };
@@ -30,7 +20,7 @@ const graph = async (ref, wrapper) => {
   const height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
-  const svg = d3.select(ref);
+  const svg = root.append('svg');
 
   svg
     .attr("width", width + margin.left + margin.right)
@@ -42,15 +32,29 @@ const graph = async (ref, wrapper) => {
   var x = d3.scaleLinear().range([0, width]);
   var y = d3.scaleLinear().range([height, 0]);
 
+  const {min, max} = data.reduce(({min, max}, d) => ({
+    min: Math.min(min, d.buy, d.rent),
+    max: Math.max(max, d.buy, d.rent)
+  }), {min: +Infinity, max: -Infinity});
+
   x.domain([0, 25 * 12]); // months
-  y.domain([-500000, 2000000]); // $
+  y.domain([min, max]); // $
 
   svg.append("g")
     .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(x));
+    .call(d3
+      .axisBottom(x)
+      .tickSize(-height)
+      .ticks(form.years / 5)
+      .tickFormat(d => d ? Math.ceil(d / 12) + 'y' : '')
+    );
 
   svg.append("g")
-    .call(d3.axisLeft(y));
+    .call(d3
+      .axisLeft(y)
+      .tickSize(-width)
+      .tickFormat(d => currency(d, {precision: 0}).format())
+    );
     
   const buy = d3.line()
     .x((d, i) => x(i))
@@ -76,22 +80,16 @@ const graph = async (ref, wrapper) => {
     .attr("d", rent);
 }
 
-export default function Chart() {
-  const wrapper = useRef(null);
-  const svg = useRef(null);
+export default function Chart({form}) {
+  const el = useRef(null);
 
   useEffect(() => {
-    if (svg.current) {
-      graph(
-        svg.current,
-        d3.select(wrapper.current).node().getBoundingClientRect()
-      );
+    if (el.current) {
+      graph(el.current, form);
     }
-  }, [svg.current]);
+  }, [el.current, form]);
 
   return (
-    <Pane ref={wrapper} padding={16} id="chart">
-      <svg ref={svg} />
-    </Pane>
+    <Pane ref={el} padding={16} id="chart" />
   );
 }
