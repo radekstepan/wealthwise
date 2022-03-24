@@ -30,10 +30,10 @@ const init = (ref, setPointer) => {
     .attr("height", height + margin.top + margin.bottom)
     .on('mousemove', evt => {
       const [x] = d3.pointer(evt, svg.node());
-      setPointer(x > 0 && x < width ? x / width : null);
+      setPointer(x > 0 && x < width ? x / width : 1);
     })
     .on('mouseleave', () => {
-      setPointer(null);
+      setPointer(1);
     })
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -139,7 +139,7 @@ export default function Chart({form}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
   const [data, setData] = useState(null);
-  const [pointer, setPointer] = useState(null);
+  const [pointer, setPointer] = useState(1);
   const [point, setPoint] = useState(null);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function Chart({form}) {
 
   useDebounce(() => {
     console.log('estimate');
-    setData(estimate(form))
+    setData(estimate(form));
   }, 500, [form]);
 
   useEffect(() => {
@@ -160,13 +160,13 @@ export default function Chart({form}) {
   }, [data]);
 
   useEffect(() => {
-    if (data && pointer) {
-      const {buy, rent} = data[Math.floor(data.length * pointer)];
+    if (data) {
+      const {buy, rent} = data[Math.max(0, Math.floor(data.length * pointer) - 1)];
       setPoint(buy > rent ?
         [['buy', buy], ['rent', rent]] :
         [['rent', rent], ['buy', buy]]);
     }
-  }, [pointer]);
+  }, [data, pointer]);
 
   return (
     <Pane padding={16}>
@@ -174,23 +174,11 @@ export default function Chart({form}) {
         {point && (
           <Card
             elevation={1}
-            className={`legend ${pointer > 0.5 ? 'left' : 'right'}`}
+            className={`legend ${pointer < 0.5 ? 'right' : 'left'}`}
             background="white"
             padding="16"
           >
-            <Text size={300}>
-              <Flipper flipKey="legend" spring="gentle">
-                {point.map(([key, val]) => (
-                  <Flipped key={key} flipId={key}>
-                    <div className={`row ${key}`}>
-                      <span className="square" />
-                      <span className="value">{curr(val)}</span>
-                      {key === 'buy' ? 'Buy' : 'Rent'}
-                    </div>
-                  </Flipped>          
-                ))}
-              </Flipper>
-            </Text>
+            {legend(point)}
           </Card>
         )}
         <div ref={el} className="svg" />
