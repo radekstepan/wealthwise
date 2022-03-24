@@ -1,21 +1,24 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDebounce} from 'react-use';
 import * as d3 from 'd3';
 import {
-  Pane
+  Pane, Card, Text
 } from 'evergreen-ui';
 import currency from 'currency.js';
+import {Flipper, Flipped} from 'react-flip-toolkit'
 import estimate from '../modules/estimate';
 import config from '../config';
 import './chart.less';
 
-const init = (ref) => {
+const curr = d => currency(d, {precision: 0}).format();
+
+const init = (ref, setPointer) => {
   const root = d3.select(ref);
   // root.select('svg').remove();
   const wrapper = root.node().getBoundingClientRect();
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 50, left: 70 };
+  var margin = {top: 20, right: 0, bottom: 50, left: 30 };
   const width = wrapper.width - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
@@ -25,6 +28,13 @@ const init = (ref) => {
   svg
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
+    .on('mousemove', evt => {
+      const [x] = d3.pointer(evt, svg.node());
+      setPointer(x > 0 && x < width ? x / width : null);
+    })
+    .on('mouseleave', () => {
+      setPointer(null);
+    })
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -48,7 +58,7 @@ const init = (ref) => {
   const yAxis = d3
     .axisLeft(y)
     .tickSize(-width)
-    .tickFormat(d => currency(d, {precision: 0}).format());
+    .tickFormat(curr);
 
   return [svg, x, y, xAxis, yAxis];
 }
@@ -107,21 +117,84 @@ const update = (svg, x, y, xAxis, yAxis, data) => {
         .attr("stroke-width", 1);
 }
 
+const legend = (point) => {
+  return (
+    <Text size={300}>
+      <Flipper flipKey="legend" spring="veryGentle">
+        {point.map(([key, val]) => (
+          <Flipped key={key} flipId={key}>
+            <div className={`row ${key}`}>
+              <span className="square" />
+              <span className="value">{curr(val)}</span>
+              {key === 'buy' ? 'Buy' : 'Rent'}
+            </div>
+          </Flipped>          
+        ))}
+      </Flipper>
+    </Text>
+  );
+}
+
 export default function Chart({form}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
+  const [data, setData] = useState(null);
+  const [pointer, setPointer] = useState(null);
+  const [point, setPoint] = useState(null);
 
   useEffect(() => {
     console.log('init');
-    setGraph(init(el.current));
+    setGraph(init(el.current, setPointer));
   }, []);
 
   useDebounce(() => {
-    console.log('update');
-    update(...graph, estimate(form));
+    console.log('estimate');
+    setData(estimate(form))
   }, 500, [form]);
 
+  useEffect(() => {
+    if (data) {
+      console.log('update');
+      update(...graph, data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data && pointer) {
+      const {buy, rent} = data[Math.floor(data.length * pointer)];
+      setPoint(buy > rent ?
+        [['buy', buy], ['rent', rent]] :
+        [['rent', rent], ['buy', buy]]);
+    }
+  }, [pointer]);
+
   return (
-    <Pane ref={el} padding={16} id="chart" />
+    <Pane padding={16}>
+      <div className="chart">
+        {point && (
+          <Card
+            elevation={1}
+            className={`legend ${pointer > 0.5 ? 'left' : 'right'}`}
+            background="white"
+            padding="16"
+          >
+            <Text size={300}>
+              <Flipper flipKey="legend" spring="gentle">
+                {point.map(([key, val]) => (
+                  <Flipped key={key} flipId={key}>
+                    <div className={`row ${key}`}>
+                      <span className="square" />
+                      <span className="value">{curr(val)}</span>
+                      {key === 'buy' ? 'Buy' : 'Rent'}
+                    </div>
+                  </Flipped>          
+                ))}
+              </Flipper>
+            </Text>
+          </Card>
+        )}
+        <div ref={el} className="svg" />
+      </div>
+    </Pane>
   );
 }

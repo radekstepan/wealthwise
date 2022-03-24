@@ -11,7 +11,7 @@ export default {
       expenses: 3,
       interest: 3.5,
       rent: 2, // rent increases
-      appreciation: 2,
+      appreciation: 3, // property appreciation
       market: 3 // stock market return
     }
   },

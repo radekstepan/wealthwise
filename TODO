@@ -1,0 +1,12 @@
+[ ] scroll the chart or a two column layout
+[ ] save as in local storage under a slug key
+[x] onhover show legend
+
+Nice to have:
+  [ ] accept math equations as the input and use mathjs to parse
+  [ ] parse dollar input values (mathjs?)
+  [ ] toggle a table view of results
+  [ ] configure currency and locale
+
+Fix:
+  [ ] flip animation on the legend not working
