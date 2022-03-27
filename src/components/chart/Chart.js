@@ -6,8 +6,7 @@ import {
 } from 'evergreen-ui';
 import currency from 'currency.js';
 import {Flipper, Flipped} from 'react-flip-toolkit'
-import estimate from '../modules/estimate';
-import config from '../config';
+import estimate from '../../modules/estimate';
 import './chart.less';
 
 const curr = d => currency(d, {precision: 0}).format();
@@ -64,57 +63,61 @@ const init = (ref, setPointer) => {
 }
 
 const update = (svg, x, y, xAxis, yAxis, data) => {
-  const {min, max} = data.reduce(({min, max}, d) => ({
-    min: Math.min(min, d.buy, d.rent),
-    max: Math.max(max, d.buy, d.rent)
-  }), {min: +Infinity, max: -Infinity});
+  const [low, median, high] = data;
 
+  const min = low.reduce((min, d) => 
+    Math.min(min, d.buy, d.rent)
+  , +Infinity);
+
+  const max = high.reduce((max, d) => 
+    Math.max(max, d.buy, d.rent)
+  , -Infinity);
+
+  // TODO does not link to number of years
   x.domain([0, 25 * 12]); // months
   y.domain([min, max]); // $
 
   svg.selectAll(".x-axis")
     .transition()
-    .duration(config.graph.animation)
+    .duration(500)
     .call(xAxis);
   svg.selectAll(".y-axis")
     .transition()
-    .duration(config.graph.animation)
+    .duration(500)
     .call(yAxis);
 
-  const buy = svg.selectAll(".buy-line")
-    .data([data], d => d.buy);
-  const rent = svg.selectAll(".rent-line")
-    .data([data], d => d.rent);
+  for (const i in data) {
+    const q = data[i];
 
-  buy
-    .enter()
-    .append("path")
-    .attr("class", "buy-line")
-    .merge(buy)
-    .transition()
-    .duration(config.graph.animation)
-    .attr("d", d3.line()
-      .x((d, i) => x(i))
-      .y(d => y(d.buy))
-    )
-      .attr("fill", "none")
-      .attr("stroke", "#2952CC")
-      .attr("stroke-width", 1);
+    const buy = svg.selectAll(`.buy-line.q${i}`)
+      .data([q], d => d.buy);
+    const rent = svg.selectAll(`.rent-line.q${i}`)
+      .data([q], d => d.rent);
 
-    rent
+    buy
       .enter()
       .append("path")
-      .attr("class", "rent-line")
-      .merge(rent)
+      .attr("class", `buy-line q${i}`)
+      .merge(buy)
       .transition()
-      .duration(config.graph.animation)
+      .duration(500)
       .attr("d", d3.line()
         .x((d, i) => x(i))
-        .y(d => y(d.rent))
-      )
-        .attr("fill", "none")
-        .attr("stroke", "#A73636")
-        .attr("stroke-width", 1);
+        .y(d => y(d.buy))
+      );
+
+      rent
+        .enter()
+        .append("path")
+        .attr("class", `rent-line q${i}`)
+        .merge(rent)
+        .transition()
+        .duration(500)
+        .attr("d", d3.line()
+          .x((d, i) => x(i))
+          .y(d => y(d.rent))
+        );
+  }
 }
 
 const legend = (point) => {
@@ -150,7 +153,7 @@ export default function Chart({form}) {
   useDebounce(() => {
     console.log('estimate');
     setData(estimate(form));
-  }, 500, [form]);
+  }, 0, [form]); // not needed, onBlur used on input
 
   useEffect(() => {
     if (data) {
@@ -161,7 +164,8 @@ export default function Chart({form}) {
 
   useEffect(() => {
     if (data) {
-      const {buy, rent} = data[Math.max(0, Math.floor(data.length * pointer) - 1)];
+      const [low, median, high] = data;
+      const {buy, rent} = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
       setPoint(buy > rent ?
         [['buy', buy], ['rent', rent]] :
         [['rent', rent], ['buy', buy]]);

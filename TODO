@@ -1,9 +1,11 @@
 Large:
-  [ ] support ranges of values
+  [x] support ranges of values
   [ ] a custom UI ala Dribbble inspiration
   [ ] save in a DB and be able to share with others
 
 Medium:
+  [ ] recalculate mortgage when interest rate changes @high
+  [ ] recaulculate mortgage when a new property is bought @medium
   [ ] save as in local storage under a slug key
   [ ] run the estimate in a job and not in the main thread
   [ ] get rid of the Evergreen UI shit
@@ -15,6 +17,7 @@ Small:
   [ ] show the year/month in the legend
   [ ] add line titles in the graph
   [ ] show monthly expenses in buy vs rent
+  [ ] add catastrophic loss event (house value) @medium
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse

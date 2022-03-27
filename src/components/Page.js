@@ -4,12 +4,12 @@ import {
   Pane,
   Heading,
 } from 'evergreen-ui';
-import Form from './Form';
-import Chart from './Chart';
-import config from '../config';
+import Form from './form/Form';
+import Chart from './chart/Chart';
+import vars from '../modules/variables';
 
 export default function Page() {
-  const [form, setForm] = useState(config.form);
+  const [form, setForm] = useState(vars);
 
   return (
     <Pane padding={16}>
