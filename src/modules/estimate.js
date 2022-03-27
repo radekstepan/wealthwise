@@ -4,6 +4,7 @@ const range = count => Array(count).fill(true).map((_, i) => i);
 
 export default function estimate(opts) {
   let {price, maintenance, taxes, insurance, rent} = opts;
+  let marketRent = rent;
   let expenses = price * (opts.downpayment / 100);
   let portfolio = expenses;
 
@@ -20,8 +21,8 @@ export default function estimate(opts) {
   const data = [];
 
   let mortgage = payment * 12 * opts.years;
-  for (const year in range(opts.years)) {
-    for (const month in range(12)) {
+  for (const year of range(opts.years)) {
+    for (const month of range(12)) {
       let monthly = 0;
 
       monthly += maintenance;
@@ -37,7 +38,7 @@ export default function estimate(opts) {
       mortgage -= payment;  // NOTE make sure not to overpay if > 25 years
       
       data.push({
-        buy: (price * 0.95) - mortgage - expenses,
+        buy: (price * 0.95) - mortgage - expenses, // 5% sale fees
         rent: portfolio - expenses
       });
     }
@@ -47,6 +48,14 @@ export default function estimate(opts) {
     insurance *= 1 + (opts.rates.expenses / 100);
     rent *= 1 + (opts.rates.rent / 100);
     price *= 1 + (opts.rates.appreciation / 100);
+    marketRent *= 1 + (opts.rates.marketRent / 100);
+
+    // Sell at 5% fee?
+    if (year && !(year % opts.scenarios.sell)) {
+      expenses += price * 0.05;
+      portfolio += price * 0.05;
+      rent = marketRent; // have to pay market rent now
+    }
   }
 
   return data;

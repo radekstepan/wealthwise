@@ -1,12 +1,33 @@
-[ ] scroll the chart or a two column layout
-[ ] save as in local storage under a slug key
-[x] onhover show legend
+Large:
+  [ ] support ranges of values
+  [ ] a custom UI ala Dribbble inspiration
+  [ ] save in a DB and be able to share with others
+
+Medium:
+  [ ] save as in local storage under a slug key
+  [ ] run the estimate in a job and not in the main thread
+  [ ] get rid of the Evergreen UI shit
+
+Small:
+  [ ] scroll the chart
+  [x] onhover show legend
+  [ ] show a diff from the previous state in the legend (like Simpletax)
+  [ ] show the year/month in the legend
+  [ ] add line titles in the graph
+  [ ] show monthly expenses in buy vs rent
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
-  [ ] parse dollar input values (mathjs?)
+  [ ] parse dollar input values (like Wealthsimple, mathjs?)
   [ ] toggle a table view of results
   [ ] configure currency and locale
+  [ ] tests on the core estimate logic
+
+Extras:
+  [ ] complex scenarios
+  [ ] find a value to make lines equal at the end
+  [ ] sensitivity analysis
+  [ ] probability distribution
 
 Fix:
   [ ] flip animation on the legend not working

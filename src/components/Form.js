@@ -3,11 +3,12 @@ import {
   Pane,
   TextInputField,
 } from 'evergreen-ui';
+import './form.less';
 
 export default function Form({form, setForm}) {
   return (
     <>
-      <Pane>
+      <Pane className="field">
         <TextInputField
           label="Price"
           placeholder="Property price"
@@ -18,7 +19,7 @@ export default function Form({form, setForm}) {
           }))}
         />
       </Pane>
-      <Pane>
+      <Pane className="field">
         <TextInputField
           label="Property appreciation"
           description="% yearly"
@@ -136,6 +137,20 @@ export default function Form({form, setForm}) {
             rates: {
               ...d.rates,
               rent: Number(e.target.value)
+            }
+          }))}
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
+          label="Market rent increases"
+          description="% yearly"
+          value={form.rates.marketRent}
+          onChange={e => setForm(d => ({
+            ...d,
+            rates: {
+              ...d.rates,
+              marketRent: Number(e.target.value)
             }
           }))}
         />
