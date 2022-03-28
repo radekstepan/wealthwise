@@ -51,15 +51,6 @@ export default function Form({form, setForm}) {
         />
       </Pane>
       <Pane>
-        {/** NOTE: do not overpay mortgage! */}
-        <TextInputField
-          label="Mortgage Term"
-          description="years"
-          disabled
-          {...props(form, setForm, 'years')}
-        />
-      </Pane>
-      <Pane>
         <TextInputField
           label="Maintenance"
           description="monthly maintenance/strata fees"
