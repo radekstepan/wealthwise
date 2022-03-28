@@ -45,9 +45,16 @@ export default function Form({form, setForm}) {
       </Pane>
       <Pane>
         <TextInputField
-          label="Interest Rate"
-          description="yearly mortgage interest rate"
-          {...props(form, setForm, 'rates.interest')}
+          label="Current Interest Rate"
+          description="% yearly mortgage interest rate"
+          {...props(form, setForm, 'rates.initialInterest')}
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
+          label="Future Interest Rate"
+          description="% yearly mortgage interest rate"
+          {...props(form, setForm, 'rates.futureInterest')}
         />
       </Pane>
       <Pane>

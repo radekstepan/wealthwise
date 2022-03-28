@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 
 const config = {
@@ -18,6 +17,11 @@ const config = {
         exclude: /node_modules/
       },
       {
+        test: /\.ts(x)?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/
+      },
+      {
         test: /\.less$/,
         use: [
           'style-loader',
@@ -30,6 +34,16 @@ const config = {
   devServer: {
     'static': {
       directory: './dist'
+    }
+  },
+  resolve: {
+    extensions: [
+      '.tsx',
+      '.ts',
+      '.js'
+    ],
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
     }
   }
 };

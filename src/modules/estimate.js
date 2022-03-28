@@ -13,7 +13,7 @@ function run(opts) {
 
   const mgage = mortgage({
     principal: price * (1 - (downpayment / 100)),
-    interest: opts.rates.interest() / 100,
+    interest: opts.rates.initialInterest() / 100,
     periods: opts.years * 12
   });
 
@@ -66,7 +66,7 @@ function run(opts) {
     // Every 5 years the interest rate changes.
     if (year && !(year % 5)) {
       mgage.renew({
-        interest: opts.rates.interest() / 100,
+        interest: opts.rates.futureInterest() / 100,
         periods: (opts.years - year) * 12
       });
     }

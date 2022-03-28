@@ -4,6 +4,8 @@ dist/*
 !dist/index.html
 node_modules/
 *.log
+.nyc_output/
+coverage/
 
 .DS_Store
 ._*
