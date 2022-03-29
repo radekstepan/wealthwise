@@ -32,13 +32,13 @@ function run(opts) {
     const priceAppreciation = formula.NOMINAL(opts.rates.appreciation() / 100, 12) / 12;
 
     for (const month of range(12)) {
-      const {payment, balance} = mgage.pay({period: (12 * year) + month + 1});
+      mgage.pay({period: (12 * year) + month + 1});
 
       const monthly = sum(
         maintenance,
         propertyTax,
         insurance,
-        payment,
+        mgage.payment(),
         -rent
       );
 
@@ -50,7 +50,7 @@ function run(opts) {
       price *= 1 + priceAppreciation;
       
       data.push({
-        buy: (price * 0.95) - balance - expenses, // 5% sale fees
+        buy: (price * 0.95) - mgage.balance() - expenses, // 5% sale fees
         rent: (portfolio - expenses) * (1 - (opts.rates.capitalGainsTax() / 100))
       });
     }
