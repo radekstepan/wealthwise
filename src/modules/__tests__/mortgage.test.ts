@@ -1,6 +1,5 @@
 import mortgage from '../mortgage';
-
-const range = d => Array(d).fill(true).map((_, i) => i + 1);
+import {range} from '../utils';
 
 describe('mortgage', () => {
   // TODO https://itools-ioutils.fcac-acfc.gc.ca/MC-CH/MCReport-CHSommaire-eng.aspx
@@ -11,11 +10,11 @@ describe('mortgage', () => {
       periods: 25 * 12
     });
 
-    mgage.pay({period: 1});
+    mgage.pay();
 
-    expect(mgage.payment().toFixed(2)).toBe('582.16');
-    expect(mgage.balance().toFixed(2)).toBe('174067.15');
-    expect(mgage.principal().toFixed(2)).toBe('99417.84');
+    expect(mgage.payment()).toBe(582.16);
+    expect(mgage.balance()).toBe(174067.14);
+    expect(mgage.principal()).toBe(99417.84);
   });
 
   test('pay off mortgage', () => {
@@ -25,9 +24,35 @@ describe('mortgage', () => {
       periods: 12
     });
 
-    for (const period of range(12)) {
-      mgage.pay({period});
-    }
+    range(12).map(mgage.pay)
+
+    expect(mgage.balance()).toBe(0);
+    expect(mgage.principal()).toBe(0);
+  });
+
+  test('renew mortgage', () => {
+    const mgage = mortgage({
+      interest: 0.05,
+      principal: 100,
+      periods: 24
+    });
+
+    range(12).map(mgage.pay)
+
+    expect(mgage.payment()).toBe(4.37);
+    expect(mgage.balance()).toBe(52.43);
+    expect(mgage.principal()).toBe(51.03);
+
+    mgage.renew({
+      periods: 12,
+      interest: 0.05
+    });
+
+    expect(mgage.payment()).toBe(4.35);
+    expect(mgage.balance()).toBe(52.21);
+    expect(mgage.principal()).toBe(51.03);
+
+    range(12).map(mgage.pay)
 
     expect(mgage.balance()).toBe(0);
     expect(mgage.principal()).toBe(0);

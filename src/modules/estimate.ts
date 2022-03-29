@@ -1,10 +1,9 @@
 import * as d3 from 'd3';
+// @ts-ignore
 import * as formula from '@formulajs/formulajs';
-import sample from '../modules/sample';
-import mortgage from '../modules/mortgage';
-
-const range = count => Array(count).fill(true).map((_, i) => i);
-const sum = (...args) => args.reduce((t, d) => t + d, 0);
+import sample from './sample';
+import mortgage from './mortgage';
+import {range, sum} from './utils';
 
 // A single run.
 function run(opts) {
@@ -31,8 +30,23 @@ function run(opts) {
     const stocksReturn = formula.NOMINAL(opts.rates.stocks() / 100, 12) / 12;
     const priceAppreciation = formula.NOMINAL(opts.rates.appreciation() / 100, 12) / 12;
 
+    // Renew mortgage every 5 years.
+    if (year && !(year % 5)) {
+      mgage.renew({
+        interest: opts.rates.futureInterest() / 100,
+        periods: (opts.years - year) * 12
+      });
+    }
+    // Sell at 5% fee?
+    // TODO what happens to the mortgage?
+    // if (year && !(year % opts.scenarios.sell)) {
+    //   expenses += price * 0.05;
+    //   portfolio += price * 0.05;
+    //   rent = marketRent; // have to pay market rent now
+    // }
+
     for (const month of range(12)) {
-      mgage.pay({period: (12 * year) + month + 1});
+      mgage.pay();
 
       const monthly = sum(
         maintenance,
@@ -62,22 +76,6 @@ function run(opts) {
     insurance *= 1 + (ratesExpenses / 100);
     rent *= 1 + (opts.rates.rent() / 100);
     marketRent *= 1 + (opts.rates.marketRent() / 100);
-
-    // Every 5 years the interest rate changes.
-    if (year && !(year % 5)) {
-      mgage.renew({
-        interest: opts.rates.futureInterest() / 100,
-        periods: (opts.years - year) * 12
-      });
-    }
-
-    // Sell at 5% fee?
-    // TODO what happens to the mortgage?
-    if (year && !(year % opts.scenarios.sell)) {
-      expenses += price * 0.05;
-      portfolio += price * 0.05;
-      rent = marketRent; // have to pay market rent now
-    }
   }
 
   return data;
@@ -86,11 +84,7 @@ function run(opts) {
 // Multiple runs/samples.
 export default function estimate(inputs) {
   const opts = sample(inputs);
-
-  const samples = [];
-  for (const i of range(100)) {
-    samples.push(run(opts));
-  }
+  const samples = range(100).map(() => run(opts));
 
   const data = [];
   // 0..300 months

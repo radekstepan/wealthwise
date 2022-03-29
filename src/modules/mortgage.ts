@@ -8,30 +8,32 @@ const z = (val: number) => {
     val = 0;
   }
   if (val < 0) {
-    throw new Error('NOTE make sure not to overpay if > 25 years');
+    throw new Error(`Negative mortgage balance: ${val}`);
   }
   return val;
 }
 
 export default function mortgage(
-  opts: {
+  init: {
     principal: number,
     periods: number,
     interest: number
   }
 ) {
-  let {principal, periods} = opts;
-  let interest = opts.interest / 12; // monthly
+  let principal = init.principal; // principal left
+  let mortgage = principal; // principal for the term
 
+  let periods = init.periods;
+  let interest = init.interest / 12; // monthly
   let payment: number = formula.PMT(
     interest,
-    opts.periods,
-    -opts.principal,
+    periods,
+    -mortgage,
     0,
     1
   );
-
-  let balance = math.round(payment * periods, 2); // payments remaining
+  let balance = payment * periods; // principal + interest
+  let period = 0;
 
   return {
     payment: () => math.round(payment, 2),
@@ -39,12 +41,12 @@ export default function mortgage(
     principal: () => math.round(principal, 2),
 
     // Make a mortgage payment.
-    pay: ({period}) => {
+    pay: () => {
       principal -= formula.PPMT(
         interest,
-        period,
-        opts.periods,
-        -opts.principal,
+        period += 1,
+        periods,
+        -mortgage,
         0,
         1
       );
@@ -55,14 +57,24 @@ export default function mortgage(
     },
 
     // Loan renewal.
-    renew: (opts) => {
-      interest = opts.interest / 12;
-      payment = formula.PMT(
+    renew: (
+      renew: {
+        periods: number,
+        interest: number
+      }
+    ) => {
+      mortgage = principal; // principal for the term
+      periods = renew.periods;
+      period = 0;
+      interest = renew.interest / 12; // set the new interest rate
+      payment = formula.PMT( // update the payment
         interest,
-        opts.periods, // TODO
-        -principal
+        periods,
+        -mortgage,
+        0,
+        1
       );
-      balance = payment * opts.periods; // payments remaining
+      balance = payment * periods; // principal + interest
     }
   };
 }
