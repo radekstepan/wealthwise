@@ -94,6 +94,13 @@ export default function Form({form, setForm}) {
       </Pane>
       <Pane>
         <TextInputField
+          label="Market rent"
+          description="monthly"
+          {...props(form, setForm, 'marketRent')}
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
           label="Rent increases"
           description="% yearly"
           {...props(form, setForm, 'rates.rent')}

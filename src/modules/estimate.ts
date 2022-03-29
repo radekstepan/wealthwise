@@ -5,13 +5,15 @@ import sample from './sample';
 import mortgage from './mortgage';
 import {range, sum} from './utils';
 
+const SAMPLES = 100; // number of samples
+const SALE_FEE = 0.05; // sale fees in %
+const TERM = 5; // 5 year mortgage term
+
 // A single run.
 function run(opts) {
   let price = opts.price();
-  const downpayment = opts.downpayment();
-
   const mgage = mortgage({
-    principal: price * (1 - (downpayment / 100)),
+    principal: price * (1 - (opts.downpayment() / 100)),
     interest: opts.rates.initialInterest() / 100,
     periods: opts.years * 12
   });
@@ -20,8 +22,8 @@ function run(opts) {
   let maintenance = opts.maintenance();
   let propertyTax = opts.propertyTax();
   let insurance = opts.insurance();
-  let marketRent = rent;
-  let expenses = price * (downpayment / 100);
+  let marketRent = opts.marketRent();
+  let expenses = price * (opts.downpayment() / 100);
   let portfolio = expenses;
 
   const data = [];
@@ -30,20 +32,35 @@ function run(opts) {
     const stocksReturn = formula.NOMINAL(opts.rates.stocks() / 100, 12) / 12;
     const priceAppreciation = formula.NOMINAL(opts.rates.appreciation() / 100, 12) / 12;
 
-    // Renew mortgage every 5 years.
-    if (year && !(year % 5)) {
-      mgage.renew({
-        interest: opts.rates.futureInterest() / 100,
-        periods: (opts.years - year) * 12
-      });
+    // Property crash.
+    if (!year) {
+      price *= (1 - (opts.scenarios.crash / 100));
     }
-    // Sell at 5% fee?
-    // TODO what happens to the mortgage?
-    // if (year && !(year % opts.scenarios.sell)) {
-    //   expenses += price * 0.05;
-    //   portfolio += price * 0.05;
-    //   rent = marketRent; // have to pay market rent now
-    // }
+
+    if (year) {
+      // Renew mortgage every 5 years.
+      let renew = !(year % TERM);
+      // Sell every x years.
+      if (!(year % opts.scenarios.sell)) {
+        const fee = price * SALE_FEE; // sale fee
+        expenses += fee;
+        portfolio += fee;
+        rent = marketRent; // have to pay market rent now
+
+        if ((price - mgage.principal()) < 0) {
+          throw new Error('Jingle mail!');
+        }
+        // NOTE: assumes the new property has the same price!
+        renew = true;
+      }
+      
+      if (renew) {
+        mgage.renew({
+          interest: opts.rates.futureInterest() / 100,
+          periods: (opts.years - year) * 12
+        });
+      }
+    }
 
     for (const month of range(12)) {
       mgage.pay();
@@ -64,7 +81,7 @@ function run(opts) {
       price *= 1 + priceAppreciation;
       
       data.push({
-        buy: (price * 0.95) - mgage.balance() - expenses, // 5% sale fees
+        buy: (price * (1 - SALE_FEE)) - mgage.balance() - expenses, // 5% sale fees
         rent: (portfolio - expenses) * (1 - (opts.rates.capitalGainsTax() / 100))
       });
     }
@@ -84,7 +101,7 @@ function run(opts) {
 // Multiple runs/samples.
 export default function estimate(inputs) {
   const opts = sample(inputs);
-  const samples = range(100).map(() => run(opts));
+  const samples = range(SAMPLES).map(() => run(opts));
 
   const data = [];
   // 0..300 months

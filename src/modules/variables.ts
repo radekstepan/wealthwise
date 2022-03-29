@@ -6,6 +6,7 @@ export default {
   propertyTax: '300',
   insurance: '200',
   rent: '2000',
+  marketRent: '2300',
   rates: {
     expenses: '3 - 5',
     initialInterest: '3.5',
@@ -17,6 +18,7 @@ export default {
     capitalGainsTax: '25' // 50% on 50% income tax
   },
   scenarios: {
+    crash: 25, // property crash in %
     sell: 7 // sell and move every x years
   }
 }

@@ -37,8 +37,9 @@ export default function mortgage(
 
   return {
     payment: () => math.round(payment, 2),
-    balance: () => math.round(balance, 2),
-    principal: () => math.round(principal, 2),
+    balance: () => math.round(balance, 2), // n..0
+    principal: () => math.round(principal, 2), // n..0
+    equity: () => math.round(init.principal - principal, 2), // 0..n
 
     // Make a mortgage payment.
     pay: () => {
