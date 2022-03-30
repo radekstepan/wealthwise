@@ -3,13 +3,11 @@ import {jStat} from 'jstat';
 
 // https://github.com/getguesstimate/guesstimate-app/blob/master/src/lib/guesstimator/samplers
 
-const point = input => {
-  const val = Number(input);
-  return () => val;
+export const point = (number: number) => {
+  return () => number;
 };
 
-const normal = input => {
-  const [low, high] = input.split('-').map(d => Number(d.trim()));
+export const normal = (low: number, high: number) => {
   const mean = math.mean(high, low)
   const stdev = (high - mean) / 1.645
   return () => {
@@ -18,14 +16,4 @@ const normal = input => {
     // marks 0.05% on the CDF, the right 0.95%.
     return jStat.normal.sample(mean, stdev);
   };
-}
-
-// Determine which sampler/distribution to apply.
-export default input => {
-  // NOTE: won't correctly identify negative numbers
-  if (!input.includes('-')) {
-    return point(input);
-  }
-
-  return normal(input);
 }

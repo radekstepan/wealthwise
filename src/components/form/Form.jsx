@@ -33,98 +33,98 @@ export default function Form({form, setForm}) {
         <TextInputField
           label="Price"
           placeholder="Property price"
-          {...props(form, setForm, 'price')}
+          {...props(form, setForm, 'house.price')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Downpayment"
           description="% of the purchase price"
-          {...props(form, setForm, 'downpayment')}
+          {...props(form, setForm, 'house.downpayment')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Current Interest Rate"
           description="% yearly mortgage interest rate"
-          {...props(form, setForm, 'rates.initialInterest')}
+          {...props(form, setForm, 'rates.interest.initial')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Future Interest Rate"
           description="% yearly mortgage interest rate"
-          {...props(form, setForm, 'rates.futureInterest')}
+          {...props(form, setForm, 'rates.interest.future')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Maintenance"
           description="monthly maintenance/strata fees"
-          {...props(form, setForm, 'maintenance')}
+          {...props(form, setForm, 'house.maintenance')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Property Taxes"
           description="monthly"
-          {...props(form, setForm, 'propertyTax')}
+          {...props(form, setForm, 'house.propertyTax')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Homeowner's Insurance"
           description="monthly"
-          {...props(form, setForm, 'insurance')}
+          {...props(form, setForm, 'house.insurance')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Expenses increases"
           description="% yearly maintenance, taxes and insurance"
-          {...props(form, setForm, 'rates.expenses')}
+          {...props(form, setForm, 'rates.house.expenses')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Rent"
           description="monthly"
-          {...props(form, setForm, 'rent')}
+          {...props(form, setForm, 'rent.current')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Market rent"
           description="monthly"
-          {...props(form, setForm, 'marketRent')}
+          {...props(form, setForm, 'rent.market')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Rent increases"
           description="% yearly"
-          {...props(form, setForm, 'rates.rent')}
+          {...props(form, setForm, 'rates.rent.controlled')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Market rent increases"
           description="% yearly"
-          {...props(form, setForm, 'rates.marketRent')}
+          {...props(form, setForm, 'rates.rent.market')}
         />
       </Pane>
       <Pane>
         <TextInputField
           label="Investment return"
           description="% yearly"
-          {...props(form, setForm, 'rates.stocks')}
+          {...props(form, setForm, 'rates.stocks.return')}
         />
       </Pane>
       <Pane className="field">
         <TextInputField
           label="Property appreciation"
           description="% yearly"
-          {...props(form, setForm, 'rates.appreciation')}
+          {...props(form, setForm, 'rates.house.appreciation')}
         />
       </Pane>
     </>

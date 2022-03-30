@@ -4,12 +4,13 @@ import {
   Pane,
   Heading,
 } from 'evergreen-ui';
-import Form from './form/Form';
-import Chart from './chart/Chart';
-import vars from '../modules/variables';
+import Form from './form/Form.jsx';
+import Chart from './chart/Chart.jsx';
+// @ts-ignore
+import inputs from '../modules/inputs.yaml';
 
 export default function Page() {
-  const [form, setForm] = useState(vars);
+  const [form, setForm] = useState(inputs);
 
   return (
     <Pane padding={16}>

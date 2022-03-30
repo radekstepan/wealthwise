@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 // @ts-ignore
 import * as formula from '@formulajs/formulajs';
 import Chance from 'chance';
-import sample from './sample';
+import parse from './parse';
 import mortgage from './mortgage';
 import {range, sum} from './utils';
 
@@ -13,38 +13,39 @@ const TERM = 5; // 5 year mortgage term
 // A single run.
 function run(opts) {
   const chance = new Chance();
+  const years = opts.mortgage.years();
+  let price = opts.house.price();
 
-  let price = opts.price();
   const mgage = mortgage({
-    principal: price * (1 - (opts.downpayment() / 100)),
-    interest: opts.rates.initialInterest() / 100,
-    periods: opts.years * 12
+    principal: price * (1 - (opts.house.downpayment())),
+    interest: opts.rates.interest.initial(),
+    periods: years * 12
   });
 
-  let rent = opts.rent();
-  let maintenance = opts.maintenance();
-  let propertyTax = opts.propertyTax();
-  let insurance = opts.insurance();
-  let marketRent = opts.marketRent();
-  let expenses = price * (opts.downpayment() / 100);
+  let rent = opts.rent.current();
+  let marketRent = opts.rent.market();
+  let maintenance = opts.house.maintenance();
+  let propertyTax = opts.house.propertyTax();
+  let insurance = opts.house.insurance();
+  let expenses = price * opts.house.downpayment();
   let portfolio = expenses;
 
   const data = [];
-  for (const year of range(opts.years)) {
+  for (const year of range(years)) {
     // monthly compount market return
-    const stocksReturn = formula.NOMINAL(opts.rates.stocks() / 100, 12) / 12;
-    const priceAppreciation = formula.NOMINAL(opts.rates.appreciation() / 100, 12) / 12;
+    const stocksReturn = formula.NOMINAL(opts.rates.stocks.return(), 12) / 12;
+    const priceAppreciation = formula.NOMINAL(opts.rates.house.appreciation(), 12) / 12;
 
     // Property crash?
-    if (chance.floating({min: 0, max: 100, fixed: 2}) < opts.scenarios.crash.chance()) {
-      price *= (1 - (opts.scenarios.crash.drop() / 100));
+    if (chance.floating({min: 0, max: 1, fixed: 2}) < opts.scenarios.crash.chance()) {
+      price *= (1 - opts.scenarios.crash.drop());
     }
 
     if (year) {
       // Renew mortgage every 5 years.
       let renew = !(year % TERM);
       // Sell every x years.
-      if (!(year % opts.scenarios.sell)) {
+      if (!(year % opts.scenarios.move())) {
         const fee = price * SALE_FEE; // sale fee
         expenses += fee;
         portfolio += fee;
@@ -55,8 +56,8 @@ function run(opts) {
       
       if (renew) {
         mgage.renew({
-          interest: opts.rates.futureInterest() / 100,
-          periods: (opts.years - year) * 12
+          interest: opts.rates.interest.future(),
+          periods: (years - year) * 12
         });
       }
     }
@@ -72,26 +73,24 @@ function run(opts) {
         -rent
       );
 
+      expenses += monthly;
       portfolio += monthly; // invest the money
       portfolio *= 1 + stocksReturn; // get the return
-
-      expenses += monthly;
-
       price *= 1 + priceAppreciation;
-      
+
       data.push({
         buy: (price * (1 - SALE_FEE)) - mgage.balance() - expenses, // 5% sale fees
-        rent: (portfolio - expenses) * (1 - (opts.rates.capitalGainsTax() / 100))
+        rent: (portfolio - expenses) * (1 - opts.rates.stocks.capitalGainsTax())
       });
     }
 
     // End of the year.
-    const ratesExpenses = opts.rates.expenses();
-    maintenance *= 1 + (ratesExpenses / 100);
-    propertyTax *= 1 + (ratesExpenses / 100);
-    insurance *= 1 + (ratesExpenses / 100);
-    rent *= 1 + (opts.rates.rent() / 100);
-    marketRent *= 1 + (opts.rates.marketRent() / 100);
+    const ratesExpenses = opts.rates.house.expenses();
+    maintenance *= 1 + ratesExpenses;
+    propertyTax *= 1 + ratesExpenses;
+    insurance *= 1 + ratesExpenses;
+    rent *= 1 + opts.rates.rent.controlled();
+    marketRent *= 1 + opts.rates.rent.market();
   }
 
   return data;
@@ -99,7 +98,7 @@ function run(opts) {
 
 // Multiple runs/samples.
 export default function estimate(inputs) {
-  const opts = sample(inputs);
+  const opts = parse(inputs);
   const samples = range(SAMPLES).map(() => run(opts));
 
   const data = [];

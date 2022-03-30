@@ -1,0 +1,31 @@
+mortgage:
+  years: 25
+house:
+  price: $810,000
+  downpayment: 20%
+  maintenance: $440
+  propertyTax: $300
+  insurance: $200
+rent:
+  current: $2,000
+  market: $2,300
+
+rates:
+  interest:
+    initial: 3.5%
+    future: 3% - 5%
+  rent:
+    controlled: 1.5% - 2.5%
+    market: 3% - 7%
+  house:
+    expenses: 3% - 5%
+    appreciation: 2% - 4%
+  stocks:
+    return: 1% - 3%
+    capitalGainsTax: 25%
+
+scenarios:
+  crash:
+    chance: 4% - 8% # 1x - 2x in 25 years
+    drop: 10% - 30%
+  move: 7 # move every x years

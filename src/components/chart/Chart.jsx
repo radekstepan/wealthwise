@@ -13,7 +13,6 @@ const curr = d => currency(d, {precision: 0}).format();
 
 const init = (ref, setPointer) => {
   const root = d3.select(ref);
-  // root.select('svg').remove();
   const wrapper = root.node().getBoundingClientRect();
 
   // set the dimensions and margins of the graph

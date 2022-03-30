@@ -12,7 +12,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.js(x)?$/,
         use: 'babel-loader',
         exclude: /node_modules/
       },
@@ -28,6 +28,11 @@ const config = {
           'css-loader',
           'less-loader'
         ]
+      },
+      {
+        test: /\.ya?ml$/,
+        type: 'json',
+        use: 'yaml-loader'
       }
     ]
   },
