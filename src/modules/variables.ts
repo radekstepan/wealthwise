@@ -18,7 +18,10 @@ export default {
     capitalGainsTax: '25' // 50% on 50% income tax
   },
   scenarios: {
-    crash: 25, // property crash in %
+    crash: {
+      chance: '3 - 5', // % yearly
+      drop: '10 - 30' // % drop in value
+    },
     sell: 7 // sell and move every x years
   }
 }

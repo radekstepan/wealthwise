@@ -9,7 +9,7 @@ Medium:
   [ ] save as in local storage under a slug key
   [ ] run the estimate in a job and not in the main thread
   [ ] get rid of the Evergreen UI shit
-  [-] simulate market crash - % chance once every 25 years pick month and apply
+  [x] simulate market crash - % chance once every 25 years pick month and apply
 
 Small:
   [ ] scroll the chart

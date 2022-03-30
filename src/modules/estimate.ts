@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 // @ts-ignore
 import * as formula from '@formulajs/formulajs';
+import Chance from 'chance';
 import sample from './sample';
 import mortgage from './mortgage';
 import {range, sum} from './utils';
@@ -11,6 +12,8 @@ const TERM = 5; // 5 year mortgage term
 
 // A single run.
 function run(opts) {
+  const chance = new Chance();
+
   let price = opts.price();
   const mgage = mortgage({
     principal: price * (1 - (opts.downpayment() / 100)),
@@ -32,9 +35,9 @@ function run(opts) {
     const stocksReturn = formula.NOMINAL(opts.rates.stocks() / 100, 12) / 12;
     const priceAppreciation = formula.NOMINAL(opts.rates.appreciation() / 100, 12) / 12;
 
-    // Property crash.
-    if (!year) {
-      price *= (1 - (opts.scenarios.crash / 100));
+    // Property crash?
+    if (chance.floating({min: 0, max: 100, fixed: 2}) < opts.scenarios.crash.chance()) {
+      price *= (1 - (opts.scenarios.crash.drop() / 100));
     }
 
     if (year) {
@@ -46,10 +49,6 @@ function run(opts) {
         expenses += fee;
         portfolio += fee;
         rent = marketRent; // have to pay market rent now
-
-        if ((price - mgage.principal()) < 0) {
-          throw new Error('Jingle mail!');
-        }
         // NOTE: assumes the new property has the same price!
         renew = true;
       }
