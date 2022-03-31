@@ -1,3 +1,8 @@
+@buy100: #52BD95;
+@buy50: #93c9b5;
+@rent100: #e6a524;
+@rent50: #f7c664;
+
 .chart {
   position: relative;
 
@@ -23,17 +28,17 @@
         padding-top: 4px;
       }
       &.buy {
-        color: #52BD95;
+        color: @buy100;
 
         .square {
-          background-color: #52BD95;
+          background-color: @buy100;
         }
       }
       &.rent {
-        color: #e6a524;
+        color: @rent100;
 
         .square {
-          background-color: #e6a524;
+          background-color: @rent100;
         }
       }
 
@@ -64,22 +69,22 @@
 
     .buy-line {
       fill: none;
-      stroke: #93c9b5;
+      stroke: @buy50;
       stroke-width: 1;
 
       &.q1 {
-        stroke: #52BD95;
+        stroke: @buy100;
         stroke-width: 1.5;
       }
     }
 
     .rent-line {
       fill: none;
-      stroke: #f7c664;
+      stroke: @rent50;
       stroke-width: 1;
 
       &.q1 {
-        stroke: #e6a524;
+        stroke: @rent100;
         stroke-width: 1.5;
       }
     }

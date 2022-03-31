@@ -49,6 +49,11 @@ const config = {
     ],
     alias: {
       'react-dom': '@hot-loader/react-dom'
+    },
+    fallback: {
+      'buffer': require.resolve('buffer/'),
+      'crypto': require.resolve('crypto-browserify'),
+      'stream': require.resolve('stream-browserify')
     }
   }
 };

@@ -36,10 +36,18 @@ export default function mortgage(
   let period = 0;
 
   return {
-    payment: () => math.round(payment, 2),
-    balance: () => math.round(balance, 2), // n..0
-    principal: () => math.round(principal, 2), // n..0
-    equity: () => math.round(init.principal - principal, 2), // 0..n
+    get payment() {
+      return math.round(payment, 2)
+    },
+    get balance() { // n..0
+      return math.round(balance, 2);
+    },
+    get principal() { // n..0
+      return math.round(principal, 2)
+    },
+    get equity() { // 0..n
+      return math.round(init.principal - principal, 2)
+    },
 
     // Make a mortgage payment.
     pay: () => {

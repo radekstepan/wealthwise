@@ -4,8 +4,8 @@ Large:
   [ ] save in a DB and be able to share with others
 
 Medium:
-  [x] recalculate mortgage when interest rate changes @high
-  [x] recalculate mortgage when a new property is bought @medium
+  [x] recalculate mortgage when interest rate changes
+  [x] recalculate mortgage when a new property is bought
   [ ] save as in local storage under a slug key
   [ ] run the estimate in a job and not in the main thread
   [ ] get rid of the Evergreen UI shit
@@ -16,9 +16,8 @@ Small:
   [x] onhover show legend
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [ ] show the year/month in the legend
-  [ ] add line titles in the graph
   [ ] show monthly expenses in buy vs rent
-  [x] add catastrophic loss event (house value) @medium
+  [x] add catastrophic loss event (house value)
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
