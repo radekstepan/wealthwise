@@ -2,6 +2,8 @@
 @buy50: #93c9b5;
 @rent100: #e6a524;
 @rent50: #f7c664;
+@afford100: #c1c4d6;
+@afford50: #E6E8F0;
 
 .chart {
   position: relative;
@@ -39,6 +41,13 @@
 
         .square {
           background-color: @rent100;
+        }
+      }
+      &.afford {
+        color: @afford100;
+
+        .square {
+          background-color: @afford100;
         }
       }
 
@@ -85,6 +94,17 @@
 
       &.q1 {
         stroke: @rent100;
+        stroke-width: 1.5;
+      }
+    }
+
+    .afford-line {
+      fill: none;
+      stroke: @afford50;
+      stroke-width: 1;
+
+      &.q1 {
+        stroke: @afford100;
         stroke-width: 1.5;
       }
     }

@@ -1,23 +1,16 @@
 Large:
-  [x] support ranges of values
   [ ] a custom UI ala Dribbble inspiration
   [ ] save in a DB and be able to share with others
 
 Medium:
-  [x] recalculate mortgage when interest rate changes
-  [x] recalculate mortgage when a new property is bought
   [ ] save as in local storage under a slug key
   [ ] run the estimate in a job and not in the main thread
   [ ] get rid of the Evergreen UI shit
-  [x] simulate market crash - % chance once every 25 years pick month and apply
 
 Small:
   [ ] scroll the chart
-  [x] onhover show legend
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [ ] show the year/month in the legend
-  [ ] show monthly expenses in buy vs rent
-  [x] add catastrophic loss event (house value)
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse

@@ -3,14 +3,14 @@ import mortgage from './mortgage';
 import {range, sum} from './utils';
 import * as formula from './formula';
 
-const SALE_FEE = 0.05; // sale fees in %
-const TERM = 5; // 5 year mortgage term
-
 // A single run.
 export default function run(opts) {
   const rnd = new Random();
 
-  const years = opts.mortgage.years();
+  const years = opts.mortgage.amortization();
+  const term = opts.mortgage.term();
+  const saleFee = opts.rates.house.saleFee();
+
   let price = opts.house.price();
 
   const mgage = mortgage({
@@ -31,6 +31,8 @@ export default function run(opts) {
     opts.house.insurance()
   );
 
+  let income = opts.income.current() / 12;
+
   const data = [];
   for (const year of range(years)) {
     // yearly to monthly return
@@ -44,11 +46,11 @@ export default function run(opts) {
 
     if (year) {
       // Renew mortgage every 5 years.
-      let renew = !(year % TERM);
+      let renew = !(year % term);
       // Sell every x years.
       if (!(year % opts.scenarios.move())) {
-        costs += price * SALE_FEE;
-        portfolio += price * SALE_FEE;
+        costs += price * saleFee;
+        portfolio += price * saleFee;
         rent = marketRent; // have to pay market rent now
         // NOTE: assumes the new property has the same price!
         renew = true;
@@ -65,27 +67,25 @@ export default function run(opts) {
     for (const month of range(12)) {
       mgage.pay();
 
-      const net = sum(
-        expenses,
-        mgage.payment,
-        -rent
-      );
+      const monthly = expenses + mgage.payment;
 
-      costs += net;
-      portfolio += net; // invest the money
+      costs += monthly - rent;
+      portfolio += monthly - rent; // invest the money
       portfolio *= 1 + stocksReturn; // get the return
       price *= 1 + priceAppreciation;
 
-      data.push([
-        (price * (1 - SALE_FEE)) - mgage.balance - costs, // 5% sale fees
-        (portfolio - costs) * (1 - opts.rates.stocks.capitalGainsTax())
-      ]);
+      data.push({
+        buy: (price * (1 - saleFee)) - mgage.balance - costs, // 5% sale fees
+        rent: (portfolio - costs) * (1 - opts.rates.stocks.capitalGainsTax()),
+        afford: monthly / income
+      });
     }
 
     // End of the year increases.
     expenses *= 1 + opts.rates.house.expenses();
     rent *= 1 + opts.rates.rent.controlled();
     marketRent *= 1 + opts.rates.rent.market();
+    income *= 1 + opts.income.raises();
   }
 
   return data;

@@ -5,11 +5,11 @@ import {
   Pane, Card, Text
 } from 'evergreen-ui';
 import currency from 'currency.js';
-import {Flipper, Flipped} from 'react-flip-toolkit'
-import estimate from '../../modules/estimate';
+import simulate from '../../modules/simulate';
 import './chart.less';
 
 const curr = d => currency(d, {precision: 0}).format();
+const perc = d => (d * 100).toFixed(0) + '%';
 
 const init = (ref, setPointer) => {
   const root = d3.select(ref);
@@ -41,27 +41,34 @@ const init = (ref, setPointer) => {
     .attr("class", "x-axis");
 
   svg.append("g")
-    .attr('class', 'y-axis');
+    .attr('class', 'y0-axis');
+
+  svg.append("g")
+    .attr('class', 'y1-axis');
 
   // add X axis and Y axis
   const x = d3.scaleLinear().range([0, width]);
-  const y = d3.scaleLinear().range([height, 0]);
+  const y0 = d3.scaleLinear().range([height, 0]);
+  const y1 = d3.scaleLinear().range([height, 0]);
 
   const xAxis = d3
     .axisBottom(x)
-    .tickSize(-height)
     .ticks(5)
     .tickFormat(d => d ? Math.ceil(d / 12) + 'y' : '');
 
-  const yAxis = d3
-    .axisLeft(y)
-    .tickSize(-width)
+  const y0Axis = d3
+    .axisLeft(y0)
     .tickFormat(curr);
 
-  return [svg, x, y, xAxis, yAxis];
+  const y1Axis = d3
+    .axisLeft(y1)
+    .ticks(5)
+    .tickFormat(perc);
+
+  return [svg, x, xAxis, y0, y0Axis, y1, y1Axis];
 }
 
-const update = (svg, x, y, xAxis, yAxis, data) => {
+const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
   const [low, median, high] = data;
 
   const min = low.reduce((min, d) => 
@@ -74,16 +81,22 @@ const update = (svg, x, y, xAxis, yAxis, data) => {
 
   // TODO does not link to number of years
   x.domain([0, 25 * 12]); // months
-  y.domain([min, max]); // $
+  y0.domain([min, max]); // $ net worth
+  y1.domain([0.3, 0.6]); // % affordability
 
   svg.selectAll(".x-axis")
     .transition()
     .duration(500)
     .call(xAxis);
-  svg.selectAll(".y-axis")
+  svg.selectAll(".y0-axis")
     .transition()
     .duration(500)
-    .call(yAxis);
+    .call(y0Axis);
+  svg.selectAll(".y1-axis")
+    .attr("transform", `translate(${parseInt(svg.attr('width')) + 5}, 0)`)
+    .transition()
+    .duration(500)
+    .call(y1Axis);
 
   for (const i in data) {
     const q = data[i];
@@ -92,6 +105,8 @@ const update = (svg, x, y, xAxis, yAxis, data) => {
       .data([q], d => d.buy);
     const rent = svg.selectAll(`.rent-line.q${i}`)
       .data([q], d => d.rent);
+    const afford = svg.selectAll(`.afford-line.q${i}`)
+      .data([q], d => d.afford);
 
     buy
       .enter()
@@ -102,37 +117,45 @@ const update = (svg, x, y, xAxis, yAxis, data) => {
       .duration(500)
       .attr("d", d3.line()
         .x((d, i) => x(i))
-        .y(d => y(d.buy))
+        .y(d => y0(d.buy))
       );
 
-      rent
-        .enter()
-        .append("path")
-        .attr("class", `rent-line q${i}`)
-        .merge(rent)
-        .transition()
-        .duration(500)
-        .attr("d", d3.line()
-          .x((d, i) => x(i))
-          .y(d => y(d.rent))
-        );
+    rent
+      .enter()
+      .append("path")
+      .attr("class", `rent-line q${i}`)
+      .merge(rent)
+      .transition()
+      .duration(500)
+      .attr("d", d3.line()
+        .x((d, i) => x(i))
+        .y(d => y0(d.rent))
+      );
+
+    afford
+      .enter()
+      .append("path")
+      .attr("class", `afford-line q${i}`)
+      .merge(afford)
+      .transition()
+      .duration(500)
+      .attr("d", d3.line()
+        .x((d, i) => x(i))
+        .y(d => y1(d.afford))
+      );
   }
 }
 
 const legend = (point) => {
   return (
     <Text size={300}>
-      <Flipper flipKey="legend" spring="veryGentle">
-        {point.map(([key, val]) => (
-          <Flipped key={key} flipId={key}>
-            <div className={`row ${key}`}>
-              <span className="square" />
-              <span className="value">{curr(val)}</span>
-              {key === 'buy' ? 'Buy' : 'Rent'}
-            </div>
-          </Flipped>          
-        ))}
-      </Flipper>
+      {point.map(([key, val]) => (
+        <div key={key} className={`row ${key}`}>
+          <span className="square" />
+          <span className="value">{key === 'afford' ? perc(val) : curr(val)}</span>
+          <span className="label">{key}</span>
+        </div>
+      ))}
     </Text>
   );
 }
@@ -151,7 +174,7 @@ export default function Chart({form}) {
 
   useDebounce(() => {
     console.log('estimate');
-    setData(estimate(form));
+    setData(simulate(form));
   }, 0, [form]); // not needed, onBlur used on input
 
   useEffect(() => {
@@ -164,10 +187,14 @@ export default function Chart({form}) {
   useEffect(() => {
     if (data) {
       const [low, median, high] = data;
-      const {buy, rent} = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
+      const {
+        buy,
+        rent,
+        afford
+      } = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
       setPoint(buy > rent ?
-        [['buy', buy], ['rent', rent]] :
-        [['rent', rent], ['buy', buy]]);
+        [['buy', buy], ['rent', rent], ['afford', afford]] :
+        [['rent', rent], ['buy', buy], ['afford', afford]]);
     }
   }, [data, pointer]);
 
