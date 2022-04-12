@@ -1,9 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useDebounce} from 'react-use';
 import * as d3 from 'd3';
-import {
-  Pane, Card, Text
-} from 'evergreen-ui';
 import currency from 'currency.js';
 import simulate from '../../modules/simulate';
 import './chart.less';
@@ -148,19 +145,13 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
   }
 }
 
-const legend = (point) => {
-  return (
-    <Text size={300}>
-      {point.map(([key, val]) => (
-        <div key={key} className={`row ${key}`}>
-          <span className="square" />
-          <span className="value">{key === 'afford' ? perc(val) : curr(val)}</span>
-          <span className="label">{key}</span>
-        </div>
-      ))}
-    </Text>
-  );
-}
+const legend = (point) => point.map(([key, val]) => (
+  <div key={key} className={`row ${key}`}>
+    <span className="square" />
+    <span className="value">{key === 'afford' ? perc(val) : curr(val)}</span>
+    <span className="label">{key}</span>
+  </div>
+));
 
 export default function Chart({form}) {
   const el = useRef(null);
@@ -201,20 +192,13 @@ export default function Chart({form}) {
   }, [data, pointer]);
 
   return (
-    <Pane padding={16}>
-      <div className="chart">
-        {point && (
-          <Card
-            elevation={1}
-            className={`legend ${pointer < 0.5 ? 'right' : 'left'}`}
-            background="white"
-            padding="16"
-          >
-            {legend(point)}
-          </Card>
-        )}
-        <div ref={el} className="svg" />
-      </div>
-    </Pane>
+    <div className="chart">
+      {point && (
+        <div className={`legend ${pointer < 0.5 ? 'right' : 'left'}`}>
+          {legend(point)}
+        </div>
+      )}
+      <div ref={el} className="svg" />
+    </div>
   );
 }

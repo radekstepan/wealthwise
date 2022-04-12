@@ -1,8 +1,4 @@
 import React from 'react';
-import {
-  Pane,
-  TextInputField,
-} from 'evergreen-ui';
 import opa from 'object-path';
 import clone from 'clone-deep';
 import './form.less';
@@ -26,121 +22,97 @@ const props = (form, setForm, key) => {
   };
 };
 
+const TextInputField = ({label, description, ...input}) => (
+  <div className="field">
+    <label className="label">{label}</label>
+    <div className="legend">{description}</div>
+    <input type="text" className="input" {...input} />
+  </div>
+);
+
 export default function Form({form, setForm}) {
   return (
-    <>
-      <Pane className="field">
-        <TextInputField
-          label="Price"
-          placeholder="Property price"
-          {...props(form, setForm, 'house.price')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Downpayment"
-          description="% of the purchase price"
-          {...props(form, setForm, 'house.downpayment')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Current Interest Rate"
-          description="% yearly mortgage interest rate"
-          {...props(form, setForm, 'rates.interest.initial')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Future Interest Rate"
-          description="% yearly mortgage interest rate"
-          {...props(form, setForm, 'rates.interest.future')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Maintenance"
-          description="monthly maintenance/strata fees"
-          {...props(form, setForm, 'house.maintenance')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Property Taxes"
-          description="monthly"
-          {...props(form, setForm, 'house.propertyTax')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Homeowner's Insurance"
-          description="monthly"
-          {...props(form, setForm, 'house.insurance')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Expenses increases"
-          description="% yearly maintenance, taxes and insurance"
-          {...props(form, setForm, 'rates.house.expenses')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Rent"
-          description="monthly"
-          {...props(form, setForm, 'rent.current')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Market rent"
-          description="monthly"
-          {...props(form, setForm, 'rent.market')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Rent increases"
-          description="% yearly"
-          {...props(form, setForm, 'rates.rent.controlled')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Market rent increases"
-          description="% yearly"
-          {...props(form, setForm, 'rates.rent.market')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Investment return"
-          description="% yearly"
-          {...props(form, setForm, 'rates.stocks.return')}
-        />
-      </Pane>
-      <Pane className="field">
-        <TextInputField
-          label="Property appreciation"
-          description="% yearly"
-          {...props(form, setForm, 'rates.house.appreciation')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Current income"
-          description="yearly after tax"
-          {...props(form, setForm, 'income.current')}
-        />
-      </Pane>
-      <Pane>
-        <TextInputField
-          label="Income raises"
-          description="% yearly"
-          {...props(form, setForm, 'income.raises')}
-        />
-      </Pane>
-    </>
+    <div className="form">
+      <TextInputField
+        label="Price"
+        placeholder="Property price"
+        {...props(form, setForm, 'house.price')}
+      />
+      <TextInputField
+        label="Downpayment"
+        description="% of the purchase price"
+        {...props(form, setForm, 'house.downpayment')}
+      />
+      <TextInputField
+        label="Current Interest Rate"
+        description="% yearly mortgage interest rate"
+        {...props(form, setForm, 'rates.interest.initial')}
+      />
+      <TextInputField
+        label="Future Interest Rate"
+        description="% yearly mortgage interest rate"
+        {...props(form, setForm, 'rates.interest.future')}
+      />
+      <TextInputField
+        label="Maintenance"
+        description="monthly maintenance/strata fees"
+        {...props(form, setForm, 'house.maintenance')}
+      />
+      <TextInputField
+        label="Property Taxes"
+        description="monthly"
+        {...props(form, setForm, 'house.propertyTax')}
+      />
+      <TextInputField
+        label="Homeowner's Insurance"
+        description="monthly"
+        {...props(form, setForm, 'house.insurance')}
+      />
+      <TextInputField
+        label="Expenses increases"
+        description="% yearly maintenance, taxes and insurance"
+        {...props(form, setForm, 'rates.house.expenses')}
+      />
+      <TextInputField
+        label="Rent"
+        description="monthly"
+        {...props(form, setForm, 'rent.current')}
+      />
+      <TextInputField
+        label="Market rent"
+        description="monthly"
+        {...props(form, setForm, 'rent.market')}
+      />
+      <TextInputField
+        label="Rent increases"
+        description="% yearly"
+        {...props(form, setForm, 'rates.rent.controlled')}
+      />
+      <TextInputField
+        label="Market rent increases"
+        description="% yearly"
+        {...props(form, setForm, 'rates.rent.market')}
+      />
+      <TextInputField
+        label="Investment return"
+        description="% yearly"
+        {...props(form, setForm, 'rates.stocks.return')}
+      />
+      <TextInputField
+        label="Property appreciation"
+        description="% yearly"
+        {...props(form, setForm, 'rates.house.appreciation')}
+      />
+      <TextInputField
+        label="Current income"
+        description="yearly after tax"
+        {...props(form, setForm, 'income.current')}
+      />
+      <TextInputField
+        label="Income raises"
+        description="% yearly"
+        {...props(form, setForm, 'income.raises')}
+      />
+    </div>
   );
 }
