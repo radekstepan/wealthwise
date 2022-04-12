@@ -2,14 +2,14 @@ mortgage:
   amortization: 25 # years
   term: 5 # years
 house:
-  price: $1,050,000 # $810,000
+  price: $600,000 # add 5-20% over asking
   downpayment: 20%
-  maintenance: $500 # $440 # or condo fees
-  propertyTax: $300
+  maintenance: $400 # or condo fees
+  propertyTax: $340
   insurance: $200
 rent:
-  current: $3,250 # $2,000
-  market: $3,250 # $2,150
+  current: $2,000 # $2,000
+  market: $2,400 # https://rentals.ca/national-rent-report
 
 rates:
   interest: # mortgage
@@ -23,7 +23,7 @@ rates:
     appreciation: 2% - 4% # house price
     saleFee: 5% # seller pays the fees
   stocks:
-    return: 1% - 3%
+    return: 3%
     capitalGainsTax: 25% # 50% on 50%
 
 scenarios:
@@ -33,5 +33,5 @@ scenarios:
   move: 7 # move every x years
 
 income:
-  current: $131,940 # after tax
-  raises: 2% # yearly
+  current: $80,000 # $131,940 # after tax https://www.wealthsimple.com/en-ca/tool/tax-calculator
+  raises: 1% - 2% # yearly

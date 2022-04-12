@@ -22,13 +22,17 @@
     }
 
     .row {
+      padding: 4px 0;
+      border-bottom: 1px solid #F4F5F9;
+
       &:first-child {
-        padding-bottom: 4px;
-        border-bottom: 1px solid #F4F5F9;
+        padding-top: 0;
       }
       &:last-child {
-        padding-top: 4px;
+        padding-bottom: 0;
+        border-bottom: 0;
       }
+
       &.buy {
         color: @buy100;
 

@@ -1,14 +1,12 @@
 import * as d3 from 'd3';
-import parse from './parse';
-import run from './run';
+import exec from './exec';
 import {range} from './utils';
 
-const SAMPLES = 100; // number of samples
+const SAMPLES = 1; // number of samples
 
 // Multiple runs/samples.
-export default function simulate(inputs) {
-  const opts = parse(inputs);
-  const samples = range(SAMPLES).map(() => run(opts));
+export default async function simulate(inputs) {
+  const samples: any = await exec(inputs);
 
   const data = [[], [], []]; // quantiles
   // For each month.

@@ -71,18 +71,20 @@ const init = (ref, setPointer) => {
 const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
   const [low, median, high] = data;
 
-  const min = low.reduce((min, d) => 
-    Math.min(min, d.buy, d.rent)
-  , +Infinity);
+  const [min$, minP] = low.reduce((min, d) => [
+    Math.min(min[0], d.buy, d.rent),
+    Math.min(min[1], d.afford)
+  ], [+Infinity, +Infinity]);
 
-  const max = high.reduce((max, d) => 
-    Math.max(max, d.buy, d.rent)
-  , -Infinity);
+  const [max$, maxP] = high.reduce((max, d) => [
+    Math.max(max[0], d.buy, d.rent),
+    Math.max(max[1], d.afford)
+  ], [-Infinity, -Infinity]);
 
   // TODO does not link to number of years
   x.domain([0, 25 * 12]); // months
-  y0.domain([min, max]); // $ net worth
-  y1.domain([0.3, 0.6]); // % affordability
+  y0.domain([min$, max$]); // $ net worth
+  y1.domain([minP, maxP]); // % affordability
 
   svg.selectAll(".x-axis")
     .transition()
@@ -172,9 +174,9 @@ export default function Chart({form}) {
     setGraph(init(el.current, setPointer));
   }, []);
 
-  useDebounce(() => {
+  useDebounce(async () => {
     console.log('estimate');
-    setData(simulate(form));
+    setData(await simulate(form));
   }, 0, [form]); // not needed, onBlur used on input
 
   useEffect(() => {

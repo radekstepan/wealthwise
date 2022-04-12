@@ -4,13 +4,14 @@ Large:
 
 Medium:
   [ ] save as in local storage under a slug key
-  [ ] run the estimate in a job and not in the main thread
   [ ] get rid of the Evergreen UI shit
+  [ ] show price to rent ratio and be able to toggle it on/off like rent to income
 
 Small:
   [ ] scroll the chart
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [ ] show the year/month in the legend
+  [ ] flip animation on the legend not working
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -25,5 +26,6 @@ Extras:
   [ ] sensitivity analysis
   [ ] probability distribution
 
-Fix:
-  [ ] flip animation on the legend not working
+Future:
+  [ ] switch the model to CoffeeScript?
+  [ ] use Brilliant programming UI to build models?

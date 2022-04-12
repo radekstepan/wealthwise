@@ -127,6 +127,20 @@ export default function Form({form, setForm}) {
           {...props(form, setForm, 'rates.house.appreciation')}
         />
       </Pane>
+      <Pane>
+        <TextInputField
+          label="Current income"
+          description="yearly after tax"
+          {...props(form, setForm, 'income.current')}
+        />
+      </Pane>
+      <Pane>
+        <TextInputField
+          label="Income raises"
+          description="% yearly"
+          {...props(form, setForm, 'income.raises')}
+        />
+      </Pane>
     </>
   );
 }

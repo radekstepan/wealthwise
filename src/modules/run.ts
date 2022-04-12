@@ -1,10 +1,13 @@
 import {Random} from 'random-js';
+import parse from './parse';
 import mortgage from './mortgage';
 import {range, sum} from './utils';
 import * as formula from './formula';
 
+const SAMPLES = 100; // number of samples
+
 // A single run.
-export default function run(opts) {
+function run(opts) {
   const rnd = new Random();
 
   const years = opts.mortgage.amortization();
@@ -90,3 +93,11 @@ export default function run(opts) {
 
   return data;
 }
+
+// TODO keep emitting data as they come through
+self.onmessage = ({data: {inputs}}) => {
+  const opts = parse(inputs);
+  const res = range(SAMPLES).map(() => run(opts));
+
+  self.postMessage({res});
+};
