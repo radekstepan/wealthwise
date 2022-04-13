@@ -9,8 +9,9 @@ export default function Page() {
 
   return (
     <>
-      <Form form={form} setForm={setForm} />
+      <div className="header">Guesstimate Buy vs Rent</div>
       <Chart form={form} />
+      <Form form={form} setForm={setForm} />
     </>
   );
 }

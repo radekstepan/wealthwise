@@ -1,5 +1,24 @@
 .form {
   margin-right: 16px;
+  margin-top: 40px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  gap: 2%;
+
+  .group {
+    margin-bottom: 30px;
+    flex-grow: 1;
+    width: 32%;
+
+    .title {
+      letter-spacing: -0.07px;
+      line-height: 24px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+  }
 
   .field {
     margin-bottom: 20px;
@@ -11,7 +30,7 @@
     .label {
       letter-spacing: -0.05px;
       line-height: 18px;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 500;
       color: #101840;
     }

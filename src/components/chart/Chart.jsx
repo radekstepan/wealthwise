@@ -13,8 +13,8 @@ const init = (ref, setPointer) => {
   const wrapper = root.node().getBoundingClientRect();
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 0, bottom: 50, left: 30 };
-  const width = wrapper.width - margin.left - margin.right;
+  var margin = {top: 0, right: 10, bottom: 20, left: 20 };
+  const width = wrapper.width - margin.left - margin.right - 60;
   const height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
