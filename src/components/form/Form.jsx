@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import opa from 'object-path';
 import clone from 'clone-deep';
 import './form.less';
@@ -22,14 +23,37 @@ const props = (form, setForm, key) => {
   };
 };
 
-const Group = ({title, children}) => (
-  <div className="group">
-    <Title>{title}</Title>
+const Group = ({expanded, title, summary, children}) => {
+  const [isExpanded, setExpanded] = useState(!!expanded);
+  return (
+    <div
+      className={`group ${isExpanded ? 'expanded' : ''}`}
+      onClick={() => setExpanded(!isExpanded)}
+    >
+      <Header
+        title={title}
+        summary={summary}
+        isExpanded={isExpanded}
+        setExpanded={setExpanded}
+      />
+      <div className="content" onClick={evt => evt.stopPropagation()}>
+        {isExpanded && children}
+      </div>
+    </div>
+  );
+};
+
+const Header = ({isExpanded, title, summary, children}) => (
+  <div className="header">
+    <div className="nub">
+      {!isExpanded && <IoIosArrowDown />}
+      {isExpanded && <IoIosArrowUp />}
+    </div>
+    <div className="title">{title}</div>
+    <div className="summary">{!isExpanded && summary}</div>
     {children}
   </div>
 );
-
-const Title = ({children}) => <div className="title">{children}</div>;
 
 const TextInputField = ({label, description, ...input}) => (
   <div className="field">
@@ -42,10 +66,11 @@ const TextInputField = ({label, description, ...input}) => (
 export default function Form({form, setForm}) {
   return (
     <div className="form">
-      <Group title="Property">
+      <Group title="Property" summary={form.house.price} expanded>
         <TextInputField
           label="Price"
           placeholder="Property price"
+          description="purchase price"
           {...props(form, setForm, 'house.price')}
         />
         <TextInputField
@@ -70,7 +95,7 @@ export default function Form({form, setForm}) {
         />
       </Group>
 
-      <Group title="Mortgage">
+      <Group title="Mortgage" summary={form.rates.interest.initial}>
         <TextInputField
           label="Downpayment"
           description="% of the purchase price"
@@ -88,7 +113,7 @@ export default function Form({form, setForm}) {
         />
       </Group>
 
-      <Group title="Rent">
+      <Group title="Rent" summary={form.rent.current}>
         <TextInputField
           label="Rent"
           description="monthly"
@@ -111,7 +136,7 @@ export default function Form({form, setForm}) {
         />
       </Group>
 
-      <Group title="Returns">
+      <Group title="Returns" summary={form.rates.house.appreciation}>
         <TextInputField
           label="Investment return"
           description="% yearly"
@@ -124,7 +149,7 @@ export default function Form({form, setForm}) {
         />
       </Group>
 
-      <Group title="Income">
+      <Group title="Income" summary={form.income.current}>
         <TextInputField
           label="Current income"
           description="yearly after tax"
@@ -137,7 +162,7 @@ export default function Form({form, setForm}) {
         />
       </Group>
 
-      <Group title="Scenarios">
+      <Group title="Scenarios" summary={form.scenarios.crash.drop}>
         <TextInputField
           label="Property price drop chance"
           description="% chance over a 25 year period"

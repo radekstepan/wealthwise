@@ -1,22 +1,43 @@
 .form {
   margin-right: 16px;
-  margin-top: 40px;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  gap: 2%;
+  width: 34%;
+  height: 100%;
+  box-shadow: 0 0 1px rgb(67 90 111 / 30%), 0 2px 4px -2px rgb(67 90 111 / 47%);
+  background: #F9FAFC;
 
   .group {
-    margin-bottom: 30px;
-    flex-grow: 1;
-    width: 32%;
+    user-select: none;
+    padding: 16px;
+    border-bottom: 1px solid #efefef;
+    cursor: pointer;
 
-    .title {
-      letter-spacing: -0.07px;
-      line-height: 24px;
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
+    &.expanded {
+      background: #fff;
+    }
+
+    .header {
+      .title {
+        letter-spacing: -0.07px;
+        line-height: 24px;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .summary {
+        color: #474d66;
+      }
+
+      .nub {
+        float: right;
+        color: #c1c4d6;
+        font-size: 14px;
+        margin-top: 4px;
+      }
+    }
+
+    .content {
+      cursor: default;
     }
   }
 
