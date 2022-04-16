@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {MdStackedLineChart} from 'react-icons/md';
 import Form from '../form/Form.jsx';
 import Chart from '../chart/Chart.jsx';
 // @ts-ignore
@@ -10,10 +11,20 @@ export default function Page() {
 
   return (
     <div className="page">
-      <div className="h1">Guesstimate Buy vs Rent</div>
       <div className="flex">
-        <Form form={form} setForm={setForm} />
-        <Chart form={form} />
+        <div className="sidebar">
+          <div className="name">
+            <MdStackedLineChart />
+            Informs
+          </div>
+          <Form form={form} setForm={setForm} />
+        </div>
+        <div className="main">
+          <div className="fixed">
+            <h2 className="h2">Buy vs rent net worth comparison</h2>
+            <Chart form={form} />
+          </div>
+        </div>
       </div>
     </div>
   );
