@@ -12,6 +12,8 @@ Small:
   [+] show the year/month in the legend
   [+] parse dollar input values (like Wealthsimple, mathjs?)
   [ ] flip animation on the legend not working
+  [+] remove onclick on the left/right padding of the form
+  [+] put a "blurry" app name
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -20,6 +22,7 @@ Nice to have:
   [ ] tests on the core estimate logic
   [ ] on expand focus on the first input field
   [ ] add onhover tooltips explaining the fields
+  [ ] form expand/collapse animation
 
 Extras:
   [ ] complex scenarios
