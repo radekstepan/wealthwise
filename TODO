@@ -1,19 +1,15 @@
 Large:
-  [ ] a custom UI ala Dribbble inspiration
   [ ] save in a DB and be able to share with others
 
 Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
+  [+] handle negative values in the inputs
 
 Small:
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [+] show the year/month in the legend
-  [+] parse dollar input values (like Wealthsimple, mathjs?)
-  [ ] flip animation on the legend not working
-  [+] remove onclick on the left/right padding of the form
-  [+] put a "blurry" app name
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -23,6 +19,9 @@ Nice to have:
   [ ] on expand focus on the first input field
   [ ] add onhover tooltips explaining the fields
   [ ] form expand/collapse animation
+  [ ] flip animation on the legend not working
+  [ ] initial chart loading text/icon
+    - followup loading animation off to the side
 
 Extras:
   [ ] complex scenarios
@@ -30,6 +29,7 @@ Extras:
   [ ] sensitivity analysis
   [ ] probability distribution
   [ ] US vs Canada scenarios
+  [ ] wea.lt/h wealthwi.se domain?
 
 Future:
   [ ] switch the model to CoffeeScript?

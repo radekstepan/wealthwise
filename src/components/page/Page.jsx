@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <div className="page">
       <div className="topbar">
-        <div className="logo" />
+        <div className="logo">wealthwise</div>
         <div className="icons">
           <RiSettings4Line />
           <RiUserLine />

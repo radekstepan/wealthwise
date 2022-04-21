@@ -1,25 +1,33 @@
 .form {
   .group {
     user-select: none;
-    padding: 16px;
     // border-bottom: 1px solid #efefef;
-    cursor: pointer;
 
     &.expanded {
       background: #fff;
       box-shadow: 0 0 1px rgb(67 90 111 / 30%), 0 2px 4px -2px rgb(67 90 111 / 47%);
+
+      .header {
+        .summary {
+          margin-top: 0;
+        }
+      }
     }
 
     .header {
+      .toggle {
+        padding: 16px;
+        cursor: pointer;
+      }
+
       .title {
         letter-spacing: -0.07px;
-        line-height: 24px;
         font-size: 18px;
         font-weight: 600;
-        margin-bottom: 8px;
       }
 
       .summary {
+        margin-top: 8px;
         color: #474d66;
       }
 
@@ -33,6 +41,8 @@
 
     .content {
       cursor: default;
+      padding: 16px;
+      padding-top: 0;
     }
   }
 
