@@ -1,24 +1,29 @@
 import currency from 'currency.js';
 import {point, normal} from './samplers';
+import {Leaf, Inputs} from './inputs';
+import {INPUTS} from '../const';
 
-function node(val) {
+function node(node: Leaf|Inputs) {
   // Traverse.
-  if (typeof val === 'object') {
-    return parse(val);
+  if (!Array.isArray(node)) {
+    return parse(node);
   }
+  const [val, type] = node;
+
   // Number.
-  if (typeof val === 'number') {
-    return point(val);
+  if (type === INPUTS.NUMBER) {
+    // TODO handle a range.
+    return point(parseFloat(val));
   }
 
   // Range.
   if (val.includes(' - ')) {
     let low: number, high: number;
-    if (val.includes('%')) {
+    if (type === INPUTS.PERCENT) {
       [low, high] = val
         .split(' - ')
         .map((d: string) => Number(d.trim().replaceAll('%', '')) / 100);
-    } else if (val.includes('$')) {
+    } else if (type === INPUTS.CURRENCY) {
       [low, high] = val.split(' - ').map((d: string) => currency(d).value); 
     } else {
       [low, high] = val.split(' - ').map((d: string) => Number(d.trim())); 
@@ -26,18 +31,17 @@ function node(val) {
     return normal(low, high);
   }
 
-  // String.
-  if (val.includes('%')) {
+  if (type === INPUTS.PERCENT) {
     return point(Number(val.replace('%', '')) / 100);
   }
-  if (val.includes('$')) {
+  if (type === INPUTS.CURRENCY) {
     return point(currency(val).value);
   }
   return point(Number(val));
 }
 
 // Parse user input.
-const parse = (opts) => Object.entries(opts).reduce((d, [key, val]) => ({
+const parse = (opts: Inputs) => Object.entries(opts).reduce((d, [key, val]) => ({
   ...d,
   [key]: node(val)
 }), {});

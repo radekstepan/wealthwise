@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import {RiUserLine, RiSettings4Line} from 'react-icons/ri';
-import Form from '../form/Form.jsx';
+import Form from '../form/Form';
 import Chart from '../chart/Chart.jsx';
-// @ts-ignore
-import inputs from '../../modules/inputs.yaml';
+import inputs from '../../modules/inputs';
 import './page.less';
 
 export default function Page() {

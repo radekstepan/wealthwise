@@ -3,11 +3,13 @@ import {jStat} from 'jstat';
 
 // https://github.com/getguesstimate/guesstimate-app/blob/master/src/lib/guesstimator/samplers
 
-export const point = (number: number) => {
+type Sample = () => number;
+
+export const point = (number: number): Sample => {
   return () => number;
 };
 
-export const normal = (low: number, high: number) => {
+export const normal = (low: number, high: number): Sample => {
   const mean = math.mean(high, low)
   const stdev = (high - mean) / 1.645
   return () => {

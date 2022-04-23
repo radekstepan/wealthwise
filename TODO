@@ -5,11 +5,12 @@ Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
-  [ ] format bad % and range inputs; < 100% etc
+  [+] format bad % and range inputs; < 100% etc
 
 Small:
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [+] show the year/month in the legend
+  [+] handle a number range
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -29,7 +30,6 @@ Extras:
   [ ] sensitivity analysis
   [ ] probability distribution
   [ ] US vs Canada scenarios
-  [ ] wea.lt/h wealthwi.se domain?
 
 Future:
   [ ] switch the model to CoffeeScript?
