@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import CurrencyInput from 'react-currency-input-field';
+import useCollapse from 'react-collapsed'
 import currency from 'currency.js';
 import opa from 'object-path';
 import clone from 'clone-deep';
@@ -29,30 +30,42 @@ const props = (form, setForm, key) => {
 
 const Group = ({expanded=false, title, summary, children}) => {
   const [isExpanded, setExpanded] = useState(!!expanded);
+  const [showSummary, setShowSummary] = useState(!expanded);
+  const onExpandStart = useCallback(() => setShowSummary(false), []);
+  const onCollapseEnd = useCallback(() => setShowSummary(true), []);
+  const {getCollapseProps} = useCollapse({
+    isExpanded,
+    onExpandStart,
+    onCollapseEnd,
+    duration: 50,
+    easing: 'ease-in'
+  });
+
   return (
     <div className={`group ${isExpanded ? 'expanded' : ''}`}>
       <Header
         title={title}
         summary={summary}
         isExpanded={isExpanded}
+        showSummary={showSummary}
         setExpanded={setExpanded}
       />
-      <div className="content" onClick={evt => evt.stopPropagation()}>
-        {isExpanded && children}
+      <div className="content" {...getCollapseProps()}>
+        {children}
       </div>
     </div>
   );
 };
 
-const Header = ({isExpanded, setExpanded, title, summary}) => (
+const Header = ({isExpanded, showSummary, setExpanded, title, summary}) => (
   <div className="header">
-    <div className="toggle" onClick={() => setExpanded(!isExpanded)}>
+    <div className="toggle" onClick={() => setExpanded(d => !d)}>
       <div className="nub">
         {!isExpanded && <IoIosArrowDown />}
         {isExpanded && <IoIosArrowUp />}
       </div>
       <div className="title">{title}</div>
-      <div className="summary">{!isExpanded && summary}</div>
+      <div className="summary">{showSummary && summary}</div>
     </div>
   </div>
 );

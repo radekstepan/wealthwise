@@ -5,7 +5,7 @@ Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
-  [+] format bad % and range inputs; < 100% etc
+  [+] format bad % and range inputs; < 100% etc; 3% - 2%, on the client
 
 Small:
   [ ] show a diff from the previous state in the legend (like Simpletax)
@@ -19,7 +19,6 @@ Nice to have:
   [ ] tests on the core estimate logic
   [ ] on expand focus on the first input field
   [ ] add onhover tooltips explaining the fields
-  [ ] form expand/collapse animation
   [ ] flip animation on the legend not working
   [ ] initial chart loading text/icon
     - followup loading animation off to the side
