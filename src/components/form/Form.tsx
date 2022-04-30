@@ -1,11 +1,10 @@
 import React, {useCallback, useState} from 'react';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
-import CurrencyInput from 'react-currency-input-field';
-import useCollapse from 'react-collapsed'
-import currency from 'currency.js';
+import useCollapse from 'react-collapsed';
 import opa from 'object-path';
 import clone from 'clone-deep';
 import {Inputs} from '../../modules/inputs';
+import Field from './Field';
 import './form.less';
 
 const props = (form, setForm, key) => {
@@ -69,25 +68,6 @@ const Header = ({isExpanded, showSummary, setExpanded, title, summary}) => (
     </div>
   </div>
 );
-
-const Field = ({label, description, ...input}) => {
-  const isCurrency = input.defaultValue.includes('$');
-  return (
-    <div className="field">
-      <label className="label">{label}</label>
-      <div className="legend">{description}</div>
-      {isCurrency ? (
-        <CurrencyInput
-          {...input}
-          defaultValue={currency(input.defaultValue).value}
-          allowNegativeValue={false}
-          prefix="$"
-          className="input"
-        />
-      ) : <input type="text" className="input" {...input} />}
-    </div>
-  );
-};
 
 interface Props {
   form: Inputs
