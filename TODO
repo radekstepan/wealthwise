@@ -22,6 +22,7 @@ Nice to have:
   [ ] flip animation on the legend not working
   [ ] initial chart loading text/icon
     - followup loading animation off to the side
+  [ ] Cmd+Z to undo the last change to the inputs, highlight it
 
 Extras:
   [ ] complex scenarios
