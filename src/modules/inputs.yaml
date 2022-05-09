@@ -2,10 +2,10 @@ mortgage:
   amortization: 25 # years
   term: 5 # years
 house:
-  price: $600,000 # add 5-20% over asking
+  price: $595,000 # add 5-20% over asking
   downpayment: 20%
-  maintenance: $400 # or condo fees
-  propertyTax: $340
+  maintenance: $405 # or condo fees
+  propertyTax: $190
   insurance: $200
 rent:
   current: $2,000 # $2,000
@@ -13,17 +13,18 @@ rent:
 
 rates:
   interest: # mortgage
-    initial: 3.9%
-    future: 3.5% - 6%
+    isFixedRate: 0 # 1 = fixed, 0 = variable
+    initial: 2.7%
+    future: 2% - 6%
   rent:
     controlled: 1.5% - 2.5%
     market: 1% - 6% # https://www.capitaldaily.ca/news/rental-crisis-victoria
   house:
     expenses: 3% - 5% # expenses increases
-    appreciation: 2% - 4% # house price
+    appreciation: 1% # 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
     saleFee: 5% # seller pays the fees
-  stocks:
-    return: 3%
+  bonds:
+    return: 2%
     capitalGainsTax: 25% # 50% on 50%
 
 scenarios:

@@ -66,16 +66,11 @@ export default function mortgage(
     },
 
     // Loan renewal.
-    renew: (
-      renew: {
-        periods: number,
-        interest: number
-      }
-    ) => {
+    renew: (newInterestRate: number) => {
       mortgage = principal; // principal for the term
-      periods = renew.periods;
+      periods -= period;
       period = 0;
-      interest = renew.interest / 12; // set the new interest rate
+      interest = newInterestRate / 12; // set the new interest rate
       payment = formula.PMT( // update the payment
         interest,
         periods,

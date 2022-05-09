@@ -43,10 +43,7 @@ describe('mortgage', () => {
     expect(mgage.balance).toBe(52.43);
     expect(mgage.principal).toBe(51.03);
 
-    mgage.renew({
-      periods: 12,
-      interest: 0.05
-    });
+    mgage.renew(0.05);
 
     expect(mgage.payment).toBe(4.35);
     expect(mgage.balance).toBe(52.21);

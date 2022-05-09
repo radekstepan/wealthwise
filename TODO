@@ -23,6 +23,7 @@ Nice to have:
   [ ] initial chart loading text/icon
     - followup loading animation off to the side
   [ ] Cmd+Z to undo the last change to the inputs, highlight it
+  [ ] test if a new RNG seed is needed for each run
 
 Extras:
   [ ] complex scenarios

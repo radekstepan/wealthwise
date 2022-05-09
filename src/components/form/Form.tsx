@@ -115,12 +115,12 @@ const Form: React.FC<Props> = ({form, setForm}) => {
         />
         <Field
           label="Current Interest Rate"
-          description="% yearly mortgage interest rate"
+          description="% yearly variable mortgage interest rate"
           {...props(form, setForm, 'rates.interest.initial')}
         />
         <Field
           label="Future Interest Rate"
-          description="% yearly mortgage interest rate"
+          description="% yearly variable mortgage interest rate"
           {...props(form, setForm, 'rates.interest.future')}
         />
       </Group>
@@ -150,14 +150,14 @@ const Form: React.FC<Props> = ({form, setForm}) => {
       {/** @ts-ignore */}
       <Group title="Returns" summary={form.rates.house.appreciation[0]}>
         <Field
-          label="Investment return"
-          description="% yearly"
-          {...props(form, setForm, 'rates.stocks.return')}
-        />
-        <Field
           label="Property appreciation"
           description="% yearly"
           {...props(form, setForm, 'rates.house.appreciation')}
+        />
+        <Field
+          label="Safe investment return"
+          description="% yearly"
+          {...props(form, setForm, 'rates.bonds.return')}
         />
       </Group>
       {/** @ts-ignore */}
