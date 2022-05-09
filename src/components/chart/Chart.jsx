@@ -81,7 +81,7 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
   // TODO does not link to number of years
   x.domain([0, 25 * 12]); // months
   y0.domain([min$, max$]); // $ net worth
-  y1.domain([minP, maxP]); // % affordability
+  // y1.domain([minP, maxP]); // % affordability
 
   svg.selectAll(".x-axis")
     .transition()
@@ -104,8 +104,8 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
       .data([q], d => d.buy);
     const rent = svg.selectAll(`.rent-line.q${i}`)
       .data([q], d => d.rent);
-    const afford = svg.selectAll(`.afford-line.q${i}`)
-      .data([q], d => d.afford);
+    // const afford = svg.selectAll(`.afford-line.q${i}`)
+    //   .data([q], d => d.afford);
 
     buy
       .enter()
@@ -131,17 +131,17 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
         .y(d => y0(d.rent))
       );
 
-    afford
-      .enter()
-      .append("path")
-      .attr("class", `afford-line q${i}`)
-      .merge(afford)
-      .transition()
-      .duration(500)
-      .attr("d", d3.line()
-        .x((d, i) => x(i))
-        .y(d => y1(d.afford))
-      );
+    // afford
+    //   .enter()
+    //   .append("path")
+    //   .attr("class", `afford-line q${i}`)
+    //   .merge(afford)
+    //   .transition()
+    //   .duration(500)
+    //   .attr("d", d3.line()
+    //     .x((d, i) => x(i))
+    //     .y(d => y1(d.afford))
+    //   );
   }
 }
 
@@ -186,8 +186,8 @@ export default function Chart({form}) {
         afford
       } = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
       setPoint(buy > rent ?
-        [['buy', buy], ['rent', rent], ['afford', afford]] :
-        [['rent', rent], ['buy', buy], ['afford', afford]]);
+        [['buy', buy], ['rent', rent], /**['afford', afford]*/] :
+        [['rent', rent], ['buy', buy], /**['afford', afford]*/]);
     }
   }, [data, pointer]);
 

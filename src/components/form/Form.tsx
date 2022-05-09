@@ -111,6 +111,7 @@ const Form: React.FC<Props> = ({form, setForm}) => {
         <Field
           label="Downpayment"
           description="% of the purchase price"
+          disabled
           {...props(form, setForm, 'house.downpayment')}
         />
         <Field
@@ -161,7 +162,7 @@ const Form: React.FC<Props> = ({form, setForm}) => {
         />
       </Group>
       {/** @ts-ignore */}
-      <Group title="Income" summary={form.income.current[0]}>
+{/*       <Group title="Income" summary={form.income.current[0]}>
         <Field
           label="Current income"
           description="yearly after tax"
@@ -172,7 +173,7 @@ const Form: React.FC<Props> = ({form, setForm}) => {
           description="% yearly"
           {...props(form, setForm, 'income.raises')}
         />
-      </Group>
+      </Group> */}
       {/** @ts-ignore */}
       <Group title="Scenarios" summary={form.scenarios.crash.drop[0]}>
         <Field
