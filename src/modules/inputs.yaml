@@ -1,12 +1,15 @@
 mortgage:
   amortization: 25 # years
   term: 5 # years
+
 house:
   price: $595,000 # add 5-20% over asking
   downpayment: 20%
   maintenance: $405 # or condo fees
   propertyTax: $190
-  insurance: $200
+  insurance: $75 # personal condo insurance
+  closingCosts: $2000
+
 rent:
   current: $2,000 # $2,000
   market: $2,400 # https://rentals.ca/national-rent-report

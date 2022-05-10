@@ -13,6 +13,7 @@ Small:
   [+] show the year/month in the legend
   [+] handle a number range
   [ ] downpayment with CMHC insurance
+  [ ] handle gradual increases in variable interest rates
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse

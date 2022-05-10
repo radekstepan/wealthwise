@@ -1,7 +1,7 @@
 import {Random} from 'random-js';
 import parse from './parse';
 import mortgage from './mortgage';
-import {range, sum, within} from './utils';
+import {range, sum} from './utils';
 import * as formula from './formula';
 
 const SAMPLES = 100; // number of samples
@@ -26,7 +26,14 @@ function run(opts) {
 
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
-  let costs = price * opts.house.downpayment();
+  let costs = sum(
+    price * opts.house.downpayment(),
+    // closing costs
+    2000,
+    // property transfer tax
+    Math.min(price, 200000) * 0.01, // 1% of first $200k
+    Math.min(price - 200000, 2000000) * 0.02 // 2% on the next amount up to $2m
+  );
   let portfolio = costs;
 
   // monthly house expenses
@@ -84,15 +91,15 @@ function run(opts) {
 
       // Change the latest interest rate every 3 months (4 hikes in a year).
       if ((month + 1) % 3 === 0) {
-        if (isFixedRate) {
-          currentInterestRate = opts.rates.interest.future();
-        } else {
+        currentInterestRate = opts.rates.interest.future();
+        if (!isFixedRate) {
+          // TODO
           // On variable, the new rate has to be within 1% of the previous value.
-          currentInterestRate = within(
-            opts.rates.interest.future,
-            currentInterestRate - 0.01,
-            currentInterestRate + 0.01
-          );
+          // currentInterestRate = within(
+          //   opts.rates.interest.future,
+          //   currentInterestRate - 0.01,
+          //   currentInterestRate + 0.01
+          // );
           // And we immediately renew.
           mgage.renew(currentInterestRate);
         }
