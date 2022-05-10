@@ -16,3 +16,34 @@ export const within = (get: () => number, min: number, max: number) => {
 
   throw new Error('All generated numbers fell out of range');
 };
+
+
+export const closingAndTax = (price: number) => sum(
+  // closing costs
+  2000,
+  // land transfer tax
+  Math.max(Math.min(price, 200000), 0) * 0.01,
+  Math.min(Math.max(price - 200000, 0), 2000000) * 0.02,
+  Math.max(price - 2000000, 0) * 0.03
+);
+
+// https://wowa.ca/calculators/cmhc-insurance
+// TODO only works on max 25 year mortgages
+export const cmhc = (downpayment: number, price: number) => {
+  if (downpayment >= 0.2) {
+    return 0;
+  }
+  if (price > 1000000) {
+    throw new Error('CMHC insurance not applicable');
+  }
+  if (downpayment < 0.05) {
+    throw new Error('CMHC insurance not applicable');
+  }
+  if (downpayment < 0.1) {
+    return ((1 - downpayment) * price) * 0.04;
+  }
+  if (downpayment < 0.15) {
+    return ((1 - downpayment) * price) * 0.031;
+  }
+  return ((1 - downpayment) * price) * 0.028;
+};

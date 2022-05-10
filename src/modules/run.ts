@@ -1,10 +1,10 @@
 import {Random} from 'random-js';
 import parse from './parse';
 import mortgage from './mortgage';
-import {range, sum} from './utils';
+import {range, sum, closingAndTax, cmhc} from './utils';
 import * as formula from './formula';
 
-const SAMPLES = 100; // number of samples
+const SAMPLES = 200; // number of samples
 
 // A single run.
 function run(opts) {
@@ -15,25 +15,19 @@ function run(opts) {
   const saleFee = opts.rates.house.saleFee();
 
   let price = opts.house.price();
+  const downpayment = opts.house.downpayment();
 
   const isFixedRate = Boolean(opts.rates.interest.isFixedRate());
   let currentInterestRate = opts.rates.interest.initial();
   const mgage = mortgage({
-    principal: price * (1 - (opts.house.downpayment())),
+    principal: price * (1 - downpayment),
     interest: currentInterestRate,
     periods: years * 12
   });
 
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
-  let costs = sum(
-    price * opts.house.downpayment(),
-    // closing costs
-    2000,
-    // property transfer tax
-    Math.min(price, 200000) * 0.01, // 1% of first $200k
-    Math.min(price - 200000, 2000000) * 0.02 // 2% on the next amount up to $2m
-  );
+  let costs = (price * downpayment) + closingAndTax(price) + cmhc(downpayment, price);
   let portfolio = costs;
 
   // monthly house expenses
@@ -61,8 +55,9 @@ function run(opts) {
       let renew = isFixedRate && !(year % term);
       // Sell every x years.
       if (!(year % opts.scenarios.move())) {
-        costs += price * saleFee;
-        portfolio += price * saleFee;
+        const moveCosts = (price * saleFee) + closingAndTax(price);
+        costs += moveCosts;
+        portfolio += moveCosts;
         rent = marketRent; // have to pay market rent now
         // NOTE: assumes the new property has the same price!
         renew = true;

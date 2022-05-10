@@ -111,7 +111,6 @@ const Form: React.FC<Props> = ({form, setForm}) => {
         <Field
           label="Downpayment"
           description="% of the purchase price"
-          disabled
           {...props(form, setForm, 'house.downpayment')}
         />
         <Field

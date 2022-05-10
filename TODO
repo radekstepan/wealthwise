@@ -12,8 +12,6 @@ Small:
   [ ] show a diff from the previous state in the legend (like Simpletax)
   [+] show the year/month in the legend
   [+] handle a number range
-  [ ] downpayment with CMHC insurance
-  [ ] handle gradual increases in variable interest rates
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -27,6 +25,7 @@ Nice to have:
     - followup loading animation off to the side
   [ ] Cmd+Z to undo the last change to the inputs, highlight it
   [ ] test if a new RNG seed is needed for each run
+  [ ] handle gradual increases in variable interest rates
 
 Extras:
   [ ] complex scenarios

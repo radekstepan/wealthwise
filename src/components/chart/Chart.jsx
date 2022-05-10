@@ -167,6 +167,7 @@ export default function Chart({form}) {
 
   useDebounce(async () => {
     console.log('estimate');
+    // TODO is this blocking?
     setData(await simulate(form));
   }, 0, [form]); // not needed, onBlur used on input
 
