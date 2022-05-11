@@ -13,15 +13,17 @@ const z = (val: number) => {
   return val;
 }
 
+const r = (val: number) => math.round(val, 2);
+
 export default function mortgage(
   init: {
-    principal: number,
+    balance: number,
     periods: number,
     interest: number
   }
 ) {
-  let principal = init.principal; // principal left
-  let mortgage = principal; // principal for the term
+  let balance = init.balance; // balance left
+  let mortgage = balance; // balance for the term
 
   let periods = init.periods;
   let interest = init.interest / 12; // monthly
@@ -30,44 +32,43 @@ export default function mortgage(
     periods,
     -mortgage,
     0,
-    1
+    0
   );
-  let balance = payment * periods; // principal + interest
   let period = 0;
 
   return {
     get payment() {
-      return math.round(payment, 2)
+      return r(payment);
     },
     get balance() { // n..0
-      return math.round(balance, 2);
-    },
-    get principal() { // n..0
-      return math.round(principal, 2)
+      return r(z(balance));
     },
     get equity() { // 0..n
-      return math.round(init.principal - principal, 2)
+      return r(init.balance - balance);
     },
 
     // Make a mortgage payment.
     pay: () => {
-      principal -= formula.PPMT(
+      const principal = formula.PPMT(
         interest,
         period += 1,
         periods,
         -mortgage,
         0,
-        1
+        0
       );
-      balance -= payment;
 
-      balance = z(balance);
-      principal = z(principal);
+      balance -= principal;
+
+      return [
+        principal, // principal
+        payment - principal // interest
+      ].map(r);
     },
 
     // Loan renewal.
     renew: (newInterestRate: number) => {
-      mortgage = principal; // principal for the term
+      mortgage = balance; // balance for the term
       periods -= period;
       period = 0;
       interest = newInterestRate / 12; // set the new interest rate
@@ -76,9 +77,8 @@ export default function mortgage(
         periods,
         -mortgage,
         0,
-        1
+        0
       );
-      balance = payment * periods; // principal + interest
     }
   };
 }

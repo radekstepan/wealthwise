@@ -7,6 +7,7 @@ Medium:
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
   [+] format bad % and range inputs; < 100% etc; 3% - 2%, on the client
   [+] have a full test on run.ts
+  [ ] a schedule of expenses for each year and month (incl month 0)
 
 Small:
   [ ] show a diff from the previous state in the legend (like Simpletax)

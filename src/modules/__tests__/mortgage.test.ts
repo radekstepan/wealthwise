@@ -2,56 +2,61 @@ import mortgage from '../mortgage';
 import {range} from '../utils';
 
 describe('mortgage', () => {
-  // TODO https://itools-ioutils.fcac-acfc.gc.ca/MC-CH/MCReport-CHSommaire-eng.aspx
-  test('first payment period', () => {
+  test('mortgage schedule', () => {
     const mgage = mortgage({
+      balance: 100000,
       interest: 0.05,
-      principal: 100000,
-      periods: 25 * 12
-    });
-
-    mgage.pay();
-
-    expect(mgage.payment).toBe(582.16);
-    expect(mgage.balance).toBe(174067.14);
-    expect(mgage.principal).toBe(99417.84);
-  });
-
-  test('pay off mortgage', () => {
-    const mgage = mortgage({
-      interest: 0.05,
-      principal: 100,
       periods: 12
     });
 
-    range(12).map(mgage.pay)
+    // https://www.bankrate.com/mortgages/amortization-calculator/
+    const schedule = [
+      [8144.08, 416.67],
+      [8178.02, 382.73],
+      [8212.09, 348.66],
+      [8246.31, 314.44],
+      [8280.67, 280.08],
+      [8315.17, 245.58],
+      [8349.82, 210.93],
+      [8384.61, 176.14],
+      [8419.54, 141.21],
+      [8454.62, 106.12],
+      [8489.85,  70.90],
+      [8525.23,  35.52]
+    ];
+
+    range(12).map(month => {
+      const [principal, interest] = mgage.pay();
+      expect(principal).toBe(schedule[month][0]);
+      expect(interest).toBe(schedule[month][1]);
+    });
 
     expect(mgage.balance).toBe(0);
-    expect(mgage.principal).toBe(0);
   });
 
   test('renew mortgage', () => {
     const mgage = mortgage({
+      balance: 100000,
       interest: 0.05,
-      principal: 100,
       periods: 24
     });
 
-    range(12).map(mgage.pay)
+    expect(mgage.payment).toBe(4387.14);
 
-    expect(mgage.payment).toBe(4.37);
-    expect(mgage.balance).toBe(52.43);
-    expect(mgage.principal).toBe(51.03);
+    const payments = range(12).map(mgage.pay);
+    const [principal, interest] = payments.pop();
 
-    mgage.renew(0.05);
+    // https://www.bankrate.com/mortgages/amortization-calculator/
+    expect(principal).toBe(4156.29);
+    expect(interest).toBe(230.85);
+    expect(mgage.balance).toBe(51247.14);
 
-    expect(mgage.payment).toBe(4.35);
-    expect(mgage.balance).toBe(52.21);
-    expect(mgage.principal).toBe(51.03);
+    mgage.renew(0.10);
 
-    range(12).map(mgage.pay)
+    expect(mgage.payment).toBe(4505.44);
+
+    range(12).map(mgage.pay);
 
     expect(mgage.balance).toBe(0);
-    expect(mgage.principal).toBe(0);
   });
 });

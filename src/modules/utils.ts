@@ -19,8 +19,8 @@ export const within = (get: () => number, min: number, max: number) => {
 
 
 export const closingAndTax = (price: number) => sum(
-  // closing costs
-  2000,
+  // closing costs https://www.ratehub.ca/mortgage-payment-calculator
+  2450,
   // land transfer tax
   Math.max(Math.min(price, 200000), 0) * 0.01,
   Math.min(Math.max(price - 200000, 0), 2000000) * 0.02,

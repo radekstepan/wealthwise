@@ -20,7 +20,7 @@ function run(opts) {
   const isFixedRate = Boolean(opts.rates.interest.isFixedRate());
   let currentInterestRate = opts.rates.interest.initial();
   const mgage = mortgage({
-    principal: price * (1 - downpayment),
+    balance: price * (1 - downpayment),
     interest: currentInterestRate,
     periods: years * 12
   });
