@@ -1,10 +1,10 @@
 import {Random} from 'random-js';
 import parse from './parse';
 import mortgage from './mortgage';
-import {range, sum, closingAndTax, cmhc} from './utils';
+import {range, sum, closingAndTax, cmhc, saleFees} from './utils';
 import * as formula from './formula';
 
-const SAMPLES = 200; // number of samples
+const SAMPLES = 100; // number of samples
 
 // A single run.
 function run(opts) {
@@ -12,7 +12,6 @@ function run(opts) {
 
   const years = opts.mortgage.amortization();
   const term = opts.mortgage.term();
-  const saleFee = opts.rates.house.saleFee();
 
   let price = opts.house.price();
   const downpayment = opts.house.downpayment();
@@ -55,7 +54,7 @@ function run(opts) {
       let renew = isFixedRate && !(year % term);
       // Sell every x years.
       if (!(year % opts.scenarios.move())) {
-        const moveCosts = (price * saleFee) + closingAndTax(price);
+        const moveCosts = saleFees(price) + closingAndTax(price);
         costs += moveCosts;
         portfolio += moveCosts;
         rent = marketRent; // have to pay market rent now
@@ -79,23 +78,17 @@ function run(opts) {
       price *= 1 + priceAppreciation;
 
       data.push({
-        buy: (price * (1 - saleFee)) - mgage.balance - costs, // 5% sale fees
+        buy: price - saleFees(price) - mgage.balance - costs,
         rent: (portfolio - costs) * (1 - opts.rates.bonds.capitalGainsTax()),
         afford: monthly / income
       });
 
       // Change the latest interest rate every 3 months (4 hikes in a year).
+      // TODO variable should be within 1% of the previous value.
       if ((month + 1) % 3 === 0) {
         currentInterestRate = opts.rates.interest.future();
+        // We immediately renew on a variable rate.
         if (!isFixedRate) {
-          // TODO
-          // On variable, the new rate has to be within 1% of the previous value.
-          // currentInterestRate = within(
-          //   opts.rates.interest.future,
-          //   currentInterestRate - 0.01,
-          //   currentInterestRate + 0.01
-          // );
-          // And we immediately renew.
           mgage.renew(currentInterestRate);
         }
       }

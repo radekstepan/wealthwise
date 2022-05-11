@@ -1,6 +1,6 @@
 mortgage:
   amortization: 25 # years
-  term: 5 # years
+  term: 5 # year; for a fixed rate
 
 house:
   price: $595,000 # add 5-20% over asking
@@ -25,7 +25,6 @@ rates:
   house:
     expenses: 3% - 5% # expenses increases
     appreciation: 1.9% # 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
-    saleFee: 5% # seller pays the fees
   bonds:
     return: 2%
     capitalGainsTax: 25% # 50% on 50%
@@ -34,7 +33,7 @@ scenarios:
   crash: # property market crash
     chance: 4% - 8% # 1x - 2x in 25 years
     drop: 10% - 30% # each time
-  move: 10 # move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
+  move: 7 # move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
 
 income:
   current: $80,000 # $131,940 # after tax https://www.wealthsimple.com/en-ca/tool/tax-calculator

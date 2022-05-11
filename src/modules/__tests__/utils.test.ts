@@ -1,17 +1,17 @@
-import {closingAndTax, cmhc} from '../utils';
+import {closingAndTax, cmhc, saleFees} from '../utils';
 
 describe('utils', () => {
   describe('closingAndTax', () => {
     test('$150k', () => {
-      expect(closingAndTax(150000)).toBe(2000 + 1500);
+      expect(closingAndTax(150000)).toBe(2450 + 1500);
     });
 
     test('$500k', () => {
-      expect(closingAndTax(500000)).toBe(2000 + 2000 + 6000);
+      expect(closingAndTax(500000)).toBe(2450 + 2000 + 6000);
     });
 
     test('$3m', () => {
-      expect(closingAndTax(3000000)).toBe(2000 + 2000 + 40000 + 30000);
+      expect(closingAndTax(3000000)).toBe(2450 + 2000 + 40000 + 30000);
     });
   });
 
@@ -30,6 +30,13 @@ describe('utils', () => {
 
     test('20% on $650k', () => {
       expect(cmhc(0.2, 650000)).toBe(0);
+    });
+  });
+
+  describe('saleFees', () => {
+    // https://wowa.ca/calculators/cost-selling-house
+    test('$500k', () => {
+      expect(saleFees(500000)).toBe(19650);
     });
   });
 });

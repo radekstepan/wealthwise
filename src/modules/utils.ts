@@ -22,7 +22,7 @@ export const closingAndTax = (price: number) => sum(
   // closing costs https://www.ratehub.ca/mortgage-payment-calculator
   2450,
   // land transfer tax
-  Math.max(Math.min(price, 200000), 0) * 0.01,
+  Math.min(price, 200000) * 0.01,
   Math.min(Math.max(price - 200000, 0), 2000000) * 0.02,
   Math.max(price - 2000000, 0) * 0.03
 );
@@ -47,3 +47,12 @@ export const cmhc = (downpayment: number, price: number) => {
   }
   return ((1 - downpayment) * price) * 0.028;
 };
+
+// https://wowa.ca/calculators/cost-selling-house
+export const saleFees = (price: number) => sum(
+  750, // legal fees
+  sum(
+    Math.min(price, 100000) * 0.03, // 3% on the first $100k
+    Math.max(price - 100000, 0) * 0.015 // 1.5% on the rest
+  ) * 2 * 1.05 // 2 agents + sales tax
+);
