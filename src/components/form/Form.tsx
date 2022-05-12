@@ -92,7 +92,7 @@ const Form: React.FC<Props> = ({form, setForm}) => {
         />
         <Field
           label="Property Taxes"
-          description="monthly"
+          description="yearly"
           {...props(form, setForm, 'house.propertyTax')}
         />
         <Field

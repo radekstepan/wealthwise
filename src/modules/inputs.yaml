@@ -6,7 +6,7 @@ house:
   price: $595,000 # add 5-20% over asking
   downpayment: 10%
   maintenance: $405 # or condo fees
-  propertyTax: $190
+  propertyTax: $2280 # yearly
   insurance: $75 # personal condo insurance
   closingCosts: $2000
 

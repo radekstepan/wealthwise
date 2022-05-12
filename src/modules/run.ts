@@ -1,8 +1,9 @@
 import {Random} from 'random-js';
 import parse from './parse';
 import mortgage from './mortgage';
-import {range, sum, closingAndTax, cmhc, saleFees} from './utils';
 import * as formula from './formula';
+import {buyWorth, closingAndTax, month0Costs, rentWorth, saleFees} from './run.helpers';
+import {range, sum, isEvery} from './utils';
 
 const SAMPLES = 100; // number of samples
 
@@ -26,13 +27,13 @@ function run(opts) {
 
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
-  let costs = (price * downpayment) + closingAndTax(price) + cmhc(downpayment, price);
-  let portfolio = costs;
+  let costs = month0Costs(price, downpayment);
+  let portfolio = costs; // our initial investment
 
   // monthly house expenses
   let expenses = sum(
     opts.house.maintenance(),
-    opts.house.propertyTax(),
+    opts.house.propertyTax() / 12, // yearly
     opts.house.insurance()
   );
 
@@ -49,11 +50,12 @@ function run(opts) {
       price *= (1 - opts.scenarios.crash.drop());
     }
 
+    let renew = false;
     if (year) {
       // Renew mortgage every 5 years if on fixed.
-      let renew = isFixedRate && !(year % term);
+      renew = isFixedRate && isEvery(year, term);
       // Sell every x years.
-      if (!(year % opts.scenarios.move())) {
+      if (isEvery(year, opts.scenarios.move())) {
         const moveCosts = saleFees(price) + closingAndTax(price);
         costs += moveCosts;
         portfolio += moveCosts;
@@ -68,30 +70,35 @@ function run(opts) {
     }
 
     for (const month of range(12)) {
+      // Start of the month.
+      if (year) {
+        // Change the latest interest rate every 3 months (4 hikes in a year).
+        // TODO variable should be within 1% of the previous value.
+        if (isEvery(month, 3)) {
+          currentInterestRate = opts.rates.interest.future();
+          // We immediately renew on a variable rate.
+          if (!isFixedRate) {
+            mgage.renew(currentInterestRate);
+          }
+        }
+      }
+
       mgage.pay();
 
       const monthly = expenses + mgage.payment;
-
       costs += monthly - rent;
       portfolio += monthly - rent; // invest the money
+
+      // End of the month.
       portfolio *= 1 + bondsReturn; // get the return
       price *= 1 + priceAppreciation;
 
+      // Log it.
       data.push({
-        buy: price - saleFees(price) - mgage.balance - costs,
-        rent: (portfolio - costs) * (1 - opts.rates.bonds.capitalGainsTax()),
+        buy: buyWorth(price, month, renew, mgage.balance, costs),
+        rent: rentWorth(portfolio, costs, opts.rates.bonds.capitalGainsTax()),
         afford: monthly / income
       });
-
-      // Change the latest interest rate every 3 months (4 hikes in a year).
-      // TODO variable should be within 1% of the previous value.
-      if ((month + 1) % 3 === 0) {
-        currentInterestRate = opts.rates.interest.future();
-        // We immediately renew on a variable rate.
-        if (!isFixedRate) {
-          mgage.renew(currentInterestRate);
-        }
-      }
     }
 
     // End of the year increases.

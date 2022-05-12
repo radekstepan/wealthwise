@@ -6,7 +6,7 @@ Medium:
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
   [+] format bad % and range inputs; < 100% etc; 3% - 2%, on the client
-  [+] have a full test on run.ts
+  [ ] have a full test on run.ts
   [ ] a schedule of expenses for each year and month (incl month 0)
 
 Small:

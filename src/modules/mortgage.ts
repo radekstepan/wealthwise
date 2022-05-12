@@ -1,6 +1,6 @@
-import * as math from 'mathjs';
 // @ts-ignore
 import * as formula from '@formulajs/formulajs';
+import {r} from './utils';
 
 // TODO sigh...
 const z = (val: number) => {
@@ -12,8 +12,6 @@ const z = (val: number) => {
   }
   return val;
 }
-
-const r = (val: number) => math.round(val, 2);
 
 export default function mortgage(
   init: {
