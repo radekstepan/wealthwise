@@ -17,8 +17,7 @@ const addThousandsSeparator = (text: string, separator: string) => text
   .replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 
 export default function createNumberMask({
-  // currency
-  prefix = '$',
+  prefix = EMPTY,
   suffix = EMPTY,
   includeThousandsSeparator = true,
   thousandsSeparatorSymbol = ',',
@@ -153,6 +152,31 @@ export default function createNumberMask({
 
 export const currencyMask = createNumberMask({
   prefix: '$',
+  includeThousandsSeparator: true,
+  thousandsSeparatorSymbol: ',',
+  allowDecimal: true,
+  decimalSymbol: '.',
+  decimalLimit: 2, // how many digits allowed after the decimal
+  integerLimit: 7, // limit length of integer numbers
+  allowNegative: false,
+  allowLeadingZeroes: false,
+  allowRange: true
+});
+
+export const percentMask = createNumberMask({
+  suffix: '%',
+  includeThousandsSeparator: true,
+  thousandsSeparatorSymbol: ',',
+  allowDecimal: true,
+  decimalSymbol: '.',
+  decimalLimit: 2, // how many digits allowed after the decimal
+  integerLimit: 7, // limit length of integer numbers
+  allowNegative: false,
+  allowLeadingZeroes: false,
+  allowRange: true
+});
+
+export const numberMask =  createNumberMask({
   includeThousandsSeparator: true,
   thousandsSeparatorSymbol: ',',
   allowDecimal: true,

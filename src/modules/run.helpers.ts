@@ -16,10 +16,10 @@ export const cmhc = (downpayment: number, price: number) => {
     return 0;
   }
   if (price > 1000000) {
-    throw new Error('CMHC insurance not applicable');
+    return 0; // not applicable
   }
   if (downpayment < 0.05) {
-    throw new Error('CMHC insurance not applicable');
+    return 0; // not applicable
   }
   if (downpayment < 0.1) {
     return ((1 - downpayment) * price) * 0.04;
