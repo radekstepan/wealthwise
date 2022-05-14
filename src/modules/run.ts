@@ -15,7 +15,7 @@ function run(opts) {
   const term = opts.mortgage.term();
 
   let price = opts.house.price();
-  const downpayment = opts.house.downpayment();
+  const downpayment = Math.min(opts.house.downpayment(), 1);
 
   const isFixedRate = Boolean(opts.rates.interest.isFixedRate());
   let currentInterestRate = opts.rates.interest.initial();
@@ -46,8 +46,8 @@ function run(opts) {
     const priceAppreciation = formula.apyToAprMonthly(opts.rates.house.appreciation());
 
     // Property crash?
-    if (rnd.bool(opts.scenarios.crash.chance())) {
-      price *= (1 - opts.scenarios.crash.drop());
+    if (rnd.bool(Math.min(opts.scenarios.crash.chance(), 1))) {
+      price *= (1 - Math.min(opts.scenarios.crash.drop(), 1));
     }
 
     let renew = false;
@@ -55,7 +55,7 @@ function run(opts) {
       // Renew mortgage every 5 years if on fixed.
       renew = isFixedRate && isEvery(year, term);
       // Sell every x years.
-      if (isEvery(year, opts.scenarios.move())) {
+      if (isEvery(year, Math.max(opts.scenarios.move(), 1))) {
         const moveCosts = saleFees(price) + closingAndTax(price);
         costs += moveCosts;
         portfolio += moveCosts;

@@ -5,7 +5,6 @@ Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
-  [+] format bad % and range inputs; < 100% etc; 3% - 2%, on the client
   [ ] a schedule of expenses for each year and month (incl month 0)
 
 Small:
