@@ -1,39 +1,51 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import MaskedInput from 'react-text-mask';
 import currency from 'currency.js';
 import {currencyMask, percentMask, numberMask} from './masks/number';
 
-const Field = ({label, description, ...input}) => {
+const Field = ({label, description, focus=false, ...input}) => {
+  const ref = useRef(null);
+  // Focus on expand (mount).
+  useEffect(() => {
+    let timeout;
+    if (focus && ref.current && ref.current.inputElement) {
+      timeout = setTimeout(() => ref.current.inputElement.focus(), 0);
+    }
+    return () => clearTimeout(timeout);
+  }, [focus, ref.current]);
+
+  const props = {
+    ref,
+    className: 'input',
+    ...input
+  };
 
   let field;
   if (input.defaultValue.includes('$')) {
     field = (
       <MaskedInput
-        {...input}
+        {...props}
         mask={currencyMask}
         inputMode="numeric"
         defaultValue={currency(input.defaultValue).value}
-        className="input"
       />
     );
   } else if (input.defaultValue.includes('%')) {
     field = (
       <MaskedInput
-        {...input}
+        {...props}
         mask={percentMask}
         inputMode="numeric"
         defaultValue={input.defaultValue}
-        className="input"
       />
     );
   } else {
     field = (
       <MaskedInput
-        {...input}
+        {...props}
         mask={numberMask}
         inputMode="numeric"
         defaultValue={input.defaultValue}
-        className="input"
       />
     );
   }
