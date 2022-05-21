@@ -39,12 +39,6 @@ export const saleFees = (price: number) => sum(
   ) * 2 * 1.05 // 2 agents + sales tax
 );
 
-// Costs incurrent when buying the property.
-export const month0Costs = (
-  price: number, // property price
-  downpayment: number // 0.00 - 1.00
-) => (price * downpayment) + closingAndTax(price) + cmhc(downpayment, price);
-
 // Net worth as a buyer.
 export const buyWorth = (
   price: number, // property price

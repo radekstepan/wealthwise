@@ -1,9 +1,9 @@
 import React, {useCallback, useState} from 'react';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import useCollapse from 'react-collapsed';
+import {connect} from 'react-redux'
 import opa from 'object-path';
 import clone from 'clone-deep';
-import {Inputs} from '../../modules/inputs';
 import Field from './Field';
 import './form.less';
 
@@ -76,12 +76,7 @@ const Header = ({isExpanded, showSummary, setExpanded, title, summary}) => (
   </div>
 );
 
-interface Props {
-  form: Inputs
-  setForm: React.Dispatch<React.SetStateAction<Inputs>>
-}
-
-const Form: React.FC<Props> = ({form, setForm}) => {
+function Form({form, setForm}) {
   return (
     <div className="form">
       {/** @ts-ignore */}
@@ -229,4 +224,13 @@ const Form: React.FC<Props> = ({form, setForm}) => {
   );
 }
 
-export default Form;
+const mapState = (state) => ({
+	form: state.form
+})
+
+const mapDispatch = (dispatch) => ({
+	setForm: dispatch.form.setForm
+})
+
+export default connect(mapState, mapDispatch)(Form);
+

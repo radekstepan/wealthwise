@@ -8,7 +8,7 @@ Medium:
   [ ] a schedule of expenses for each year and month (incl month 0)
 
 Small:
-  [ ] show a diff from the previous state in the legend (like Simpletax)
+  [ ] run simulate in the worker
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -22,6 +22,7 @@ Nice to have:
   [ ] Cmd+Z to undo the last change to the inputs, highlight it
   [ ] test if a new RNG seed is needed for each run
   [ ] handle gradual increases in variable interest rates
+  [ ] animate from previous value in the results section and show diff @next
 
 Extras:
   [ ] complex scenarios

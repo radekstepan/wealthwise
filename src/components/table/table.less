@@ -1,0 +1,43 @@
+.table {
+  margin-top: 40px;
+  width: 50%;
+  background: #f4f9ff;
+  padding: 16px;
+  border: 1px solid #d7e8ff;
+  // box-shadow: 0 0 1px rgb(67 90 111 / 30%), 0 2px 4px -2px rgb(67 90 111 / 47%);
+  border-radius: 4px;
+
+  h3 {
+    letter-spacing: -0.07px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 0;
+  }
+
+  .list {
+    .group {
+      border-bottom: 1px solid #F4F5F9;
+      margin-top: 18px;
+
+      .item {
+        padding: 6px 0;
+        display: flex;
+  
+        &:first-child {
+          padding-top: 0;
+        }
+  
+        &.bold {
+          color: #5777d7;
+          font-size: 16px;
+        }
+
+        .dot {
+          flex: 1;
+          border-bottom: 1px dotted #bbb;
+          margin: 0 6px 4px 6px;
+        }
+      }
+    }
+  }
+}

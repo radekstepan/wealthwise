@@ -2,13 +2,13 @@ import {Random} from 'random-js';
 import parse from './parse';
 import mortgage from './mortgage';
 import * as formula from './formula';
-import {buyWorth, closingAndTax, month0Costs, rentWorth, saleFees} from './run.helpers';
+import {buyWorth, closingAndTax, cmhc, rentWorth, saleFees} from './run.helpers';
 import {range, sum, isEvery} from './utils';
 
 const SAMPLES = 100; // number of samples
 
 // A single run.
-function run(opts) {
+function run(opts: any, i: number) {
   const rnd = new Random();
 
   const years = opts.mortgage.amortization();
@@ -27,7 +27,12 @@ function run(opts) {
 
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
-  let costs = month0Costs(price, downpayment);
+  const month0Costs = [
+    price * downpayment,
+    closingAndTax(price),
+    cmhc(downpayment, price)    
+  ];
+  let costs = sum(...month0Costs);
   let portfolio = costs; // our initial investment
 
   // monthly house expenses
@@ -36,6 +41,19 @@ function run(opts) {
     opts.house.propertyTax() / 12, // yearly
     opts.house.insurance()
   );
+
+  if (!i) {
+    self.postMessage({
+      action: 'meta',
+      meta: {
+        downpayment: month0Costs[0],
+        closingAndTax: month0Costs[1],
+        cmhc: month0Costs[2],
+        expenses,
+        payment: mgage.payment
+      }
+    });
+  }
 
   let income = opts.income.current() / 12;
 
@@ -114,7 +132,7 @@ function run(opts) {
 // TODO keep emitting data as they come through
 self.onmessage = ({data: {inputs}}) => {
   const opts = parse(inputs);
-  const res = range(SAMPLES).map(() => run(opts));
+  const res = range(SAMPLES).map((i) => run(opts, i));
 
-  self.postMessage({res});
+  self.postMessage({action: 'res', res});
 };

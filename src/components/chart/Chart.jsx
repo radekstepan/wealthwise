@@ -1,11 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {useDebounce} from 'react-use';
+import {connect} from 'react-redux'
 import * as d3 from 'd3';
-import currency from 'currency.js';
 import simulate from '../../modules/simulate';
+import {curr} from '../../modules/utils';
 import './chart.less';
 
-const curr = d => currency(d, {precision: 0}).format();
 const perc = d => (d * 100).toFixed(0) + '%';
 
 const init = (ref, setPointer) => {
@@ -153,7 +152,7 @@ const legend = (point) => point.map(([key, val]) => (
   </div>
 ));
 
-export default function Chart({form}) {
+function Chart({form, setMeta}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
   const [data, setData] = useState(null);
@@ -165,11 +164,10 @@ export default function Chart({form}) {
     setGraph(init(el.current, setPointer));
   }, []);
 
-  useDebounce(async () => {
+  useEffect(() => {
     console.log('estimate');
-    // TODO is this blocking?
-    setData(await simulate(form));
-  }, 0, [form]); // not needed, onBlur used on input
+    simulate(form, setMeta, setData);
+  }, [form]);
 
   useEffect(() => {
     if (data) {
@@ -184,7 +182,7 @@ export default function Chart({form}) {
       const {
         buy,
         rent,
-        afford
+        // afford
       } = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
       setPoint(buy > rent ?
         [['buy', buy], ['rent', rent], /**['afford', afford]*/] :
@@ -203,3 +201,13 @@ export default function Chart({form}) {
     </div>
   );
 }
+
+const mapState = (state) => ({
+	form: state.form
+})
+
+const mapDispatch = (dispatch) => ({
+	setMeta: dispatch.meta.setMeta
+})
+
+export default connect(mapState, mapDispatch)(Chart);

@@ -1,13 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {RiUserLine, RiSettings4Line} from 'react-icons/ri';
 import Form from '../form/Form';
 import Chart from '../chart/Chart.jsx';
-import inputs from '../../modules/inputs';
+import Table from '../table/Table';
 import './page.less';
 
-export default function Page() {
-  const [form, setForm] = useState(inputs);
-
+function Page() {
   return (
     <div className="page">
       <div className="topbar">
@@ -19,15 +17,18 @@ export default function Page() {
       </div>
       <div className="flex">
         <div className="sidebar">
-          <Form form={form} setForm={setForm} />
+          <Form />
         </div>
         <div className="main">
           <div className="fixed">
             <h2 className="h2 title">Buy vs rent net worth comparison</h2>
-            <Chart form={form} />
+            <Chart />
+            <Table />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default Page;
