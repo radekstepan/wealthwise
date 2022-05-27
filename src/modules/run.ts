@@ -5,7 +5,7 @@ import * as formula from './formula';
 import {buyWorth, closingAndTax, cmhc, rentWorth, saleFees} from './run.helpers';
 import {range, sum, isEvery} from './utils';
 
-const SAMPLES = 100; // number of samples
+const SAMPLES = 1000; // number of samples
 
 // A single run.
 function run(opts: any, i: number) {
@@ -110,13 +110,6 @@ function run(opts: any, i: number) {
       // End of the month.
       portfolio *= 1 + bondsReturn; // get the return
       price *= 1 + priceAppreciation;
-
-      // Log it.
-      data.push({
-        buy: buyWorth(price, month, renew, mgage.balance, costs),
-        rent: rentWorth(portfolio, costs, opts.rates.bonds.capitalGainsTax()),
-        afford: monthly / income
-      });
     }
 
     // End of the year increases.
@@ -124,6 +117,13 @@ function run(opts: any, i: number) {
     rent *= 1 + opts.rates.rent.controlled();
     marketRent *= 1 + opts.rates.rent.market();
     income *= 1 + opts.income.raises();
+
+    // Log it.
+    data.push({
+      buy: buyWorth(price, renew, mgage.balance, costs),
+      rent: rentWorth(portfolio, costs, opts.rates.bonds.capitalGainsTax()),
+      // afford: monthly / income
+    });
   }
 
   return data;

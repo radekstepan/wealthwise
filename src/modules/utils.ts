@@ -1,7 +1,7 @@
 import * as math from 'mathjs';
 import currency from 'currency.js';
 
-// Round.
+// Round; @expensive
 export const r = (val: number) => math.round(val, 2);
 export const round = r;
 export const range = (n: number) => Array(n).fill(1).map((_, i) => i);

@@ -10,8 +10,8 @@ export const point = (number: number): Sample => {
 };
 
 export const normal = (low: number, high: number): Sample => {
-  const mean = math.mean(high, low)
-  const stdev = (high - mean) / 1.645
+  const mean = math.mean(high, low);
+  const stdev = (high - mean) / 1.645;
   return () => {
     // This assumes a centered 90% confidence interval,
     // e.g. the left endpoint

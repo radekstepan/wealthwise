@@ -1,5 +1,5 @@
 import mortgage from '../mortgage';
-import {range} from '../utils';
+import {r, range} from '../utils';
 
 describe('mortgage', () => {
   test('mortgage schedule', () => {
@@ -27,8 +27,8 @@ describe('mortgage', () => {
 
     range(12).map(month => {
       const [principal, interest] = mgage.pay();
-      expect(principal).toBe(schedule[month][0]);
-      expect(interest).toBe(schedule[month][1]);
+      expect(r(principal)).toBe(schedule[month][0]);
+      expect(r(interest)).toBe(schedule[month][1]);
     });
 
     expect(mgage.balance).toBe(0);
@@ -41,19 +41,19 @@ describe('mortgage', () => {
       periods: 24
     });
 
-    expect(mgage.payment).toBe(4387.14);
+    expect(r(mgage.payment)).toBe(4387.14);
 
     const payments = range(12).map(mgage.pay);
     const [principal, interest] = payments.pop();
 
     // https://www.bankrate.com/mortgages/amortization-calculator/
-    expect(principal).toBe(4156.29);
-    expect(interest).toBe(230.85);
-    expect(mgage.balance).toBe(51247.14);
+    expect(r(principal)).toBe(4156.29);
+    expect(r(interest)).toBe(230.85);
+    expect(r(mgage.balance)).toBe(51247.14);
 
     mgage.renew(0.10);
 
-    expect(mgage.payment).toBe(4505.44);
+    expect(r(mgage.payment)).toBe(4505.44);
 
     range(12).map(mgage.pay);
 

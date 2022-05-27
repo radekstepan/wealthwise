@@ -1,3 +1,5 @@
+# TODO switch to Neon? https://ne-on.org/
+
 mortgage:
   amortization: 25 # years
   term: 5 # year; for a fixed rate

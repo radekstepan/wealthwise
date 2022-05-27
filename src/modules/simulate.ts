@@ -8,7 +8,7 @@ export default function simulate(inputs, setMeta, setData) {
 
   child.on('meta', setMeta);
 
-  child.on('res', samples => {
+  child.on('res', function processResult(samples) {
     const data = [[], [], []]; // quantiles
     // For each month.
     for (const m of range(samples[0].length)) {

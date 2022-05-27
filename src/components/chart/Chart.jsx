@@ -5,6 +5,8 @@ import simulate from '../../modules/simulate';
 import {curr} from '../../modules/utils';
 import './chart.less';
 
+const DOMAIN_X = [0, 25]; // years
+
 const perc = d => (d * 100).toFixed(0) + '%';
 
 const init = (ref, setPointer) => {
@@ -50,7 +52,7 @@ const init = (ref, setPointer) => {
   const xAxis = d3
     .axisBottom(x)
     .ticks(5)
-    .tickFormat(d => d ? Math.ceil(d / 12) + 'y' : '');
+    .tickFormat(d => d ? Math.ceil(d) + 'y' : '');
 
   const y0Axis = d3
     .axisLeft(y0)
@@ -78,7 +80,7 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
   ], [-Infinity, -Infinity]);
 
   // TODO does not link to number of years
-  x.domain([0, 25 * 12]); // months
+  x.domain(DOMAIN_X);
   y0.domain([min$, max$]); // $ net worth
   // y1.domain([minP, maxP]); // % affordability
 

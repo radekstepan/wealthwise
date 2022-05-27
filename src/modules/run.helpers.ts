@@ -42,13 +42,12 @@ export const saleFees = (price: number) => sum(
 // Net worth as a buyer.
 export const buyWorth = (
   price: number, // property price
-  month: number, // which month are we in?
   didRenew: boolean, // did we renew this month?
   balanceRemaining: number, // on the mortgage
   costs: number // expenses incurred so far
 ) => sum(
   price,
-  !month && didRenew ? 0 : -saleFees(price), // do not "pay" sale fees 2x
+  didRenew ? 0 : -saleFees(price), // do not "pay" sale fees 2x
   -balanceRemaining,
   -costs // includes sale fees in the month we move
 );

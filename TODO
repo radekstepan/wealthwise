@@ -11,7 +11,6 @@ Small:
   [ ] Otter style loading/progress bar
   [ ] tab through fields
   [ ] limit inputs to single values for e.g. house price, maintenance etc @next
-  [ ] 1000 samples default, but log data only once a year @next
   [ ] a Run button @next
     - with a dropdown being able to choose the sample size
     - loading indicator https://uiball.com/loaders/

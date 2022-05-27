@@ -1,6 +1,5 @@
 // @ts-ignore
 import * as formula from '@formulajs/formulajs';
-import {r} from './utils';
 
 // TODO sigh...
 const z = (val: number) => {
@@ -13,6 +12,7 @@ const z = (val: number) => {
   return val;
 }
 
+// PMT, PPMT are @expensive
 export default function mortgage(
   init: {
     balance: number,
@@ -36,13 +36,13 @@ export default function mortgage(
 
   return {
     get payment() {
-      return r(payment);
+      return payment;
     },
     get balance() { // n..0
-      return r(z(balance));
+      return z(balance);
     },
     get equity() { // 0..n
-      return r(init.balance - balance);
+      return init.balance - balance;
     },
 
     // Make a mortgage payment.
@@ -61,7 +61,7 @@ export default function mortgage(
       return [
         principal, // principal
         payment - principal // interest
-      ].map(r);
+      ];
     },
 
     // Loan renewal.
