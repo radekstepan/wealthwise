@@ -1,4 +1,4 @@
-import inputs from '../modules/inputs';
+import inputs from '../modules/inputs/inputs';
 
 export default {
   state: inputs,

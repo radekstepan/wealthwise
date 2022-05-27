@@ -1,7 +1,7 @@
 import currency from 'currency.js';
-import {point, normal} from './samplers';
+import {point, normal} from '../samplers';
 import {Leaf, Inputs} from './inputs';
-import {INPUTS} from '../const';
+import {INPUTS} from '../../const';
 
 function node(node: Leaf|Inputs) {
   // Traverse.

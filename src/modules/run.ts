@@ -1,5 +1,5 @@
 import {Random} from 'random-js';
-import parse from './parse';
+import parse from './inputs/parse';
 import mortgage from './mortgage';
 import * as formula from './formula';
 import {buyWorth, closingAndTax, cmhc, rentWorth, saleFees} from './run.helpers';

@@ -2,30 +2,8 @@ import React, {useCallback, useState} from 'react';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import useCollapse from 'react-collapsed';
 import {connect} from 'react-redux'
-import opa from 'object-path';
-import clone from 'clone-deep';
 import Field from './Field';
 import './form.less';
-
-const props = (form, setForm, key) => {
-  const [value, type] = opa.get(form, key);
-
-  return {
-    defaultValue: value,
-    onBlur: e => setForm(d => {
-      // Do not run if value has not changed.
-      let newValue = e.target.value;
-
-      if (value === newValue) {
-        return d;
-      }
-  
-      const obj = clone(d);
-      opa.set(obj, key, [newValue, type]);
-      return obj;
-    })
-  };
-};
 
 const Group = ({expanded=false, title, summary, children}) => {
   const [isExpanded, setExpanded] = useState(!!expanded);
@@ -89,27 +67,27 @@ function Form({form, setForm}) {
               label="Price"
               placeholder="Property price"
               description="purchase price"
-              {...props(form, setForm, 'house.price')}
+              field="house.price"
             />
             <Field
               label="Maintenance"
               description="monthly maintenance/strata fees"
-              {...props(form, setForm, 'house.maintenance')}
+              field="house.maintenance"
             />
             <Field
               label="Property Taxes"
               description="yearly"
-              {...props(form, setForm, 'house.propertyTax')}
+              field="house.propertyTax"
             />
             <Field
               label="Homeowner's Insurance"
               description="monthly"
-              {...props(form, setForm, 'house.insurance')}
+              field="house.insurance"
             />
             <Field
               label="Expenses increases"
               description="% yearly maintenance, taxes and insurance"
-              {...props(form, setForm, 'rates.house.expenses')}
+              field="rates.house.expenses"
             />
           </>
         )}
@@ -121,18 +99,18 @@ function Form({form, setForm}) {
             <Field
               label="Downpayment"
               description="% of the purchase price"
-              {...props(form, setForm, 'house.downpayment')}
+              field="house.downpayment"
             />
             <Field
               focus={isExpandEnd}
               label="Current Interest Rate"
               description="% yearly variable mortgage interest rate"
-              {...props(form, setForm, 'rates.interest.initial')}
+              field="rates.interest.initial"
             />
             <Field
               label="Future Interest Rate"
               description="% yearly variable mortgage interest rate"
-              {...props(form, setForm, 'rates.interest.future')}
+              field="rates.interest.future"
             />
           </>
         )}
@@ -145,22 +123,22 @@ function Form({form, setForm}) {
               focus={isExpandEnd}
               label="Rent"
               description="monthly"
-              {...props(form, setForm, 'rent.current')}
+              field="rent.current"
             />
             <Field
               label="Market rent"
               description="monthly"
-              {...props(form, setForm, 'rent.market')}
+              field="rent.market"
             />
             <Field
               label="Rent increases"
               description="% yearly"
-              {...props(form, setForm, 'rates.rent.controlled')}
+              field="rates.rent.controlled"
             />
             <Field
               label="Market rent increases"
               description="% yearly"
-              {...props(form, setForm, 'rates.rent.market')}
+              field="rates.rent.market"
             />
           </>
         )}
@@ -173,12 +151,12 @@ function Form({form, setForm}) {
               focus={isExpandEnd}
               label="Property appreciation"
               description="% yearly"
-              {...props(form, setForm, 'rates.house.appreciation')}
+              field="rates.house.appreciation"
             />
             <Field
               label="Safe investment return"
               description="% yearly"
-              {...props(form, setForm, 'rates.bonds.return')}
+              field="rates.bonds.return"
             />
           </>
         )}
@@ -204,18 +182,18 @@ function Form({form, setForm}) {
             <Field
               label="Property price drop chance"
               description="% chance over a 25 year period"
-              {...props(form, setForm, 'scenarios.crash.chance')}
+              field="scenarios.crash.chance"
             />
             <Field
               focus={isExpandEnd}
               label="Property price drop amount"
               description="% amount drop"
-              {...props(form, setForm, 'scenarios.crash.drop')}
+              field="scenarios.crash.drop"
             />
             <Field
               label="Moving"
               description="move every x years"
-              {...props(form, setForm, 'scenarios.move')}
+              field="scenarios.move"
             />
           </>
         )}

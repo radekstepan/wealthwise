@@ -4,11 +4,17 @@ Large:
 Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
-  [ ] remove await from Chart and make sure we "cancel" old results if they arrive late
   [ ] a schedule of expenses for each year and month (incl month 0)
 
 Small:
   [ ] run simulate in the worker
+  [ ] Otter style loading/progress bar
+  [ ] tab through fields
+  [ ] limit inputs to single values for e.g. house price, maintenance etc @next
+  [ ] 1000 samples default, but log data only once a year @next
+  [ ] a Run button @next
+    - with a dropdown being able to choose the sample size
+    - loading indicator https://uiball.com/loaders/
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -28,9 +34,11 @@ Extras:
   [ ] complex scenarios
   [ ] find a value to make lines equal at the end
   [ ] sensitivity analysis
-  [ ] probability distribution
-  [ ] US vs Canada scenarios
+  [ ] probability distribution @important
+  [ ] US vs Canada scenarios; wealthwi.se/canada/bc
 
 Future:
   [ ] switch the model to CoffeeScript?
   [ ] use Brilliant programming UI to build models?
+  [ ] CMHC or TFSA calculator
+  [ ] 25 or 30 year mortgage calculator

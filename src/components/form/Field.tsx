@@ -1,9 +1,25 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MaskedInput from 'react-text-mask';
+import {connect} from 'react-redux'
+import opa from 'object-path';
+import clone from 'clone-deep';
 import currency from 'currency.js';
 import {currencyMask, percentMask, numberMask} from './masks/number';
+import clean from '../../modules/inputs/clean';
+import {INPUTS} from '../../const';
 
-const Field = ({label, description, focus=false, ...input}) => {
+const Field = ({
+  label,
+  description,
+  focus=false,
+  form,
+  setForm,
+  field: key,
+  ...input
+}) => {
+  const [formValue, type] = opa.get(form, key);
+  const [value, setValue] = useState(formValue);
+
   const ref = useRef(null);
   // Focus on expand (mount).
   useEffect(() => {
@@ -14,29 +30,54 @@ const Field = ({label, description, focus=false, ...input}) => {
     return () => clearTimeout(timeout);
   }, [focus, ref.current]);
 
+  const onChange = e => {
+    const newValue = e.target.value;
+    setValue(newValue);
+  };
+
+  const onBlur = () => {
+    const newValue = clean(value);
+
+    setValue(newValue);
+
+    if (formValue === newValue) {
+      return;
+    }
+
+    // TODO make more performant.
+    setForm(d => {
+      const obj = clone(d);
+      opa.set(obj, key, [newValue, type]);
+      return obj;
+    });
+  };
+
   const props = {
     ref,
+    value,
+    onBlur,
+    onChange,
     className: 'input',
     ...input
   };
 
   let field;
-  if (input.defaultValue.includes('$')) {
+  if (type === INPUTS.CURRENCY) {
     field = (
       <MaskedInput
         {...props}
         mask={currencyMask}
         inputMode="numeric"
-        defaultValue={currency(input.defaultValue).value}
+        defaultValue={currency(formValue).value}
       />
     );
-  } else if (input.defaultValue.includes('%')) {
+  } else if (type === INPUTS.PERCENT) {
     field = (
       <MaskedInput
         {...props}
         mask={percentMask}
         inputMode="numeric"
-        defaultValue={input.defaultValue}
+        defaultValue={formValue}
       />
     );
   } else {
@@ -45,7 +86,7 @@ const Field = ({label, description, focus=false, ...input}) => {
         {...props}
         mask={numberMask}
         inputMode="numeric"
-        defaultValue={input.defaultValue}
+        defaultValue={formValue}
       />
     );
   }
@@ -59,4 +100,12 @@ const Field = ({label, description, focus=false, ...input}) => {
   );
 };
 
-export default Field;
+const mapState = (state) => ({
+	form: state.form
+})
+
+const mapDispatch = (dispatch) => ({
+	setForm: dispatch.form.setForm
+})
+
+export default connect(mapState, mapDispatch)(Field);

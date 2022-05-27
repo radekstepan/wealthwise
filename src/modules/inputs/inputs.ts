@@ -1,4 +1,4 @@
-import {INPUTS} from '../const';
+import {INPUTS} from '../../const';
 // @ts-ignore
 import inputs from './inputs.yaml';
 
