@@ -5,9 +5,8 @@ import simulate from '../../modules/simulate';
 import {curr} from '../../modules/utils';
 import './chart.less';
 
-const DOMAIN_X = [0, 25]; // years
-
-const perc = d => (d * 100).toFixed(0) + '%';
+// TODO link to actual years
+const DOMAIN_X = [0, 24]; // years - 1 (inclusive)
 
 const init = (ref, setPointer) => {
   const root = d3.select(ref);
@@ -15,15 +14,15 @@ const init = (ref, setPointer) => {
 
   // set the dimensions and margins of the graph
   var margin = {top: 0, right: 10, bottom: 20, left: 20 };
-  const width = wrapper.width - margin.left - margin.right - 60;
+  const width = wrapper.width - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
   const svg = root.append('svg');
 
   svg
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", wrapper.width) // + margin.left + margin.right)
+    .attr("height", height) // + margin.top + margin.bottom)
     .on('mousemove', evt => {
       const [x] = d3.pointer(evt, svg.node());
       setPointer(x > 0 && x < width ? x / width : 1);
@@ -31,72 +30,55 @@ const init = (ref, setPointer) => {
     .on('mouseleave', () => {
       setPointer(1);
     })
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    // .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
   svg.append("g")
+    // Push to the bottom.
     .attr("transform", `translate(0, ${height})`)
     .attr("class", "x-axis");
 
   svg.append("g")
-    .attr('class', 'y0-axis');
-
-  svg.append("g")
-    .attr('class', 'y1-axis');
+    // Push to the right.
+    .attr("transform", `translate(${width + margin.left + margin.right + 60}, 0)`)
+    .attr('class', 'y-axis');
 
   // add X axis and Y axis
-  const x = d3.scaleLinear().range([0, width]);
-  const y0 = d3.scaleLinear().range([height, 0]);
-  const y1 = d3.scaleLinear().range([height, 0]);
+  const x = d3.scaleLinear().range([0, wrapper.width]);
+  const y = d3.scaleLinear().range([height, 0]);
 
   const xAxis = d3
     .axisBottom(x)
-    .ticks(5)
-    .tickFormat(d => d ? Math.ceil(d) + 'y' : '');
+    .tickFormat(d => d ? Math.ceil(d) + 1 + 'y' : 'Now');
 
-  const y0Axis = d3
-    .axisLeft(y0)
+  const yAxis = d3
+    .axisLeft(y)
     .tickFormat(curr);
 
-  const y1Axis = d3
-    .axisLeft(y1)
-    .ticks(5)
-    .tickFormat(perc);
-
-  return [svg, x, xAxis, y0, y0Axis, y1, y1Axis];
+  return [svg, x, xAxis, y, yAxis];
 }
 
-const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
+const update = (svg, x, xAxis, y, yAxis, data) => {
   const [low, median, high] = data;
 
-  const [min$, minP] = low.reduce((min, d) => [
-    Math.min(min[0], d.buy, d.rent),
-    Math.min(min[1], d.afford)
-  ], [+Infinity, +Infinity]);
+  const min$ = low.reduce((min, d) =>
+    Math.min(min, d.buy, d.rent)
+  , +Infinity);
 
-  const [max$, maxP] = high.reduce((max, d) => [
-    Math.max(max[0], d.buy, d.rent),
-    Math.max(max[1], d.afford)
-  ], [-Infinity, -Infinity]);
+  const max$ = high.reduce((max, d) =>
+    Math.max(max, d.buy, d.rent)
+  , -Infinity);
 
-  // TODO does not link to number of years
   x.domain(DOMAIN_X);
-  y0.domain([min$, max$]); // $ net worth
-  // y1.domain([minP, maxP]); // % affordability
+  y.domain([min$, max$]); // $ net worth
 
   svg.selectAll(".x-axis")
     .transition()
     .duration(500)
     .call(xAxis);
-  svg.selectAll(".y0-axis")
+  svg.selectAll(".y-axis")
     .transition()
     .duration(500)
-    .call(y0Axis);
-  svg.selectAll(".y1-axis")
-    .attr("transform", `translate(${parseInt(svg.attr('width')) + 5}, 0)`)
-    .transition()
-    .duration(500)
-    .call(y1Axis);
+    .call(yAxis);
 
   for (const i in data) {
     const q = data[i];
@@ -105,8 +87,6 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
       .data([q], d => d.buy);
     const rent = svg.selectAll(`.rent-line.q${i}`)
       .data([q], d => d.rent);
-    // const afford = svg.selectAll(`.afford-line.q${i}`)
-    //   .data([q], d => d.afford);
 
     buy
       .enter()
@@ -116,8 +96,8 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
       .transition()
       .duration(500)
       .attr("d", d3.line()
-        .x((d, i) => x(i))
-        .y(d => y0(d.buy))
+        .x((_d, i) => x(i))
+        .y(d => y(d.buy))
       );
 
     rent
@@ -128,28 +108,18 @@ const update = (svg, x, xAxis, y0, y0Axis, y1, y1Axis, data) => {
       .transition()
       .duration(500)
       .attr("d", d3.line()
-        .x((d, i) => x(i))
-        .y(d => y0(d.rent))
+        .x((_d, i) => x(i))
+        .y(d => y(d.rent))
       );
-
-    // afford
-    //   .enter()
-    //   .append("path")
-    //   .attr("class", `afford-line q${i}`)
-    //   .merge(afford)
-    //   .transition()
-    //   .duration(500)
-    //   .attr("d", d3.line()
-    //     .x((d, i) => x(i))
-    //     .y(d => y1(d.afford))
-    //   );
   }
 }
 
 const legend = (point) => point.map(([key, val]) => (
   <div key={key} className={`row ${key}`}>
     <span className="square" />
-    <span className="value">{key === 'afford' ? perc(val) : curr(val)}</span>
+    <span className="value">
+      {key === 'afford' ? (val * 100).toFixed(0) + '%' : curr(val)}
+    </span>
     <span className="label">{key}</span>
   </div>
 ));
