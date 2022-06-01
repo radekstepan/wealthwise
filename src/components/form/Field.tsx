@@ -3,7 +3,7 @@ import MaskedInput from 'react-text-mask';
 import {connect} from 'react-redux'
 import opa from 'object-path';
 import clone from 'clone-deep';
-import currency from 'currency.js';
+import numbro from 'numbro';
 import {currencyMask, percentMask, numberMask} from './masks/number';
 import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
@@ -68,7 +68,7 @@ const Field = ({
         {...props}
         mask={currencyMask}
         inputMode="numeric"
-        defaultValue={currency(formValue).value}
+        defaultValue={numbro.unformat(formValue)}
       />
     );
   } else if (type === INPUTS.PERCENT) {

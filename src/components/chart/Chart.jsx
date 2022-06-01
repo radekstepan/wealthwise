@@ -1,8 +1,8 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {connect} from 'react-redux'
 import * as d3 from 'd3';
+import numbro from 'numbro';
 import simulate from '../../modules/simulate';
-import {curr} from '../../modules/utils';
 import './chart.less';
 
 // TODO link to actual years
@@ -39,7 +39,7 @@ const init = (ref, setPointer) => {
 
   svg.append("g")
     // Push to the right.
-    .attr("transform", `translate(${width + margin.left + margin.right + 60}, 0)`)
+    .attr("transform", `translate(${width + margin.left + margin.right + 50}, 0)`)
     .attr('class', 'y-axis');
 
   // add X axis and Y axis
@@ -52,7 +52,10 @@ const init = (ref, setPointer) => {
 
   const yAxis = d3
     .axisLeft(y)
-    .tickFormat(curr);
+    .tickFormat(d => numbro(d).formatCurrency({
+      average: true,
+      mantissa: 0
+    }));
 
   return [svg, x, xAxis, y, yAxis];
 }
@@ -118,13 +121,16 @@ const legend = (point) => point.map(([key, val]) => (
   <div key={key} className={`row ${key}`}>
     <span className="square" />
     <span className="value">
-      {key === 'afford' ? (val * 100).toFixed(0) + '%' : curr(val)}
+      {numbro(val).formatCurrency({
+        thousandSeparated: true,
+        mantissa: 0
+      })}
     </span>
     <span className="label">{key}</span>
   </div>
 ));
 
-function Chart({form, setMeta}) {
+function Chart({form, setMeta, setDist}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
   const [data, setData] = useState(null);
@@ -138,7 +144,7 @@ function Chart({form, setMeta}) {
 
   useEffect(() => {
     console.log('estimate');
-    simulate(form, setMeta, setData);
+    simulate(form, setMeta, setDist, setData);
   }, [form]);
 
   useEffect(() => {
@@ -179,7 +185,8 @@ const mapState = (state) => ({
 })
 
 const mapDispatch = (dispatch) => ({
-	setMeta: dispatch.meta.setMeta
+	setMeta: dispatch.meta.setMeta,
+  setDist: dispatch.meta.setDist
 })
 
 export default connect(mapState, mapDispatch)(Chart);

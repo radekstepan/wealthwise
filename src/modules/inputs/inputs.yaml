@@ -19,7 +19,7 @@ rent:
 rates:
   interest: # mortgage
     isFixedRate: 0 # 1 = fixed, 0 = variable
-    initial: 2.7%
+    initial: 2.7% # May 2022
     future: 2% - 6% # 4% - Mar 2023
   rent:
     controlled: 1.5% - 2.5%

@@ -3,6 +3,7 @@ import {RiUserLine, RiSettings4Line} from 'react-icons/ri';
 import Form from '../form/Form';
 import Chart from '../chart/Chart.jsx';
 import Table from '../table/Table';
+import Dist from '../dist/Dist.jsx';
 import './page.less';
 
 function Page() {
@@ -23,6 +24,7 @@ function Page() {
           <div className="fixed">
             <h2 className="h2 title">Buy vs rent net worth comparison</h2>
             <Chart />
+            <Dist />
             <Table />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import currency from 'currency.js';
+import numbro from 'numbro';
 import {point, normal} from '../samplers';
 import {Leaf, Inputs} from './inputs';
 import {INPUTS} from '../../const';
@@ -24,7 +24,7 @@ function node(node: Leaf|Inputs) {
         .split(' - ')
         .map((d: string) => Number(d.trim().replaceAll('%', '')) / 100);
     } else if (type === INPUTS.CURRENCY) {
-      [low, high] = val.split(' - ').map((d: string) => currency(d).value); 
+      [low, high] = val.split(' - ').map((d: string) => numbro.unformat(d)); 
     } else {
       [low, high] = val.split(' - ').map((d: string) => Number(d.trim())); 
     }
@@ -35,7 +35,7 @@ function node(node: Leaf|Inputs) {
     return point(Number(val.replace('%', '')) / 100);
   }
   if (type === INPUTS.CURRENCY) {
-    return point(currency(val).value);
+    return point(numbro.unformat(val));
   }
   return point(Number(val));
 }

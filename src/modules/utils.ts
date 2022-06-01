@@ -1,5 +1,5 @@
 import * as math from 'mathjs';
-import currency from 'currency.js';
+import numbro from 'numbro';
 
 // Round; @expensive
 export const r = (val: number) => math.round(val, 2);
@@ -24,5 +24,3 @@ export const within = (get: () => number, min: number, max: number) => {
 
   throw new Error('All generated numbers fell out of range');
 };
-
-export const curr = d => currency(d, {precision: 0}).format();

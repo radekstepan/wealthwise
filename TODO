@@ -14,6 +14,8 @@ Small:
   [ ] a Run button @next
     - with a dropdown being able to choose the sample size
     - loading indicator https://uiball.com/loaders/
+  [ ] show mortgage size with CMHC insurance and apply to the balance
+  [ ] hide ditribution if there's none to show
 
 Nice to have:
   [ ] accept math equations as the input and use mathjs to parse
@@ -33,7 +35,6 @@ Extras:
   [ ] complex scenarios
   [ ] find a value to make lines equal at the end
   [ ] sensitivity analysis
-  [ ] probability distribution @important
   [ ] US vs Canada scenarios; wealthwi.se/canada/bc
 
 Future:
