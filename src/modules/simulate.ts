@@ -11,7 +11,11 @@ export default function simulate(inputs, setMeta, setDist, setData) {
   child.on('meta', setMeta);
 
   child.on('res', function processResult(samples) {
-    const dist = samples.map(s => s[s.length - 1].buy).sort(d3.ascending);
+    // Distribution.
+    const dist = samples
+      .map(s => s[s.length - 1].property - s[s.length - 1].costs)
+      .sort(d3.ascending);
+
     const min = d3.quantile(dist, 0.05);
     const max = d3.quantile(dist, 0.95);
     const band = (max - min) / BANDS;
@@ -36,24 +40,37 @@ export default function simulate(inputs, setMeta, setDist, setData) {
     ]));
 
     const data = [[], [], []]; // quantiles
-    // For each month.
-    for (const m of range(samples[0].length)) {
-      const buy = [], rent = [], afford = [];
+    // For each year.
+    for (const year of range(samples[0].length)) {
+      const buy = [], rent = [];
       for (const sample of samples) {
-        buy.push(sample[m].buy);
-        rent.push(sample[m].rent);
-        afford.push(sample[m].afford);
+        // NOTE a simple comparison without taxes and fees.
+        buy.push({
+          net: sample[year].property - sample[year].costs,
+          costs: sample[year].costs,
+          rent: sample[year].rent,
+        });
+        rent.push({
+          net: sample[year].portfolio - sample[year].costs,
+          costs: sample[year].costs,
+          rent: sample[year].rent,
+        });
       }
   
-      buy.sort(d3.ascending);
-      rent.sort(d3.ascending);
-      afford.sort(d3.ascending);
-  
+      buy.sort((a, b) => d3.ascending(a.net, b.net));
+      rent.sort((a, b) => d3.ascending(a.net, b.net));
+
       for (const [q, p] of [0.05, 0.5, 0.95].entries()) {
-        data[q][m] = {
-          buy: d3.quantile(buy, p),
-          rent: d3.quantile(rent, p),
-          afford: d3.quantile(afford, p)
+        const b = buy[Math.floor(samples.length * p)];
+        const r = rent[Math.floor(samples.length * p)];
+
+        data[q][year] = {
+          buy: b.net,
+          rent: r.net,
+          buyCosts: b.costs,
+          rentCosts: r.costs,
+          buyRent: b.rent,
+          rentRent: r.rent
         };
       }
     }

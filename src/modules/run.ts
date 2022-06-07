@@ -2,7 +2,7 @@ import {Random} from 'random-js';
 import parse from './inputs/parse';
 import mortgage from './mortgage';
 import * as formula from './formula';
-import {buyWorth, closingAndTax, cmhc, rentWorth, saleFees} from './run.helpers';
+import {closingAndTax, cmhc, saleFees} from './run.helpers';
 import {range, sum, isEvery} from './utils';
 
 const SAMPLES = 1000; // number of samples
@@ -34,6 +34,7 @@ function run(opts: any, i: number) {
   ];
   let costs = sum(...month0Costs);
   let portfolio = costs; // our initial investment
+  let rentSum = 0; // money spent on the rent
 
   // monthly house expenses
   let expenses = sum(
@@ -110,6 +111,8 @@ function run(opts: any, i: number) {
       // End of the month.
       portfolio *= 1 + bondsReturn; // get the return
       price *= 1 + priceAppreciation;
+
+      rentSum += rent;
     }
 
     // End of the year increases.
@@ -120,9 +123,10 @@ function run(opts: any, i: number) {
 
     // Log it.
     data.push({
-      buy: buyWorth(price, renew, mgage.balance, costs),
-      rent: rentWorth(portfolio, costs, opts.rates.bonds.capitalGainsTax()),
-      // afford: monthly / income
+      rent: rentSum,
+      property: price - mgage.balance, // NOTE: no sale fees
+      portfolio, // NOTE: no capital gains tax
+      costs
     });
   }
 

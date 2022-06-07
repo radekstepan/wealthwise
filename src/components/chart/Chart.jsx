@@ -130,10 +130,9 @@ const legend = (point) => point.map(([key, val]) => (
   </div>
 ));
 
-function Chart({form, setMeta, setDist}) {
+function Chart({data, form, setData, setMeta, setDist}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
-  const [data, setData] = useState(null);
   const [pointer, setPointer] = useState(1);
   const [point, setPoint] = useState(null);
 
@@ -181,10 +180,12 @@ function Chart({form, setMeta, setDist}) {
 }
 
 const mapState = (state) => ({
-	form: state.form
+	form: state.form,
+  data: state.data
 })
 
 const mapDispatch = (dispatch) => ({
+  setData: dispatch.data.setData,
 	setMeta: dispatch.meta.setMeta,
   setDist: dispatch.meta.setDist
 })

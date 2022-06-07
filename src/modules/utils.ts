@@ -1,5 +1,4 @@
 import * as math from 'mathjs';
-import numbro from 'numbro';
 
 // Round; @expensive
 export const r = (val: number) => math.round(val, 2);
