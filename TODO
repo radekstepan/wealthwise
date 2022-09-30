@@ -5,7 +5,7 @@ Medium:
   [ ] save as in local storage under a slug key
   [ ] show price to rent ratio and be able to toggle it on/off like rent to income
   [ ] a schedule of expenses for each year and month (incl month 0)
-  [+] show net worth and profit in the meta table (profit against expenses) @next
+  [+] fix negative invested money (costs < rents)
 
 Small:
   [ ] run simulate in the worker

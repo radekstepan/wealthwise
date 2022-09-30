@@ -5,22 +5,35 @@ mortgage:
   term: 5 # year; for a fixed rate
 
 house:
-  price: $595,000 # add 5-20% over asking
+  price: $599,900 # add 5-20% over asking
   downpayment: 10%
-  maintenance: $405 # or condo fees
+  maintenance: $466 # or condo fees
   propertyTax: $2280 # yearly
   insurance: $75 # personal condo insurance
   closingCosts: $2000
 
 rent:
-  current: $2,200 # $2,000 + parking
-  market: $2,600 # https://rentals.ca/national-rent-report
+  current: $2,400 # $2,150 + parking
+  market: $2,850 # https://rentals.ca/national-rent-report
 
 rates:
   interest: # mortgage
     isFixedRate: 0 # 1 = fixed, 0 = variable
-    initial: 3.2% # Jun 2022
-    future: 2% - 6.4% # 4.2% - Mar 2023
+    initial: 4.19%
+    bax: # https://www.m-x.ca/en/trading/tools/canadian-interest-rate-expectations
+      - +50
+      - +50
+      - +25
+      - +25
+      - -25
+      - -25
+      - -50
+      - -50
+      - -75
+      - -75
+      - -75
+      - -75
+    future: 2% - 5%
   rent:
     controlled: 1.5% - 2.5%
     market: 1% - 6% # https://www.capitaldaily.ca/news/rental-crisis-victoria
@@ -28,7 +41,7 @@ rates:
     expenses: 3% - 5% # expenses increases
     appreciation: 1.9% # 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
   bonds:
-    return: 2%
+    return: 2% - 3%
     capitalGainsTax: 25% # 50% on 50%
 
 scenarios:

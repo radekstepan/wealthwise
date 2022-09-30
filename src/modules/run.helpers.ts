@@ -58,3 +58,13 @@ export const rentWorth = (
   costs: number, // expenses incurred so far = our investment
   capitalGainsTax: number // 0.00 - 1.00
 ) => (portfolio - costs) * (1 - capitalGainsTax);
+
+// Use BAX interest rate expectations, then switch to a guess.
+export const Interest = (interest) => {
+  const initial = interest.initial();
+  
+  const keys = Object.keys(interest.bax);
+  const rates = [initial].concat(keys.map(key => initial + (interest.bax[key]() / 10000)));
+
+  return () => rates.length ? rates.shift() : interest.future();
+}

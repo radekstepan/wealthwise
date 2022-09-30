@@ -61,6 +61,7 @@ export default function simulate(inputs, setMeta, setDist, setData) {
       rent.sort((a, b) => d3.ascending(a.net, b.net));
 
       for (const [q, p] of [0.05, 0.5, 0.95].entries()) {
+        // NOTE: https://github.com/d3/d3-array/blob/main/src/quantile.js#L19
         const b = buy[Math.floor(samples.length * p)];
         const r = rent[Math.floor(samples.length * p)];
 
