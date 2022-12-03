@@ -130,6 +130,10 @@ const legend = (point) => point.map(([key, val]) => (
   </div>
 ));
 
+
+// The chart is intended to visualize the net worth of a person
+//  over time, given different scenarios such as buying or
+//  renting a home.
 function Chart({data, form, setData, setMeta, setDist}) {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);

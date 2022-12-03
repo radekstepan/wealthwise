@@ -5,10 +5,13 @@ import {jStat} from 'jstat';
 
 type Sample = () => number;
 
+// A sample that always returns the same value.
 export const point = (number: number): Sample => {
   return () => number;
 };
 
+// Generates a random sample from a normal (i.e. Gaussian) distribution
+//  with a specified mean and standard deviation.
 export const normal = (low: number, high: number): Sample => {
   const mean = math.mean(high, low);
   const stdev = (high - mean) / 1.645;

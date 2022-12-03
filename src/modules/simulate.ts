@@ -5,6 +5,11 @@ import {range} from './utils';
 const BANDS = 7; // distribution bands
 
 // Multiple runs/samples.
+// Simulating multiple scenarios for comparing buying vs. renting a property.
+//  It takes inputs and runs them a child process, which returns results
+//  that are used to calculate distribution bands and quantiles for the buy
+//  and rent scenarios. The bands and quantiles are then used to set the dist
+//  and data variables, which are used for visualization.
 export default function simulate(inputs, setMeta, setDist, setData) {
   const child = exec(inputs);
 

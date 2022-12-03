@@ -2,6 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux'
 import CountUp from 'react-countup';
 
+// The Value component will display the current and previous values
+//  as a count up transition using the CountUp component.
 function Value({current, previous}) {
   return (
     <div>

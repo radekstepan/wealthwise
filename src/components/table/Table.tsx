@@ -9,6 +9,10 @@ import './table.less';
 const CAPITAL_GAINS_TAX = 0.5;
 const YEARS = 25;
 
+// The component renders a table with several groups of items, each
+//  containing a label and a value. The value for each item is
+//  calculated using a Value component, which receives a function that
+//  specifies how the value should be calculated.
 function Table({current, data}) {
   if (!current) {
     return null;

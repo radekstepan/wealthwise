@@ -1,5 +1,11 @@
 import {sum} from './utils';
 
+// This function calculates closing costs and land transfer tax for a given
+//  property price. The closing costs are fixed at $2450, and the land
+//  transfer tax is calculated based on the property price. For property
+//  prices up to $200,000, the tax rate is 1%. For property prices between
+//  $200,000 and $2,000,000, the tax rate is 2%. For property prices above
+//  $2,000,000, the tax rate is 3%.
 export const closingAndTax = (price: number) => sum(
   // closing costs https://www.ratehub.ca/mortgage-payment-calculator
   2450,
@@ -9,6 +15,8 @@ export const closingAndTax = (price: number) => sum(
   Math.max(price - 2000000, 0) * 0.03
 );
 
+// Calculate the Canada Mortgage and Housing Corporation (CMHC)
+//  insurance premium on a home mortgage loan.
 // https://wowa.ca/calculators/cmhc-insurance
 // TODO only works on max 25 year mortgages
 export const cmhc = (downpayment: number, price: number) => {
@@ -30,6 +38,13 @@ export const cmhc = (downpayment: number, price: number) => {
   return ((1 - downpayment) * price) * 0.028;
 };
 
+// This function calculates the cost of selling a house. The function
+//  takes a single argument, price, which is the sale price of the house.
+//  The function first adds $750 to the total cost for legal fees, then
+//  calculates the cost of the real estate agents' commissions. The
+//  commission is 3% on the first $100,000 of the sale price, and 1.5% on
+//  any amount above $100,000. The commission is then multiplied by two
+//  to account for two agents, and increased by 5% to account for sales tax.
 // https://wowa.ca/calculators/cost-selling-house
 export const saleFees = (price: number) => sum(
   750, // legal fees
@@ -39,7 +54,14 @@ export const saleFees = (price: number) => sum(
   ) * 2 * 1.05 // 2 agents + sales tax
 );
 
-// Net worth as a buyer.
+// Calculates the net worth of a buyer in a property transaction. It takes
+//  the property price, a boolean value indicating whether the buyer has
+//  renewed the property in the current month, the remaining balance on the
+//  buyer's mortgage, and the total expenses incurred so far by the buyer
+//  in the transaction. The net worth is calculated by adding the property
+//  price and the remaining mortgage balance, and subtracting any sale fees
+//  and expenses incurred. If the buyer has renewed the property in the
+//  current month, no sale fees are subtracted from the net worth calculation.
 export const buyWorth = (
   price: number, // property price
   didRenew: boolean, // did we renew this month?

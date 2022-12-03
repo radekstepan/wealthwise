@@ -5,6 +5,10 @@ import {connect} from 'react-redux'
 import Field from './Field';
 import './form.less';
 
+// Group uses the useCollapse hook to animate the expansion and collapse
+//  of the group. It passes a callback to its children that allows the
+//  children to know when the expansion animation has ended. This is used
+//  to focus on the first field in the group when it expands.
 const Group = ({expanded=false, title, summary, children}) => {
   const [isExpanded, setExpanded] = useState(!!expanded);
   const [isExpandEnd, setIsExpandEnd] = useState(false);
@@ -41,6 +45,8 @@ const Group = ({expanded=false, title, summary, children}) => {
   );
 };
 
+// The Header component is used to render the group's title and summary,
+//  and to provide a toggle to expand and collapse the group.
 const Header = ({isExpanded, showSummary, setExpanded, title, summary}) => (
   <div className="header">
     <div className="toggle" onClick={() => setExpanded(d => !d)}>

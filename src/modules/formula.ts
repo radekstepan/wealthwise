@@ -1,7 +1,16 @@
 // @ts-ignore
 import * as formula from '@formulajs/formulajs';
 
-// APY to APR then monthly.
+// This code is using the NOMINAL function to convert an annual
+//  percentage yield (APY) to an annual percentage rate (APR).
+// The NOMINAL function is used to convert an annual rate that
+//  is compounded more frequently than once per year to a rate
+//  that is compounded once per year. It takes two arguments:
+//  the annual rate and the number of times per year that the
+//  rate is compounded.
+// The resulting monthly rate is being multiplied by -1 if the
+//  original APY was negative, so that the sign of the APR matches
+//  the sign of the original APY.
 export const apyToAprMonthly = (apy: number) => {
   if (!apy) {
     return 0;

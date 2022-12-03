@@ -16,6 +16,17 @@ const convertToMask = (text: string): Mask => text
 const addThousandsSeparator = (text: string, separator: string) => text
   .replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 
+// This code defines a function createNumberMask that creates a new
+//  mask for a number. The mask is an array of strings and regular
+//  expressions that define which characters are allowed in a string.
+//  The createNumberMask function takes in a number of options that
+//  specify the exact mask to be created, including the prefix and
+//  suffix to be used, whether to include a thousands separator and
+//  decimal symbol, the decimal limit, and other options. It then
+//  returns a function parse that takes in a number as a string and
+//  returns the mask for that number. This mask can be used to
+//  validate whether a given string is a valid number that matches the
+//  specified options.
 export default function createNumberMask({
   prefix = EMPTY,
   suffix = EMPTY,

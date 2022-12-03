@@ -12,7 +12,14 @@ const z = (val: number) => {
   return val;
 }
 
-// PMT, PPMT are @expensive
+// A class that calculates the monthly payment, balance, and equity of
+//  a mortgage loan. It uses the formula.PMT and formula.PPMT functions
+//  from the formulajs library to calculate the monthly payment and
+//  principal payment, respectively.
+// The pay method can be called to simulate making a payment on the
+//  mortgage.
+// The renew method can be used to renew the loan with a new interest rate.
+// NOTE: PMT, PPMT are @expensive
 export default function mortgage(
   init: {
     balance: number,

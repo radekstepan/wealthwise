@@ -8,6 +8,11 @@ import {currencyMask, percentMask, numberMask} from './masks/number';
 import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
 
+// The component uses the value in the form state to set its initial
+//  value, and it updates the form state when the input value changes.
+//  The type of the field is used to determine which mask to apply to
+//  the input. The component is connected to a Redux store, so that it
+//  can access the form state and dispatch actions to update it.
 const Field = ({
   label,
   description,
