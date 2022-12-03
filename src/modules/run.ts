@@ -2,7 +2,7 @@ import {Random} from 'random-js';
 import parse from './inputs/parse';
 import mortgage from './mortgage';
 import * as formula from './formula';
-import {closingAndTax, cmhc, saleFees, Interest} from './run.helpers';
+import {closingAndTax, cmhc, saleFees} from './run.helpers';
 import {range, sum, isEvery} from './utils';
 
 const SAMPLES = 1000; // number of samples
@@ -18,8 +18,7 @@ function run(opts: any, i: number) {
   const downpayment = Math.min(opts.house.downpayment(), 1);
 
   const isFixedRate = Boolean(opts.rates.interest.isFixedRate());
-  const interest = Interest(opts.rates.interest)
-  let currentInterestRate = interest();
+  let currentInterestRate = opts.rates.interest.initial();
 
   const mgage = mortgage({
     balance: price * (1 - downpayment),
@@ -96,7 +95,7 @@ function run(opts: any, i: number) {
         // Change the latest interest rate every 3 months (4 hikes in a year).
         // TODO variable should be within 1% of the previous value.
         if (isEvery(month, 3)) {
-          currentInterestRate = interest();
+          currentInterestRate = opts.rates.interest.future();
           // We immediately renew on a variable rate.
           if (!isFixedRate) {
             mgage.renew(currentInterestRate);

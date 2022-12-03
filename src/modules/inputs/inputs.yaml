@@ -13,40 +13,13 @@ house:
   closingCosts: $2000
 
 rent:
-  current: $2,400 # $2,150 + parking
-  market: $2,850 # https://rentals.ca/national-rent-report
+  current: $2,000 # $2,150 - work from home
+  market: $2,700 # https://rentals.ca/national-rent-report
 
 rates:
   interest: # mortgage
     isFixedRate: 0 # 1 = fixed, 0 = variable
-    initial: 4.19%
-    bax: # https://www.m-x.ca/en/trading/tools/canadian-interest-rate-expectations
-      expectations: 
-        - 0.5%
-        - 0.5%
-        - 0.25%
-        - 0.25%
-        - -0.25%
-        - -0.25%
-        - -0.5%
-        - -0.5%
-        - -0.75%
-        - -0.75%
-        - -0.75%
-        - -0.75%
-      spread:
-        - -0.5% - 0.5%
-        - -0.5% - 0.5%
-        - -1% - 1%
-        - -1% - 1%
-        - -1% - 1%
-        - -1.5% - 1.5%
-        - -1.5% - 1.5%
-        - -1.5% - 1.5%
-        - -1.5% - 1.5%
-        - -2% - 2%
-        - -2% - 2%
-        - -2% - 2%
+    initial: 4.85% # https://wowa.ca/best-mortgage-rates/5-year/variable
     future: 2% - 5%
   rent:
     controlled: 1.5% - 2.5%

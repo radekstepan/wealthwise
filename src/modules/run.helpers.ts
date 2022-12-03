@@ -60,15 +60,15 @@ export const rentWorth = (
 ) => (portfolio - costs) * (1 - capitalGainsTax);
 
 // Use BAX interest rate expectations, then switch to a guess.
-export const Interest = (interest) => {
-  const initial = interest.initial();
+// export const Interest = (interest) => {
+//   const initial = interest.initial();
   
-  const keys = Object.keys(interest.bax.expectations);
-  const rates = [initial].concat(keys.map(key => Math.max(sum(
-    initial,
-    interest.bax.expectations[key](),
-    interest.bax.spread[key]()
-  ), 0.02))); // 2% minimum
+//   const keys = Object.keys(interest.bax.expectations);
+//   const rates = [initial].concat(keys.map(key => Math.max(sum(
+//     initial,
+//     interest.bax.expectations[key](),
+//     interest.bax.spread[key]()
+//   ), 0.02))); // 2% minimum
 
-  return () => rates.length ? rates.shift() : interest.future();
-}
+//   return () => rates.length ? rates.shift() : interest.future();
+// }
