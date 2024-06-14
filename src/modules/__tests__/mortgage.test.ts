@@ -5,11 +5,12 @@ describe('mortgage', () => {
   test('mortgage schedule', () => {
     const mgage = mortgage({
       balance: 100000,
-      interest: 0.05,
+      rate: 0.05,
       periods: 12
     });
 
-    // https://www.bankrate.com/mortgages/amortization-calculator/
+    expect(r(mgage.payment)).toBe(8560.75);
+
     const schedule = [
       [8144.08, 416.67],
       [8178.02, 382.73],
@@ -37,16 +38,15 @@ describe('mortgage', () => {
   test('renew mortgage', () => {
     const mgage = mortgage({
       balance: 100000,
-      interest: 0.05,
+      rate: 0.05,
       periods: 24
     });
 
     expect(r(mgage.payment)).toBe(4387.14);
 
     const payments = range(12).map(mgage.pay);
-    const [principal, interest] = payments.pop();
+    const [principal, interest] = payments.pop()!;
 
-    // https://www.bankrate.com/mortgages/amortization-calculator/
     expect(r(principal)).toBe(4156.29);
     expect(r(interest)).toBe(230.85);
     expect(r(mgage.balance)).toBe(51247.14);

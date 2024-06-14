@@ -1,8 +1,19 @@
 import * as d3 from 'd3';
 import exec from './exec';
-import {range} from './utils';
+import {range, sum} from './utils';
+import { type Data } from './run';
+import { type ChartData } from '../components/chart/Chart';
 
 const BANDS = 7; // distribution bands
+const YEARS = 25; // TODO hard-coded
+
+type Samples = Array<Data>; // samples * years
+
+interface DataPoint {
+  net: number,
+  costs: number,
+  rent: number,
+}
 
 // Multiple runs/samples.
 // Simulating multiple scenarios for comparing buying vs. renting a property.
@@ -10,15 +21,25 @@ const BANDS = 7; // distribution bands
 //  that are used to calculate distribution bands and quantiles for the buy
 //  and rent scenarios. The bands and quantiles are then used to set the dist
 //  and data variables, which are used for visualization.
-export default function simulate(inputs, setMeta, setDist, setData) {
+export default function simulate(inputs, setMeta, setDist, setData: (data: ChartData) => void) {
   const child = exec(inputs);
 
   child.on('meta', setMeta);
 
-  child.on('res', function processResult(samples) {
-    // Distribution.
+  child.on('res', function processResult(samples: Samples) {
+    // Distribution of end results as a buyer (net worth).
     const dist = samples
-      .map(s => s[s.length - 1].property - s[s.length - 1].costs)
+      .map(s => {
+        const {buyer} = s[s.length - 1]; // last year in this sample
+        return sum(
+          // Net house value.
+          buyer.house.value
+          -buyer.house.costs,
+          // Net portfolio appreciation.
+          buyer.portfolio.value,
+          -buyer.portfolio.costs
+        );
+      })
       .sort(d3.ascending);
 
     const min = d3.quantile(dist, 0.05);
@@ -44,21 +65,40 @@ export default function simulate(inputs, setMeta, setDist, setData) {
       d
     ]));
 
-    const data = [[], [], []]; // quantiles
+    const data: ChartData = [[], [], []]; // quantiles
     // For each year.
-    for (const year of range(samples[0].length)) {
-      const buy = [], rent = [];
+    for (const year of range(YEARS)) {
+      const buy: Array<DataPoint> = [];
+      const rent: Array<DataPoint> = [];
       for (const sample of samples) {
-        // NOTE a simple comparison without taxes and fees.
+        const sampleYear = sample[year];
+
         buy.push({
-          net: sample[year].property - sample[year].costs,
-          costs: sample[year].costs,
-          rent: sample[year].rent,
+          net: sum(
+            sampleYear.buyer.house.value,
+            -sampleYear.buyer.house.costs,
+            sampleYear.buyer.portfolio.value,
+            -sampleYear.buyer.portfolio.costs,
+            +sampleYear.renter.house.costs, // cancel out rent
+          ),
+          costs: sum(
+            sampleYear.buyer.house.costs,
+            sampleYear.buyer.portfolio.costs,
+            -sampleYear.renter.house.costs, // cancel out rent
+          ),
+          rent: sampleYear.rent,
         });
         rent.push({
-          net: sample[year].portfolio - sample[year].costs,
-          costs: sample[year].costs,
-          rent: sample[year].rent,
+          net: sum(
+            sampleYear.renter.portfolio.value,
+            -sampleYear.renter.portfolio.costs
+            // do not include rent
+          ),
+          costs: sum(
+            sampleYear.renter.portfolio.costs
+            // do not include rent
+          ),
+          rent: sampleYear.rent,
         });
       }
   
@@ -71,12 +111,8 @@ export default function simulate(inputs, setMeta, setDist, setData) {
         const r = rent[Math.floor(samples.length * p)];
 
         data[q][year] = {
-          buy: b.net,
-          rent: r.net,
-          buyCosts: b.costs,
-          rentCosts: r.costs,
-          buyRent: b.rent,
-          rentRent: r.rent
+          buyer: b.net,
+          renter: r.net
         };
       }
     }

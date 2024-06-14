@@ -8,7 +8,28 @@ import './chart.less';
 // TODO link to actual years
 const DOMAIN_X = [0, 24]; // years - 1 (inclusive)
 
-const init = (ref, setPointer) => {
+export type ChartData = Array< // quantiles
+  Array<ChartDataPoint> // years of data
+>;
+
+interface ChartDataPoint {
+  buyer: number,
+  renter: number
+}
+
+type Selection = d3.Selection<SVGSVGElement, unknown, null, undefined>;
+type Scale = d3.ScaleLinear<number, number>;
+type Axis = d3.Axis<d3.AxisDomain>;
+
+type ChartInit = [
+  Selection,
+  Scale,
+  Axis,
+  Scale,
+  Axis
+];
+
+const init = (ref, setPointer): ChartInit => {
   const root = d3.select(ref);
   const wrapper = root.node().getBoundingClientRect();
 
@@ -18,7 +39,7 @@ const init = (ref, setPointer) => {
   const height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
-  const svg = root.append('svg');
+  const svg: Selection = root.append('svg');
 
   svg
     .attr("width", wrapper.width) // + margin.left + margin.right)
@@ -43,14 +64,14 @@ const init = (ref, setPointer) => {
     .attr('class', 'y-axis');
 
   // add X axis and Y axis
-  const x = d3.scaleLinear().range([0, wrapper.width]);
-  const y = d3.scaleLinear().range([height, 0]);
+  const x: Scale = d3.scaleLinear().range([0, wrapper.width]);
+  const y: Scale = d3.scaleLinear().range([height, 0]);
 
-  const xAxis = d3
+  const xAxis: Axis = d3
     .axisBottom(x)
-    .tickFormat(d => d ? Math.ceil(d) + 1 + 'y' : 'Now');
+    .tickFormat(d => d ? Math.ceil(d.valueOf()) + 1 + 'y' : 'Now');
 
-  const yAxis = d3
+  const yAxis: Axis = d3
     .axisLeft(y)
     .tickFormat(d => numbro(d).formatCurrency({
       average: true,
@@ -60,59 +81,66 @@ const init = (ref, setPointer) => {
   return [svg, x, xAxis, y, yAxis];
 }
 
-const update = (svg, x, xAxis, y, yAxis, data) => {
-  const [low, median, high] = data;
+const update = (
+  svg: Selection,
+  x: Scale,
+  xAxis: Axis,
+  y: Scale,
+  yAxis: Axis,
+  data: ChartData
+) => {
+  const [low, _median, high] = data;
 
   const min$ = low.reduce((min, d) =>
-    Math.min(min, d.buy, d.rent)
+    Math.min(min, d.buyer, d.renter)
   , +Infinity);
 
   const max$ = high.reduce((max, d) =>
-    Math.max(max, d.buy, d.rent)
+    Math.max(max, d.buyer, d.renter)
   , -Infinity);
 
   x.domain(DOMAIN_X);
   y.domain([min$, max$]); // $ net worth
 
-  svg.selectAll(".x-axis")
+  svg.selectAll<any, string>(".x-axis")
     .transition()
     .duration(500)
-    .call(xAxis);
-  svg.selectAll(".y-axis")
+    .call(xAxis)
+  svg.selectAll<any, string>(".y-axis")
     .transition()
     .duration(500)
     .call(yAxis);
 
-  for (const i in data) {
-    const q = data[i];
+  for (const quantile in data) {
+    const q = data[quantile];
 
-    const buy = svg.selectAll(`.buy-line.q${i}`)
-      .data([q], d => d.buy);
-    const rent = svg.selectAll(`.rent-line.q${i}`)
-      .data([q], d => d.rent);
+    const buy = svg.selectAll<SVGPathElement, Array<ChartDataPoint>>(`.buy-line.q${quantile}`)
+      .data([q]);
+    const rent = svg.selectAll<SVGPathElement, Array<ChartDataPoint>>(`.rent-line.q${quantile}`)
+      .data([q]);
 
     buy
       .enter()
       .append("path")
-      .attr("class", `buy-line q${i}`)
+      .attr("class", `buy-line q${quantile}`)
       .merge(buy)
       .transition()
       .duration(500)
-      .attr("d", d3.line()
-        .x((_d, i) => x(i))
-        .y(d => y(d.buy))
+      .attr("d", d3.line<ChartDataPoint>()
+        .x((_d, year) => x(year))
+        .y(d => y(d.buyer)) // buyer index
       );
 
     rent
       .enter()
       .append("path")
-      .attr("class", `rent-line q${i}`)
+      .attr("class", `rent-line q${quantile}`)
       .merge(rent)
       .transition()
       .duration(500)
-      .attr("d", d3.line()
-        .x((_d, i) => x(i))
-        .y(d => y(d.rent))
+      .attr("d", d3.line<ChartDataPoint>()
+        .x((_d, year) => x(year))
+        .y(d => y(d.renter)) // renter index
       );
   }
 }
@@ -134,9 +162,15 @@ const legend = (point) => point.map(([key, val]) => (
 // The chart is intended to visualize the net worth of a person
 //  over time, given different scenarios such as buying or
 //  renting a home.
-function Chart({data, form, setData, setMeta, setDist}) {
+function Chart({data, form, setData, setMeta, setDist}: {
+  data: ChartData,
+  form: any,
+  setData: (data: ChartData) => void,
+  setMeta: (meta: any) => void,
+  setDist: (dist: any) => void
+}) {
   const el = useRef(null);
-  const [graph, setGraph] = useState(null);
+  const [graph, setGraph] = useState<ChartInit>(null);
   const [pointer, setPointer] = useState(1);
   const [point, setPoint] = useState(null);
 
@@ -151,7 +185,7 @@ function Chart({data, form, setData, setMeta, setDist}) {
   }, [form]);
 
   useEffect(() => {
-    if (data) {
+    if (data && graph) {
       console.log('update');
       update(...graph, data);
     }
@@ -159,15 +193,14 @@ function Chart({data, form, setData, setMeta, setDist}) {
 
   useEffect(() => {
     if (data) {
-      const [low, median, high] = data;
+      const [_low, median, _high] = data;
       const {
-        buy,
-        rent,
-        // afford
+        buyer,
+        renter,
       } = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
-      setPoint(buy > rent ?
-        [['buy', buy], ['rent', rent], /**['afford', afford]*/] :
-        [['rent', rent], ['buy', buy], /**['afford', afford]*/]);
+      setPoint(buyer > renter ?
+        [['buy', buyer], ['rent', renter]] :
+        [['rent', renter], ['buy', buyer]]);
     }
   }, [data, pointer]);
 

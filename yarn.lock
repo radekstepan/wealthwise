@@ -1542,10 +1542,10 @@
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
 
-"@types/d3@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-7.1.0.tgz#8f32a7e7f434d8f920c8b1ebdfed55e18c033720"
-  integrity sha512-gYWvgeGjEl+zmF8c+U1RNIKqe7sfQwIXeLXO5Os72TjDjCEtgpvGBvZ8dXlAuSS1m6B90Y1Uo6Bm36OGR/OtCA==
+"@types/d3@^7.3.0":
+  version "7.4.3"
+  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-7.4.3.tgz#d4550a85d08f4978faf0a4c36b848c61eaac07e2"
+  integrity sha512-lZXZ9ckh5R8uiFVt8ogUNf+pIrK4EsWrx2Np75WvF/eTpJ0FMHNhjXk8CKEx/+gpHbNQyJWehbFaTvqmHWB3ww==
   dependencies:
     "@types/d3-array" "*"
     "@types/d3-axis" "*"

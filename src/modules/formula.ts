@@ -18,3 +18,5 @@ export const apyToAprMonthly = (apy: number) => {
   const monthly = formula.NOMINAL(Math.abs(apy), 12) / 12;
   return (apy < 0 ? -1 : 1) * monthly;
 }
+
+export const pmt = (rate: number, nper: number, pv: number) => rate * pv * Math.pow((1 + rate), nper) / (1 - Math.pow((1 + rate), nper));

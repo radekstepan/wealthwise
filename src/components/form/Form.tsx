@@ -167,20 +167,6 @@ function Form({form, setForm}) {
           </>
         )}
       </Group>
-      {/*
-      <Group title="Income" summary={form.income.current[0]}>
-        <Field
-          label="Current income"
-          description="yearly after tax"
-          {...props(form, setForm, 'income.current')}
-        />
-        <Field
-          label="Income raises"
-          description="% yearly"
-          {...props(form, setForm, 'income.raises')}
-        />
-      </Group>
-      */}
       {/** @ts-ignore */}
       <Group title="Scenarios" summary={form.scenarios.crash.drop[0]}>
         {({isExpandEnd}) => (

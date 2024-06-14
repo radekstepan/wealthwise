@@ -62,7 +62,7 @@ export const saleFees = (price: number) => sum(
 //  price and the remaining mortgage balance, and subtracting any sale fees
 //  and expenses incurred. If the buyer has renewed the property in the
 //  current month, no sale fees are subtracted from the net worth calculation.
-export const buyWorth = (
+const buyWorth = (
   price: number, // property price
   didRenew: boolean, // did we renew this month?
   balanceRemaining: number, // on the mortgage
@@ -74,8 +74,8 @@ export const buyWorth = (
   -costs // includes sale fees in the month we move
 );
 
-// Net worth as a rented.
-export const rentWorth = (
+// Net worth as a renter.
+const rentWorth = (
   portfolio: number, // portfolio value
   costs: number, // expenses incurred so far = our investment
   capitalGainsTax: number // 0.00 - 1.00

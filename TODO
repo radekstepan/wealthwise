@@ -1,49 +1,16 @@
-Large:
-  [ ] save in a DB and be able to share with others
-
-Medium:
-  [ ] save as in local storage under a slug key
-  [ ] show price to rent ratio and be able to toggle it on/off like rent to income
-  [ ] a schedule of expenses for each year and month (incl month 0)
-  [+] fix negative invested money (costs < rents)
-  [+] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
-
-Small:
-  [ ] Otter style loading/progress bar
-  [ ] tab through fields
-  [ ] limit inputs to single values for e.g. house price, maintenance etc @next
-  [ ] a Run button @next
-    - with a dropdown being able to choose the sample size
-    - loading indicator https://uiball.com/loaders/
-  [ ] show mortgage size with CMHC insurance and apply to the balance
-  [ ] hide ditribution if there's none to show
-  [ ] if all keys of inputs are ints, convert into an array
-
-Nice to have:
-  [ ] accept math equations as the input and use mathjs to parse
-  [ ] toggle a table view of results
-  [ ] configure currency and locale
-  [ ] tests on the core estimate logic
-  [ ] add onhover tooltips explaining the fields
-  [ ] flip animation on the legend not working
-  [ ] initial chart loading text/icon
-    - followup loading animation off to the side
-  [ ] Cmd+Z to undo the last change to the inputs, highlight it
-  [ ] test if a new RNG seed is needed for each run
-  [ ] handle gradual increases in variable interest rates
-  [ ] animate from previous value in the results section and show diff @next
-  [ ] Cmd+C should copy an unformatted numeric value
-
-Extras:
-  [ ] complex scenarios
-  [ ] find a value to make lines equal at the end
-  [ ] sensitivity analysis
-  [ ] US vs Canada scenarios; wealthwi.se/canada/bc
-
-Future:
-  [ ] switch the model to CoffeeScript?
-  [ ] use Brilliant programming UI to build models?
-  [ ] CMHC or TFSA calculator
-  [ ] 25 or 30 year mortgage calculator
-  [ ] touch enabled interface to draw a range of values and their distribution; example would be drawing the future interest rates
-
+- fix the actual code
+- fix negative invested money (costs < rents)
+- fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
+- hide ditribution if there's none to show
+- tests on the core estimate logic
+- flip animation on the legend not working
+- test if a new RNG seed is needed for each run
+- Cmd+C should copy an unformatted numeric value
+- pick amortization in years
+- change rent, market rent, mortgage to 20% and interest rate
+- checkbox for variable rate read-only
+- tooltips on each form field
+- capital gains tax a variable
+- have a way to contact me, my face with a little bio and an email address
+- arrows describing the different sections
+- the portfolio appreciate doesn't account for capital gains tax

@@ -1,9 +1,8 @@
-// @ts-ignore
-import * as formula from '@formulajs/formulajs';
+import { pmt } from './formula';
 
-// TODO sigh...
-const z = (val: number) => {
-  if (val < 0.01 && val > -0.01) {
+// Normalize small floating-point values to zero and ensure no negative balances
+const normalizeBalance = (val: number): number => {
+  if (Math.abs(val) < 0.01) {
     val = 0;
   }
   if (val < 0) {
@@ -12,78 +11,62 @@ const z = (val: number) => {
   return val;
 }
 
-// A class that calculates the monthly payment, balance, and equity of
-//  a mortgage loan. It uses the formula.PMT and formula.PPMT functions
-//  from the formulajs library to calculate the monthly payment and
-//  principal payment, respectively.
-// The pay method can be called to simulate making a payment on the
-//  mortgage.
-// The renew method can be used to renew the loan with a new interest rate.
-// NOTE: PMT, PPMT are @expensive
-export default function mortgage(
+// Class-like function to manage mortgage calculations and operations
+export default function Mortgage(
   init: {
-    balance: number,
-    periods: number,
-    interest: number
+    balance: number, // Property price sans downpayment
+    periods: number, // Amortization period in months (years * 12)
+    rate: number     // Annual interest rate
   }
 ) {
-  let balance = init.balance; // balance left
-  let mortgage = balance; // balance for the term
-
-  let periods = init.periods;
-  let interest = init.interest / 12; // monthly
-  let payment: number = formula.PMT(
-    interest,
-    periods,
-    -mortgage,
-    0,
-    0
-  );
-  let period = 0;
+  let { balance, periods, rate } = init;
+  rate = rate / 12; // Convert annual rate to monthly
+  let payment = pmt(rate, periods, -balance);
+  let paidPeriods = 0;
 
   return {
     get payment() {
       return payment;
     },
-    get balance() { // n..0
-      return z(balance);
+    get balance() {
+      return normalizeBalance(balance);
     },
-    get equity() { // 0..n
+    get equity() {
       return init.balance - balance;
     },
 
-    // Make a mortgage payment.
-    pay: () => {
-      const principal = formula.PPMT(
-        interest,
-        period += 1,
-        periods,
-        -mortgage,
-        0,
-        0
-      );
+    // Simulate making a mortgage payment
+    pay() {
+      if (balance <= 0) {
+        payment = 0;
+        return [0, 0]; // No payment needed
+      }
+
+      const interest = balance * rate;
+      let principal = payment - interest;
+
+      if (principal > balance) {
+        principal = balance;
+        payment = interest + principal; // Adjust final payment
+      }
 
       balance -= principal;
+      paidPeriods++;
 
-      return [
-        principal, // principal
-        payment - principal // interest
-      ];
+      if (balance <= 0) {
+        balance = 0;
+        payment = 0;
+      }
+
+      return [principal, interest];
     },
 
-    // Loan renewal.
-    renew: (newInterestRate: number) => {
-      mortgage = balance; // balance for the term
-      periods -= period;
-      period = 0;
-      interest = newInterestRate / 12; // set the new interest rate
-      payment = formula.PMT( // update the payment
-        interest,
-        periods,
-        -mortgage,
-        0,
-        0
-      );
-    }
+    // Renew the loan with a new interest rate
+    renew(newInterestRate: number) {
+      rate = newInterestRate / 12; // Convert annual rate to monthly
+      periods = periods - paidPeriods; // Adjust remaining periods
+      payment = pmt(rate, periods, -balance); // Recalculate payment
+      paidPeriods = 0; // Reset paid periods count
+    },
   };
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {RiUserLine, RiSettings4Line} from 'react-icons/ri';
 import Form from '../form/Form';
-import Chart from '../chart/Chart.jsx';
+import Chart from '../chart/Chart';
 import Table from '../table/Table';
 import Dist from '../dist/Dist.jsx';
 import './page.less';
