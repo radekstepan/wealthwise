@@ -1,18 +1,19 @@
 import * as d3 from 'd3';
 import exec from './exec';
 import {range, sum} from './utils';
-import { type Data } from './run';
-import { type ChartData } from '../components/chart/Chart';
+import { type Buyer, type Renter, type Data } from './run';
+import { closingAndTax, saleFees } from './run.helpers';
+import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
+import { type MetaState } from '../atoms/metaAtom';
+import { type DistState } from '../atoms/distAtom';
 
 const BANDS = 7; // distribution bands
 const YEARS = 25; // TODO hard-coded
 
 type Samples = Array<Data>; // samples * years
 
-interface DataPoint {
-  net: number,
-  costs: number,
-  rent: number,
+export type DataPoint<T extends Buyer | Renter> = T & {
+  $: number
 }
 
 // Multiple runs/samples.
@@ -21,7 +22,12 @@ interface DataPoint {
 //  that are used to calculate distribution bands and quantiles for the buy
 //  and rent scenarios. The bands and quantiles are then used to set the dist
 //  and data variables, which are used for visualization.
-export default function simulate(inputs, setMeta, setDist, setData: (data: ChartData) => void) {
+export default function simulate(
+  inputs,
+  setMeta: (next: MetaState) => void,
+  setDist: (next: DistState) => void,
+  setData: (data: ChartData) => void
+) {
   const child = exec(inputs);
 
   child.on('meta', setMeta);
@@ -68,52 +74,56 @@ export default function simulate(inputs, setMeta, setDist, setData: (data: Chart
     const data: ChartData = [[], [], []]; // quantiles
     // For each year.
     for (const year of range(YEARS)) {
-      const buy: Array<DataPoint> = [];
-      const rent: Array<DataPoint> = [];
+      const buy: Array<DataPoint<Buyer>> = [];
+      const rent: Array<DataPoint<Renter>> = [];
       for (const sample of samples) {
         const sampleYear = sample[year];
 
+        const buyerPortfolioNet = sum(
+          sampleYear.buyer.portfolio.value,
+          -sampleYear.buyer.portfolio.costs,
+        );
+        const renterPortfolioNet = sum(
+          sampleYear.renter.portfolio.value,
+          -sampleYear.renter.portfolio.costs,
+        );
+
         buy.push({
-          net: sum(
+          ...sampleYear.buyer,
+          $: sum(
             sampleYear.buyer.house.value,
-            -sampleYear.buyer.house.costs,
+            -sampleYear.buyer.house.costs, // 0% capital gains tax
+            -saleFees(sampleYear.buyer.house.value),
+            -closingAndTax(sampleYear.buyer.house.value),
             sampleYear.buyer.portfolio.value,
             -sampleYear.buyer.portfolio.costs,
-            +sampleYear.renter.house.costs, // cancel out rent
-          ),
-          costs: sum(
-            sampleYear.buyer.house.costs,
-            sampleYear.buyer.portfolio.costs,
-            -sampleYear.renter.house.costs, // cancel out rent
-          ),
-          rent: sampleYear.rent,
+            -(buyerPortfolioNet * sampleYear.buyer.portfolio.capitalGainsTaxRate)
+          )
         });
+
         rent.push({
-          net: sum(
-            sampleYear.renter.portfolio.value,
-            -sampleYear.renter.portfolio.costs
-            // do not include rent
-          ),
-          costs: sum(
-            sampleYear.renter.portfolio.costs
-            // do not include rent
-          ),
-          rent: sampleYear.rent,
+          ...sampleYear.renter,
+          $: sum(
+            renterPortfolioNet,
+            -(renterPortfolioNet * sampleYear.renter.portfolio.capitalGainsTaxRate)
+          )
         });
       }
   
-      buy.sort((a, b) => d3.ascending(a.net, b.net));
-      rent.sort((a, b) => d3.ascending(a.net, b.net));
+      buy.sort((a, b) => d3.ascending(a.$, b.$));
+      rent.sort((a, b) => d3.ascending(a.$, b.$));
 
       for (const [q, p] of [0.05, 0.5, 0.95].entries()) {
         // NOTE: https://github.com/d3/d3-array/blob/main/src/quantile.js#L19
         const b = buy[Math.floor(samples.length * p)];
         const r = rent[Math.floor(samples.length * p)];
 
-        data[q][year] = {
-          buyer: b.net,
-          renter: r.net
+        const dataPoint: ChartDataPoint = {
+          buyer: b,
+          renter: r
         };
+
+        data[q][year] = dataPoint;
       }
     }
   

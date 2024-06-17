@@ -1,7 +1,8 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {connect} from 'react-redux'
 import * as d3 from 'd3';
 import numbro from 'numbro';
+import { useAtomValue } from 'jotai';
+import { distAtom } from '../../atoms/distAtom';
 import './dist.less';
 
 const init = (ref) => {
@@ -99,19 +100,20 @@ const update = (svg, x, xAxis, y, yAxis, data) => {
     .text(d => (d[1] / sum * 100).toFixed(2) + '%');
 }
 
-function Distribution({dist}) {
+function Distribution() {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
+  const distState = useAtomValue(distAtom);
 
   useEffect(() => {
     setGraph(init(el.current));
   }, []);
 
   useEffect(() => {
-    if (dist) {
-      update(...graph, dist);
+    if (distState.length) {
+      update(...graph, distState);
     }
-  }, [dist]);
+  }, [distState]);
 
   return (
     <div className="distribution">
@@ -120,8 +122,4 @@ function Distribution({dist}) {
   );
 }
 
-const mapState = (state) => ({
-	dist: state.meta.dist
-})
-
-export default connect(mapState)(Distribution);
+export default Distribution;

@@ -1,15 +1,22 @@
-import React from 'react';
-import {connect} from 'react-redux'
+import React, { useRef, useEffect } from 'react';
 import CountUp from 'react-countup';
 
-// The Value component will display the current and previous values
-//  as a count up transition using the CountUp component.
-function Value({current, previous}) {
+interface ValueProps {
+  d: number;
+}
+
+function Value({ d }) {
+  const previousValueRef = useRef(null);
+
+  useEffect(() => {
+    previousValueRef.current = d;
+  }, [d]);
+
   return (
     <div>
       <CountUp
-        start={previous}
-        end={current}
+        start={previousValueRef.current}
+        end={d}
         duration={0.2}
         separator=","
         prefix="$"
@@ -18,9 +25,4 @@ function Value({current, previous}) {
   );
 }
 
-const mapState = (state, ownProps) => ({
-  current: ownProps.children(state.meta.current),
-  previous: state.meta.previous ? ownProps.children(state.meta.previous) : null
-});
-
-export default connect(mapState)(Value);
+export default Value;

@@ -2,19 +2,26 @@ import React, {useEffect, useState, useRef} from 'react';
 import {connect} from 'react-redux'
 import * as d3 from 'd3';
 import numbro from 'numbro';
-import simulate from '../../modules/simulate';
+import { useAtom, useSetAtom } from 'jotai';
+import simulate, { type DataPoint } from '../../modules/simulate';
+import { type Buyer, type Renter } from '../../modules/run';
+import { metaAtom } from '../../atoms/metaAtom';
+import { distAtom } from '../../atoms/distAtom';
+import { dataAtom } from '../../atoms/dataAtom';
 import './chart.less';
 
 // TODO link to actual years
 const DOMAIN_X = [0, 24]; // years - 1 (inclusive)
 
-export type ChartData = Array< // quantiles
-  Array<ChartDataPoint> // years of data
->;
+export type ChartData = [
+  q1: Array<ChartDataPoint>, // 5th - years of data
+  q2: Array<ChartDataPoint>, // median - years of data
+  q3: Array<ChartDataPoint>, // 95th - years of data
+];
 
-interface ChartDataPoint {
-  buyer: number,
-  renter: number
+export interface ChartDataPoint {
+  buyer: DataPoint<Buyer>,
+  renter: DataPoint<Renter>
 }
 
 type Selection = d3.Selection<SVGSVGElement, unknown, null, undefined>;
@@ -92,11 +99,11 @@ const update = (
   const [low, _median, high] = data;
 
   const min$ = low.reduce((min, d) =>
-    Math.min(min, d.buyer, d.renter)
+    Math.min(min, d.buyer.$, d.renter.$)
   , +Infinity);
 
   const max$ = high.reduce((max, d) =>
-    Math.max(max, d.buyer, d.renter)
+    Math.max(max, d.buyer.$, d.renter.$)
   , -Infinity);
 
   x.domain(DOMAIN_X);
@@ -128,7 +135,7 @@ const update = (
       .duration(500)
       .attr("d", d3.line<ChartDataPoint>()
         .x((_d, year) => x(year))
-        .y(d => y(d.buyer)) // buyer index
+        .y(d => y(d.buyer.$)) // buyer index
       );
 
     rent
@@ -140,39 +147,49 @@ const update = (
       .duration(500)
       .attr("d", d3.line<ChartDataPoint>()
         .x((_d, year) => x(year))
-        .y(d => y(d.renter)) // renter index
+        .y(d => y(d.renter.$)) // renter index
       );
   }
 }
 
-const legend = (point) => point.map(([key, val]) => (
-  <div key={key} className={`row ${key}`}>
-    <span className="square" />
-    <span className="value">
-      {numbro(val).formatCurrency({
-        thousandSeparated: true,
-        mantissa: 0
-      })}
-    </span>
-    <span className="label">{key}</span>
-  </div>
-));
+const legend = (point: ChartDataPoint) => {
+  const {buyer, renter} = point;
+
+  const d: [
+    ['buy'|'rent', DataPoint<Buyer>|DataPoint<Renter>],
+    ['rent'|'buy', DataPoint<Renter>|DataPoint<Buyer>]
+  ] = buyer.$ < renter.$
+    ? [['buy', buyer], ['rent', renter]]
+    : [['rent', renter], ['buy', buyer]];
+
+  return d.map(([key, val]) => (
+    <div key={key} className={`row ${key}`}>
+      <span className="square" />
+      <span className="value">
+        {numbro(val.$).formatCurrency({
+          thousandSeparated: true,
+          mantissa: 0
+        })}
+      </span>
+      <span className="label">{key}</span>
+    </div>
+  ));
+};
 
 
 // The chart is intended to visualize the net worth of a person
 //  over time, given different scenarios such as buying or
 //  renting a home.
-function Chart({data, form, setData, setMeta, setDist}: {
-  data: ChartData,
-  form: any,
-  setData: (data: ChartData) => void,
-  setMeta: (meta: any) => void,
-  setDist: (dist: any) => void
+function Chart({form}: {
+  form: any
 }) {
   const el = useRef(null);
   const [graph, setGraph] = useState<ChartInit>(null);
   const [pointer, setPointer] = useState(1);
-  const [point, setPoint] = useState(null);
+  const [point, setPoint] = useState<ChartDataPoint>(null);
+  const setMeta = useSetAtom(metaAtom);
+  const setDist = useSetAtom(distAtom);
+  const [data, setData] = useAtom(dataAtom);
 
   useEffect(() => {
     console.log('init');
@@ -182,25 +199,21 @@ function Chart({data, form, setData, setMeta, setDist}: {
   useEffect(() => {
     console.log('estimate');
     simulate(form, setMeta, setDist, setData);
-  }, [form]);
+  }, [form, setMeta, setDist, setData]);
 
   useEffect(() => {
-    if (data && graph) {
+    if (data[1].length && graph) {
       console.log('update');
       update(...graph, data);
     }
   }, [data]);
 
   useEffect(() => {
-    if (data) {
+    if (data[1].length) {
       const [_low, median, _high] = data;
-      const {
-        buyer,
-        renter,
-      } = median[Math.max(0, Math.floor(median.length * pointer) - 1)];
-      setPoint(buyer > renter ?
-        [['buy', buyer], ['rent', renter]] :
-        [['rent', renter], ['buy', buyer]]);
+      setPoint(
+        median[Math.max(0, Math.floor(median.length * pointer) - 1)]
+      );
     }
   }, [data, pointer]);
 
@@ -217,14 +230,7 @@ function Chart({data, form, setData, setMeta, setDist}: {
 }
 
 const mapState = (state) => ({
-	form: state.form,
-  data: state.data
+	form: state.form
 })
 
-const mapDispatch = (dispatch) => ({
-  setData: dispatch.data.setData,
-	setMeta: dispatch.meta.setMeta,
-  setDist: dispatch.meta.setDist
-})
-
-export default connect(mapState, mapDispatch)(Chart);
+export default connect(mapState)(Chart);

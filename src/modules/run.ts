@@ -4,6 +4,7 @@ import Mortgage from "./mortgage";
 import { closingAndTax, cmhc, saleFees } from "./run.helpers";
 import * as formula from './formula';
 import parse from './inputs/parse';
+import { MetaState } from "../atoms/metaAtom";
 
 const SAMPLES = 1000; // number of samples
 
@@ -53,19 +54,28 @@ interface Opts {
 interface Asset {
   costs: number,
   value: number,
+  capitalGainsTaxRate: number, // 0...1
+}
+
+interface House extends Asset {
+  capitalGainsTaxRate: 0, // 0 = owner occupied
 }
 
 interface User {
   portfolio: Asset,
-  house: Asset, // value = house value - mortgage balance - sale fees - closing and tax
+  rentPaid: number, 
 }
+
+export interface Renter extends User {};
+export interface Buyer extends User {
+  house: House,
+};
 
 // 25 years of data.
 export type Data = Array<{
   year: number,
-  buyer: User,
-  renter: User,
-  rent: number,
+  buyer: Buyer,
+  renter: Renter,
 }>;
 
 // A single random simulation run.
@@ -104,34 +114,42 @@ function run(opts: Opts, emitMeta: boolean): Data {
     opts.house.insurance()
   );
 
-  const buyer: User = {
-    portfolio: { costs: 0, value: 0 },
+  const buyer: Buyer = {
+    portfolio: { costs: 0, value: 0, capitalGainsTaxRate: null },
     house: {
       costs,
-      value: currentHousePrice * downpayment
-    }
+      value: currentHousePrice * downpayment,
+      capitalGainsTaxRate: 0
+    },
+    rentPaid: 0
   };
-  const renter: User = {
-    portfolio: { costs, value: costs },
-    house: { costs: 0, value: 0 } // renter does not own a house, but pays rent (= costs)
+  const renter: Renter = {
+    portfolio: {
+      costs,
+      value: costs,
+      capitalGainsTaxRate: null
+    },
+    rentPaid: 0
   };
 
   if (emitMeta) {
+    const meta: MetaState = {
+      downpayment: month0Costs[0],
+      closingAndTax: month0Costs[1],
+      cmhc: month0Costs[2],
+      expenses: monthlyExpenses,
+      payment: mgage.payment
+    };
+
     self.postMessage({
       action: 'meta',
-      meta: {
-        downpayment: month0Costs[0], // in $
-        closingAndTax: month0Costs[1], // in $
-        cmhc: month0Costs[2], // in $
-        expenses: monthlyExpenses, // in $, maintenance, property tax, insurance
-        payment: mgage.payment // in $, monthly payment
-      }
+      meta
     });
   }
 
   // Data for each year.
   const data: Data = [];
-
+  
   for (const year of range(amortization)) {
     const housePriceAppreciation = formula.apyToAprMonthly(opts.rates.house.appreciation());
     const bondsReturn = formula.apyToAprMonthly(opts.rates.bonds.return());
@@ -150,11 +168,14 @@ function run(opts: Opts, emitMeta: boolean): Data {
       // Pay mortgage (handles empty balance).
       mgage.pay();
 
-      buyer.house.costs += monthlyExpenses + mgage.payment; // buyer monthly costs (imputed rent)
-      renter.house.costs += rent; // renter monthly costs
+      // Pay rent.
+      buyer.rentPaid += rent;
+      renter.rentPaid += rent;
+
       const diff = monthlyExpenses + mgage.payment - rent;
       // Buyer expenses are greater than rent, invest as a renter.
       if (diff > 0) {
+        buyer.house.costs += diff;
         renter.portfolio.costs += diff;
         renter.portfolio.value += diff;
       } else {
@@ -180,10 +201,10 @@ function run(opts: Opts, emitMeta: boolean): Data {
     if (mgage.balance > 0 && isEvery(year, 5)) {
       renew = true;
     }
-    // Moving scenario.
-    if (moveEvery > 0 && isEvery(year, moveEvery)) {
+    // Moving scenario (make sure we do not move in the last year).
+    // TODO moving years hardcoded
+    if (moveEvery > 0 && isEvery(year, moveEvery) && year !== 25) {
       renew = true;
-      // NOTE: will double count these expenses since property price is less these costs.
       const movingCosts = sum(
         saleFees(currentHousePrice),
         closingAndTax(currentHousePrice)
@@ -219,31 +240,26 @@ function run(opts: Opts, emitMeta: boolean): Data {
     // Log it.
     data.push({
       year,
-      rent,
       // Object, make sure to copy the values.
       buyer: {
+        rentPaid: buyer.rentPaid,
         portfolio: {
           costs: buyer.portfolio.costs,
-          value: buyer.portfolio.value
+          value: buyer.portfolio.value,
+          capitalGainsTaxRate: 0.25, // TODO
         },
         house: {
           costs: buyer.house.costs,
-          value: sum(
-            buyer.house.value,
-            // Pay seller costs (do not double count if moving).
-            renew ? 0 : -saleFees(currentHousePrice),
-            renew ? 0 : -closingAndTax(currentHousePrice)
-          )
+          value: buyer.house.value,
+          capitalGainsTaxRate: 0
         }
       },
       renter: {
+        rentPaid: renter.rentPaid,
         portfolio: {
           costs: renter.portfolio.costs,
-          value: renter.portfolio.value
-        },
-        house: {
-          costs: renter.house.costs,
-          value: 0
+          value: renter.portfolio.value,
+          capitalGainsTaxRate: 0.25, // TODO
         }
       },
     });
