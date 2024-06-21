@@ -1,9 +1,9 @@
 import numbro from 'numbro';
 import {point, normal} from '../samplers';
-import {Leaf, Inputs} from './inputs';
 import {INPUTS} from '../../const';
 
-function node(node: Leaf|Inputs) {
+// TODO type
+function node(node) {
   // Traverse.
   if (!Array.isArray(node)) {
     return parse(node);
@@ -41,7 +41,7 @@ function node(node: Leaf|Inputs) {
 }
 
 // Parse user input.
-const parse = (opts: Inputs) => Object.entries(opts).reduce((d, [key, val]) => ({
+const parse = (opts) => Object.entries(opts).reduce((d, [key, val]) => ({
   ...d,
   [key]: node(val)
 }), {});

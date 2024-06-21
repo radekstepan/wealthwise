@@ -3,7 +3,7 @@ import {jStat} from 'jstat';
 
 // https://github.com/getguesstimate/guesstimate-app/blob/master/src/lib/guesstimator/samplers
 
-type Sample = () => number;
+export type Sample = () => number;
 
 // A sample that always returns the same value.
 export const point = (number: number): Sample => {

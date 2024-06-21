@@ -1,21 +1,24 @@
 - [x] fix the actual code
 - [x] fix the summary table
-- [ ] fix negative invested money (costs < rents)
-- [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
-- [ ] hide ditribution if there's none to show
+- [x] fix negative invested money (costs < rents)
+- [x] the portfolio appreciate doesn't account for capital gains tax
 - [ ] tests on the core estimate logic
-- [ ] flip animation on the legend not working
-- [ ] test if a new RNG seed is needed for each run
-- [ ] Cmd+C should copy an unformatted numeric value
-- [ ] pick amortization in years
-- [ ] change rent, market rent, mortgage to 20% and interest rate
-- [ ] checkbox for variable rate read-only
+- [>] pick amortization in years (do a read-only 25 years)
+- [>] checkbox for variable rate read-only
+- [>] capital gains tax a variable
 - [ ] tooltips on each form field
-- [ ] capital gains tax a variable
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
-- [ ] the portfolio appreciate doesn't account for capital gains tax
 - [ ] review TODO notes
 - [ ] the alignment of values and median in chart seems off (around 0)
-- [ ] legend doesn't flip, shows buyer, renter in that order always
 - [ ] why is the distribution not uniform?
+- [ ] sale costs seem high
+
+Nice to have
+- [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
+- [ ] legend doesn't flip, shows buyer, renter in that order always
+- [ ] hide ditribution if there's none to show
+- [ ] Cmd+C should copy an unformatted numeric value
+- [ ] test if a new RNG seed is needed for each run
+- [ ] flip animation on the legend not working
+- [ ] type the inputs automatically (parse, run)

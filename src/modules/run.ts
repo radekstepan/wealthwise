@@ -4,49 +4,49 @@ import Mortgage from "./mortgage";
 import { closingAndTax, cmhc, saleFees } from "./run.helpers";
 import * as formula from './formula';
 import parse from './inputs/parse';
-import { MetaState } from "../atoms/metaAtom";
+import { type MetaState } from "../atoms/metaAtom";
+import { type Sample } from "./samplers";
 
 const SAMPLES = 1000; // number of samples
 
-type NumFn = () => number;
-
+// TODO this should be inferred from the inputs.
 interface Opts {
   mortgage: {
-    amortization: NumFn;
+    amortization: Sample;
   },
   house: {
-    price: NumFn;
-    downpayment: NumFn;
-    maintenance: NumFn;
-    propertyTax: NumFn;
-    insurance: NumFn;
+    price: Sample;
+    downpayment: Sample;
+    maintenance: Sample;
+    propertyTax: Sample;
+    insurance: Sample;
   },
   rates: {
     interest: {
-      initial: NumFn;
-      future: NumFn;
+      initial: Sample;
+      future: Sample;
     },
     house: {
-      appreciation: NumFn;
-      expenses: NumFn;
+      appreciation: Sample;
+      expenses: Sample;
     },
     bonds: {
-      return: NumFn;
+      return: Sample;
     },
     rent: {
-      controlled: NumFn;
-      market: NumFn;
+      controlled: Sample;
+      market: Sample;
     },
   },
   rent: {
-    current: NumFn;
-    market: NumFn;
+    current: Sample;
+    market: Sample;
   },
   scenarios: {
-    move: NumFn;
+    move: Sample;
     crash: {
-      chance: NumFn;
-      drop: NumFn;
+      chance: Sample;
+      drop: Sample;
     }
   }
 }

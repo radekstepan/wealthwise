@@ -1,12 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import MaskedInput from 'react-text-mask';
-import {connect} from 'react-redux'
 import opa from 'object-path';
 import clone from 'clone-deep';
 import numbro from 'numbro';
+import { useAtom } from 'jotai';
 import {currencyMask, percentMask, numberMask} from './masks/number';
 import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
+import { formAtom } from '../../atoms/formAtom';
 
 // The component uses the value in the form state to set its initial
 //  value, and it updates the form state when the input value changes.
@@ -17,11 +18,11 @@ const Field = ({
   label,
   description,
   focus=false,
-  form,
-  setForm,
   field: key,
   ...input
 }) => {
+  const [form, setForm] = useAtom(formAtom);
+
   const [formValue, type] = opa.get(form, key);
   const [value, setValue] = useState(formValue);
 
@@ -40,7 +41,7 @@ const Field = ({
     setValue(newValue);
   };
 
-  const onBlur = () => {
+  const onBlur = useCallback(() => {
     const newValue = clean(value);
 
     setValue(newValue);
@@ -50,12 +51,10 @@ const Field = ({
     }
 
     // TODO make more performant.
-    setForm(d => {
-      const obj = clone(d);
-      opa.set(obj, key, [newValue, type]);
-      return obj;
-    });
-  };
+    const obj = clone(form);
+    opa.set(obj, key, [newValue, type]);
+    setForm(obj);
+  }, [form, formValue, key, setForm, type, value]);
 
   const props = {
     ref,
@@ -105,12 +104,4 @@ const Field = ({
   );
 };
 
-const mapState = (state) => ({
-	form: state.form
-})
-
-const mapDispatch = (dispatch) => ({
-	setForm: dispatch.form.setForm
-})
-
-export default connect(mapState, mapDispatch)(Field);
+export default Field;

@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {connect} from 'react-redux'
 import * as d3 from 'd3';
 import numbro from 'numbro';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import simulate, { type DataPoint } from '../../modules/simulate';
 import { type Buyer, type Renter } from '../../modules/run';
 import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';
+import { formAtom } from '../../atoms/formAtom';
 import './chart.less';
 
 // TODO link to actual years
@@ -180,9 +180,7 @@ const legend = (point: ChartDataPoint) => {
 // The chart is intended to visualize the net worth of a person
 //  over time, given different scenarios such as buying or
 //  renting a home.
-function Chart({form}: {
-  form: any
-}) {
+export default function Chart() {
   const el = useRef(null);
   const [graph, setGraph] = useState<ChartInit>(null);
   const [pointer, setPointer] = useState(1);
@@ -190,6 +188,7 @@ function Chart({form}: {
   const setMeta = useSetAtom(metaAtom);
   const setDist = useSetAtom(distAtom);
   const [data, setData] = useAtom(dataAtom);
+  const form = useAtomValue(formAtom);
 
   useEffect(() => {
     console.log('init');
@@ -227,10 +226,4 @@ function Chart({form}: {
       <div ref={el} className="svg" />
     </div>
   );
-}
-
-const mapState = (state) => ({
-	form: state.form
-})
-
-export default connect(mapState)(Chart);
+};

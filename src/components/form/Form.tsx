@@ -1,9 +1,10 @@
 import React, {useCallback, useState} from 'react';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import useCollapse from 'react-collapsed';
-import {connect} from 'react-redux'
+import { useAtomValue } from 'jotai';
 import Field from './Field';
 import './form.less';
+import { formAtom } from '../../atoms/formAtom';
 
 // Group uses the useCollapse hook to animate the expansion and collapse
 //  of the group. It passes a callback to its children that allows the
@@ -60,10 +61,11 @@ const Header = ({isExpanded, showSummary, setExpanded, title, summary}) => (
   </div>
 );
 
-function Form({form, setForm}) {
+export default function Form() {
+  const form = useAtomValue(formAtom);
+
   return (
     <div className="form">
-      {/** @ts-ignore */}
       <Group title="Property" summary={form.house.price[0]} expanded>
         {({isExpandEnd}) => (
           <>
@@ -98,7 +100,6 @@ function Form({form, setForm}) {
           </>
         )}
       </Group>
-      {/** @ts-ignore */}
       <Group title="Mortgage" summary={form.rates.interest.initial[0]}>
         {({isExpandEnd}) => (
           <>
@@ -121,7 +122,6 @@ function Form({form, setForm}) {
           </>
         )}
       </Group>
-      {/** @ts-ignore */}
       <Group title="Rent" summary={form.rent.current[0]}>
         {({isExpandEnd}) => (
           <>
@@ -149,7 +149,6 @@ function Form({form, setForm}) {
           </>
         )}
       </Group>
-      {/** @ts-ignore */}
       <Group title="Returns" summary={form.rates.house.appreciation[0]}>
         {({isExpandEnd}) => (
           <>
@@ -167,7 +166,6 @@ function Form({form, setForm}) {
           </>
         )}
       </Group>
-      {/** @ts-ignore */}
       <Group title="Scenarios" summary={form.scenarios.crash.drop[0]}>
         {({isExpandEnd}) => (
           <>
@@ -193,14 +191,3 @@ function Form({form, setForm}) {
     </div>
   );
 }
-
-const mapState = (state) => ({
-	form: state.form
-})
-
-const mapDispatch = (dispatch) => ({
-	setForm: dispatch.form.setForm
-})
-
-export default connect(mapState, mapDispatch)(Form);
-
