@@ -1,7 +1,8 @@
 export const inputs = {
   mortgage: {
     amortization: 25, // years
-    term: 5 // year; for a fixed rate
+    term: 5, // year; for a fixed rate
+    isFixedRate: "Yes"
   },
 
   house: {
@@ -22,7 +23,6 @@ export const inputs = {
 
   rates: {
     interest: { // mortgage
-      isFixedRate: 1, // 1 = fixed, 0 = variable
       initial: "5%", // https://wowa.ca/best-mortgage-rates/5-year/fixed
       future: "3.5% - 6%"
     },

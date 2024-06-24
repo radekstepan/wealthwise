@@ -16,6 +16,9 @@ function assignType(val: InputValue): [string, INPUTS] {
     return [val.toString(), INPUTS.NUMBER];
   }
   if (typeof val === 'string') {
+    if (val === 'Yes' || val === 'No') {
+      return [val, INPUTS.BOOLEAN];
+    }
     if (val.includes('%')) {
       return [val, INPUTS.PERCENT];
     }

@@ -13,6 +13,8 @@ const SAMPLES = 1000; // number of samples
 interface Opts {
   mortgage: {
     amortization: Sample;
+    term: Sample;
+    isFixedRate: Sample;
   },
   house: {
     price: Sample;
@@ -83,6 +85,8 @@ function run(opts: Opts, emitMeta: boolean): Data {
   const rnd = new Random();
 
   const amortization = opts.mortgage.amortization();
+  const term = opts.mortgage.term();
+  const isFixedRate = Boolean(opts.mortgage.isFixedRate());
   // Make sure the downpayment is between 0 and 1.
   const downpayment = Math.min(Math.max(opts.house.downpayment(), 0), 1);
   
@@ -161,10 +165,6 @@ function run(opts: Opts, emitMeta: boolean): Data {
     }
 
     for (const month of range(12)) {
-      if (isEvery(month, 3)) {
-        currentInterestRate = opts.rates.interest.future();
-      }
-
       // Pay mortgage (handles empty balance).
       mgage.pay();
 
@@ -194,15 +194,26 @@ function run(opts: Opts, emitMeta: boolean): Data {
       // Monthly portfolio appreciation.
       buyer.portfolio.value *= 1 + bondsReturn;
       renter.portfolio.value *= 1 + bondsReturn;
+
+      // Interest rate change.
+      if (isEvery(month, 3)) {
+        currentInterestRate = opts.rates.interest.future();
+
+        // Renew variable rate mortgage all the time.
+        if (!isFixedRate && mgage.balance > 0) {
+          mgage.renew(currentInterestRate);
+        }
+      }
     } // end of month
 
     let renew = false;
-    // Renew the fixed rate mortgage every 5 years.
-    if (mgage.balance > 0 && isEvery(year, 5)) {
-      renew = true;
+    if (isFixedRate) {
+      // Renew the fixed rate mortgage every 5 years.
+      if (mgage.balance > 0 && isEvery(year, term)) {
+        renew = true;
+      }
     }
     // Moving scenario (make sure we do not move in the last year).
-    // TODO moving years hardcoded
     if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
       renew = true;
       const movingCosts = sum(

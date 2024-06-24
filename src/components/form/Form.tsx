@@ -124,6 +124,18 @@ export default function Form() {
               field="mortgage.amortization"
               readOnly
             />
+            <Field
+              label="Term"
+              description="years"
+              field="mortgage.term"
+              readOnly
+            />
+            <Field
+              label="Fixed Rate"
+              description="is this a fixed rate mortgage"
+              field="mortgage.isFixedRate"
+              readOnly
+            />
           </>
         )}
       </Group>

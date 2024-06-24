@@ -10,6 +10,11 @@ function node(node) {
   }
   const [val, type] = node;
 
+  // A boolean value.
+  if (type === INPUTS.BOOLEAN) {
+    return val === 'Yes' ? point(1) : point(0);
+  }
+
   // Number.
   if (type === INPUTS.NUMBER) {
     // TODO handle a range.

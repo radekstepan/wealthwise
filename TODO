@@ -4,7 +4,7 @@
 - [x] the portfolio appreciate doesn't account for capital gains tax
 - [ ] tests on the core estimate logic
 - [x] pick amortization in years (do a read-only 25 years)
-- [>] checkbox for variable rate read-only
+- [x] checkbox for variable rate read-only
 - [>] capital gains tax a variable
 - [ ] tooltips on each form field
 - [ ] have a way to contact me, my face with a little bio and an email address

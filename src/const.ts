@@ -1,5 +1,6 @@
 export enum INPUTS {
   NUMBER,
   CURRENCY,
-  PERCENT
+  PERCENT,
+  BOOLEAN
 };
