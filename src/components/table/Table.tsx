@@ -6,12 +6,11 @@ import {sum} from '../../modules/utils';
 import { closingAndTax, saleFees } from '../../modules/run.helpers';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
+import { type ChartDataPoint } from '../chart/Chart';
 import './table.less';
 
 // TODO hardcoded capital gains tax
 const CAPITAL_GAINS_TAX = 0.25;
-// TODO hardcoded years
-const YEARS = 25;
 
 // The component renders a table with several groups of items, each
 //  containing a label and a value. The value for each item is
@@ -26,7 +25,12 @@ function Table() {
     return null;
   }
 
-  const median = dataState.length ? dataState[1][dataState[1].length - 1] : null;
+  let median: ChartDataPoint|null = null;
+  let years: number|null = null;
+  if (dataState.length) {
+    years = dataState[1].length - 1;
+    median = dataState[1][years];
+  }
 
   return (
     <div className="table">
@@ -82,7 +86,7 @@ function Table() {
           <>
             <div className="group">
               <div className="item bold">
-                <div className="label">Property <em>value in {YEARS} years</em></div>
+                <div className="label">Property <em>value in {years} years</em></div>
                 <span className="dot" />
                 <div>{numbro(median.buyer.house.value).formatCurrency({
                   thousandSeparated: true,
@@ -135,7 +139,7 @@ function Table() {
             </div>
             <div className="group">
               <div className="item bold">
-                <div className="label">Buyer portfolio <em>value in {YEARS} years</em></div>
+                <div className="label">Buyer portfolio <em>value in {years} years</em></div>
                 <span className="dot" />
                 <div>{numbro(median.buyer.portfolio.value).formatCurrency({
                   thousandSeparated: true,
@@ -179,7 +183,7 @@ function Table() {
             </div>
             <div className="group">
               <div className="item bold">
-                <div className="label">Renter portfolio <em>value in {YEARS} years</em></div>
+                <div className="label">Renter portfolio <em>value in {years} years</em></div>
                 <span className="dot" />
                 <div>{numbro(median.renter.portfolio.value).formatCurrency({
                   thousandSeparated: true,

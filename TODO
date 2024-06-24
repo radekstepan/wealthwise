@@ -3,7 +3,7 @@
 - [x] fix negative invested money (costs < rents)
 - [x] the portfolio appreciate doesn't account for capital gains tax
 - [ ] tests on the core estimate logic
-- [>] pick amortization in years (do a read-only 25 years)
+- [x] pick amortization in years (do a read-only 25 years)
 - [>] checkbox for variable rate read-only
 - [>] capital gains tax a variable
 - [ ] tooltips on each form field

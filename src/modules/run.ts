@@ -203,7 +203,7 @@ function run(opts: Opts, emitMeta: boolean): Data {
     }
     // Moving scenario (make sure we do not move in the last year).
     // TODO moving years hardcoded
-    if (moveEvery > 0 && isEvery(year, moveEvery) && year !== 25) {
+    if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
       renew = true;
       const movingCosts = sum(
         saleFees(currentHousePrice),

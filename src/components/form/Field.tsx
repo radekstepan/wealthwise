@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState, type FC} from 'react';
 import MaskedInput from 'react-text-mask';
 import opa from 'object-path';
 import clone from 'clone-deep';
@@ -9,16 +9,26 @@ import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
 import { formAtom } from '../../atoms/formAtom';
 
+interface Props {
+  label: string;
+  field: string;
+  description: string;
+  placeholder?: string;
+  focus?: boolean;
+  readOnly?: boolean;
+}
+
 // The component uses the value in the form state to set its initial
 //  value, and it updates the form state when the input value changes.
 //  The type of the field is used to determine which mask to apply to
 //  the input. The component is connected to a Redux store, so that it
 //  can access the form state and dispatch actions to update it.
-const Field = ({
+const Field: FC<Props> = ({
   label,
   description,
-  focus=false,
   field: key,
+  focus=false,
+  readOnly=false,
   ...input
 }) => {
   const [form, setForm] = useAtom(formAtom);
@@ -62,16 +72,18 @@ const Field = ({
     onBlur,
     onChange,
     className: 'input',
+    inputMode: 'numeric' as const,
     ...input
   };
 
   let field;
-  if (type === INPUTS.CURRENCY) {
+  if (readOnly) {
+    field = <input {...props} disabled />;
+  } else if (type === INPUTS.CURRENCY) {
     field = (
       <MaskedInput
         {...props}
         mask={currencyMask}
-        inputMode="numeric"
         defaultValue={numbro.unformat(formValue)}
       />
     );

@@ -8,7 +8,6 @@ import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
 
 const BANDS = 7; // distribution bands
-const YEARS = 25; // TODO hard-coded
 
 type Samples = Array<Data>; // samples * years
 
@@ -73,7 +72,7 @@ export default function simulate(
 
     const data: ChartData = [[], [], []]; // quantiles
     // For each year.
-    for (const year of range(YEARS)) {
+    for (const year of range(samples[0].length)) {
       const buy: Array<DataPoint<Buyer>> = [];
       const rent: Array<DataPoint<Renter>> = [];
       for (const sample of samples) {

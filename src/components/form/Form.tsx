@@ -70,7 +70,6 @@ export default function Form() {
         {({isExpandEnd}) => (
           <>
             <Field
-              autoFocus
               focus={isExpandEnd}
               label="Price"
               placeholder="Property price"
@@ -118,6 +117,12 @@ export default function Form() {
               label="Future Interest Rate"
               description="% yearly variable mortgage interest rate"
               field="rates.interest.future"
+            />
+            <Field
+              label="Amortization"
+              description="years"
+              field="mortgage.amortization"
+              readOnly
             />
           </>
         )}
