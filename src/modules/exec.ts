@@ -1,9 +1,10 @@
 import EventEmitter from 'events';
+import { type TypedInputs } from './inputs/inputs';
 const worker = new Worker(new URL('./run.ts', import.meta.url));
 
 // A utility for running code in a separate thread and emitting
 //  events when certain messages are received from the Worker object.
-export default function exec(inputs) {
+export default function exec(inputs: TypedInputs) {
   const evt = new EventEmitter();
 
   worker.postMessage({inputs});

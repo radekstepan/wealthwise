@@ -3,56 +3,11 @@ import { isEvery, range, sum } from "./utils";
 import Mortgage from "./mortgage";
 import { closingAndTax, cmhc, saleFees } from "./run.helpers";
 import * as formula from './formula';
-import parse from './inputs/parse';
+import parse, { type ParsedInputs } from './inputs/parse';
+import { type TypedInputs } from "./inputs/inputs";
 import { type MetaState } from "../atoms/metaAtom";
-import { type Sample } from "./samplers";
 
 const SAMPLES = 1000; // number of samples
-
-// TODO this should be inferred from the inputs.
-interface Opts {
-  mortgage: {
-    amortization: Sample;
-    term: Sample;
-    isFixedRate: Sample;
-  },
-  house: {
-    price: Sample;
-    downpayment: Sample;
-    maintenance: Sample;
-    propertyTax: Sample;
-    insurance: Sample;
-  },
-  rates: {
-    interest: {
-      initial: Sample;
-      future: Sample;
-    },
-    house: {
-      appreciation: Sample;
-      expenses: Sample;
-    },
-    bonds: {
-      return: Sample;
-      capitalGainsTax: Sample;
-    },
-    rent: {
-      controlled: Sample;
-      market: Sample;
-    },
-  },
-  rent: {
-    current: Sample;
-    market: Sample;
-  },
-  scenarios: {
-    move: Sample;
-    crash: {
-      chance: Sample;
-      drop: Sample;
-    }
-  }
-}
 
 interface Asset {
   costs: number,
@@ -82,7 +37,7 @@ export type Data = Array<{
 }>;
 
 // A single random simulation run.
-function run(opts: Opts, emitMeta: boolean): Data {
+function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   const rnd = new Random();
 
   const amortization = opts.mortgage.amortization();
@@ -282,7 +237,9 @@ function run(opts: Opts, emitMeta: boolean): Data {
   return data;
 }
 
-self.onmessage = ({data: {inputs}}) => {
+self.onmessage = ({data: {inputs}}: {
+  data: {inputs: TypedInputs}
+}) => {
   const opts = parse(inputs);
   const res = range(SAMPLES).map((i) => run(opts, !i));
 

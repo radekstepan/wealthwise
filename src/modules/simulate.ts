@@ -6,6 +6,7 @@ import { closingAndTax, saleFees } from './run.helpers';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
+import { type TypedInputs } from './inputs/inputs';
 
 const BANDS = 7; // distribution bands
 
@@ -22,7 +23,7 @@ export type DataPoint<T extends Buyer | Renter> = T & {
 //  and rent scenarios. The bands and quantiles are then used to set the dist
 //  and data variables, which are used for visualization.
 export default function simulate(
-  inputs,
+  inputs: TypedInputs,
   setMeta: (next: MetaState) => void,
   setDist: (next: DistState) => void,
   setData: (data: ChartData) => void

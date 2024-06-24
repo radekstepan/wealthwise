@@ -21,4 +21,4 @@ Nice to have
 - [ ] Cmd+C should copy an unformatted numeric value
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working
-- [ ] type the inputs automatically (parse, run)
+- [x] type the inputs automatically (parse, run)
