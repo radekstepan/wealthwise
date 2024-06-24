@@ -82,12 +82,12 @@ export default function Form() {
               field="house.maintenance"
             />
             <Field
-              label="Property Taxes"
+              label="Property taxes"
               description="yearly"
               field="house.propertyTax"
             />
             <Field
-              label="Homeowner's Insurance"
+              label="Homeowner's insurance"
               description="monthly"
               field="house.insurance"
             />
@@ -109,12 +109,12 @@ export default function Form() {
             />
             <Field
               focus={isExpandEnd}
-              label="Current Interest Rate"
+              label="Current interest rate"
               description="% yearly variable mortgage interest rate"
               field="rates.interest.initial"
             />
             <Field
-              label="Future Interest Rate"
+              label="Future interest rate"
               description="% yearly variable mortgage interest rate"
               field="rates.interest.future"
             />
@@ -131,7 +131,7 @@ export default function Form() {
               readOnly
             />
             <Field
-              label="Fixed Rate"
+              label="Fixed rate"
               description="is this a fixed rate mortgage"
               field="mortgage.isFixedRate"
               readOnly
@@ -180,6 +180,11 @@ export default function Form() {
               description="% yearly"
               field="rates.bonds.return"
             />
+            <Field
+              label="Capital gains tax"
+              description="% rate applied to stock returns"
+              field="rates.bonds.capitalGainsTax"
+            />
           </>
         )}
       </Group>
@@ -188,7 +193,7 @@ export default function Form() {
           <>
             <Field
               label="Property price drop chance"
-              description="% chance over a 25 year period"
+              description="% chance over the amortization period"
               field="scenarios.crash.chance"
             />
             <Field

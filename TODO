@@ -5,7 +5,7 @@
 - [ ] tests on the core estimate logic
 - [x] pick amortization in years (do a read-only 25 years)
 - [x] checkbox for variable rate read-only
-- [>] capital gains tax a variable
+- [x] capital gains tax a variable
 - [ ] tooltips on each form field
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections

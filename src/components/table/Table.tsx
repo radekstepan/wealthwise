@@ -9,9 +9,6 @@ import { dataAtom } from '../../atoms/dataAtom';
 import { type ChartDataPoint } from '../chart/Chart';
 import './table.less';
 
-// TODO hardcoded capital gains tax
-const CAPITAL_GAINS_TAX = 0.25;
-
 // The component renders a table with several groups of items, each
 //  containing a label and a value. The value for each item is
 //  calculated using a Value component, which receives a function that

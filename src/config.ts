@@ -36,7 +36,6 @@ export const inputs = {
     },
     bonds: {
       return: "3% - 4%",
-      // TODO unused
       capitalGainsTax: "25%" // 50% on 50% (over $250k profit yearly is 66% inclusion rate)
     }
   },

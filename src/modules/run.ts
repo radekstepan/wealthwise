@@ -34,6 +34,7 @@ interface Opts {
     },
     bonds: {
       return: Sample;
+      capitalGainsTax: Sample;
     },
     rent: {
       controlled: Sample;
@@ -89,7 +90,9 @@ function run(opts: Opts, emitMeta: boolean): Data {
   const isFixedRate = Boolean(opts.mortgage.isFixedRate());
   // Make sure the downpayment is between 0 and 1.
   const downpayment = Math.min(Math.max(opts.house.downpayment(), 0), 1);
-  
+
+  const capitalGainsTaxRate = opts.rates.bonds.capitalGainsTax();
+
   let currentHousePrice = opts.house.price();
   let currentInterestRate = opts.rates.interest.initial();
 
@@ -119,7 +122,7 @@ function run(opts: Opts, emitMeta: boolean): Data {
   );
 
   const buyer: Buyer = {
-    portfolio: { costs: 0, value: 0, capitalGainsTaxRate: null },
+    portfolio: { costs: 0, value: 0, capitalGainsTaxRate },
     house: {
       costs,
       value: currentHousePrice * downpayment,
@@ -131,7 +134,7 @@ function run(opts: Opts, emitMeta: boolean): Data {
     portfolio: {
       costs,
       value: costs,
-      capitalGainsTaxRate: null
+      capitalGainsTaxRate
     },
     rentPaid: 0
   };
@@ -257,7 +260,7 @@ function run(opts: Opts, emitMeta: boolean): Data {
         portfolio: {
           costs: buyer.portfolio.costs,
           value: buyer.portfolio.value,
-          capitalGainsTaxRate: 0.25, // TODO
+          capitalGainsTaxRate
         },
         house: {
           costs: buyer.house.costs,
@@ -270,7 +273,7 @@ function run(opts: Opts, emitMeta: boolean): Data {
         portfolio: {
           costs: renter.portfolio.costs,
           value: renter.portfolio.value,
-          capitalGainsTaxRate: 0.25, // TODO
+          capitalGainsTaxRate
         }
       },
     });
