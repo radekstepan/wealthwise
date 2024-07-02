@@ -10,7 +10,7 @@
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
 - [ ] review TODO notes
-- [ ] the alignment of values and median in chart seems off (around 0)
+- [x] the alignment of values and median in chart seems off (around 0)
 - [ ] why is the distribution not uniform?
 - [ ] sale costs seem high
 
@@ -22,3 +22,4 @@ Nice to have
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working
 - [x] type the inputs automatically (parse, run)
+- [ ] simulate "x" years (needs to subtract mortgage in the table)

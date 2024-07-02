@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, type MutableRefObject} from 'react';
 import * as d3 from 'd3';
 import numbro from 'numbro';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -36,13 +36,15 @@ type ChartInit = [
   Axis
 ];
 
-const init = (ref, setPointer): ChartInit => {
+const init = (
+  ref: HTMLDivElement,
+  setPointer: (value: number) => void
+): ChartInit => {
   const root = d3.select(ref);
   const wrapper = root.node().getBoundingClientRect();
 
   // set the dimensions and margins of the graph
   var margin = {top: 0, right: 10, bottom: 20, left: 20 };
-  const width = wrapper.width - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
@@ -53,12 +55,11 @@ const init = (ref, setPointer): ChartInit => {
     .attr("height", height) // + margin.top + margin.bottom)
     .on('mousemove', evt => {
       const [x] = d3.pointer(evt, svg.node());
-      setPointer(x > 0 && x < width ? x / width : 1);
+      setPointer(Math.max(0, Math.min(1, x / wrapper.width)));
     })
     .on('mouseleave', () => {
       setPointer(1);
-    })
-    // .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    });
 
   svg.append("g")
     // Push to the bottom.
@@ -67,7 +68,7 @@ const init = (ref, setPointer): ChartInit => {
 
   svg.append("g")
     // Push to the right.
-    .attr("transform", `translate(${width + margin.left + margin.right + 50}, 0)`)
+    .attr("transform", `translate(${wrapper.width + 50}, 0)`)
     .attr('class', 'y-axis');
 
   // add X axis and Y axis
@@ -181,7 +182,7 @@ const legend = (point: ChartDataPoint) => {
 //  over time, given different scenarios such as buying or
 //  renting a home.
 export default function Chart() {
-  const el = useRef(null);
+  const el = useRef<HTMLDivElement>(null);
   const [graph, setGraph] = useState<ChartInit>(null);
   const [pointer, setPointer] = useState(1);
   const [point, setPoint] = useState<ChartDataPoint>(null);
@@ -210,9 +211,18 @@ export default function Chart() {
   useEffect(() => {
     if (data[1].length) {
       const [_low, median, _high] = data;
-      setPoint(
-        median[Math.max(0, Math.floor(median.length * pointer) - 1)]
-      );
+
+      if (pointer === 1) {
+        setPoint(median[median.length - 1]);
+      } else {
+        setPoint(
+          median[Math.min(
+            median.length - 2,
+            Math.floor(
+              median.length * (pointer * (median.length - 1) / median.length)
+            ))]
+        );
+      }
     }
   }, [data, pointer]);
 
