@@ -2,11 +2,12 @@ import * as d3 from 'd3';
 import exec from './exec';
 import {range, sum} from './utils';
 import { type Buyer, type Renter, type Data } from './run';
-import { closingAndTax, saleFees } from './run.helpers';
+import { saleFees } from './run.helpers';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
 import { type TypedInputs } from './inputs/inputs';
+import { Province } from '../config';
 
 const BANDS = 7; // distribution bands
 
@@ -93,8 +94,8 @@ export default function simulate(
           $: sum(
             sampleYear.buyer.house.value,
             -sampleYear.buyer.house.costs, // 0% capital gains tax
-            -saleFees(sampleYear.buyer.house.value),
-            -closingAndTax(sampleYear.buyer.house.value),
+            // TODO hardcoded province
+            -saleFees(Province.Alberta, sampleYear.buyer.house.value),
             sampleYear.buyer.portfolio.value,
             -sampleYear.buyer.portfolio.costs,
             -(buyerPortfolioNet * sampleYear.buyer.portfolio.capitalGainsTaxRate)

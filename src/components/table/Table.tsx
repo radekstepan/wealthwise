@@ -3,11 +3,12 @@ import numbro from 'numbro';
 import { useAtomValue } from 'jotai';
 import Value from './Value';
 import {sum} from '../../modules/utils';
-import { closingAndTax, saleFees } from '../../modules/run.helpers';
+import { saleFees } from '../../modules/run.helpers';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { type ChartDataPoint } from '../chart/Chart';
 import './table.less';
+import { Province } from '../../config';
 
 // The component renders a table with several groups of items, each
 //  containing a label and a value. The value for each item is
@@ -49,7 +50,7 @@ function Table() {
             <Value d={metaState.downpayment} />
           </div>
           <div className="item">
-            <div className="label">Land transfer tax &amp; closing costs</div>
+            <div className="label">Closing costs</div>
             <span className="dot" />
             <Value d={metaState.closingAndTax} />
           </div>
@@ -112,10 +113,10 @@ function Table() {
               <div className="item">
                 <div className="label">- Sale costs</div>
                 <span className="dot" />
-                <div>{numbro(sum(
-                  saleFees(median.buyer.house.value),
-                  closingAndTax(median.buyer.house.value)
-                )).formatCurrency({
+                <div>{numbro(
+                  // TODO hardcoded province
+                  saleFees(Province.Alberta, median.buyer.house.value),
+                ).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
                 })}</div>
@@ -126,8 +127,8 @@ function Table() {
                 <div>{numbro(sum(
                   median.buyer.house.value,
                   -median.buyer.house.costs,
-                  -saleFees(median.buyer.house.value),
-                  -closingAndTax(median.buyer.house.value)
+                  // TODO hardcoded province
+                  -saleFees(Province.Alberta, median.buyer.house.value)
                 )).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0

@@ -1,4 +1,10 @@
+export enum Province {
+  "Alberta"
+};
+
 export const inputs = {
+  province: Province.Alberta,
+
   mortgage: {
     amortization: 25, // years
     term: 5, // year; for a fixed rate
@@ -11,7 +17,7 @@ export const inputs = {
     maintenance: "$550", // or condo fees
     propertyTax: "$3,100", // yearly
     insurance: "$100", // personal condo insurance
-    closingCosts: "$3,000"
+    closingCosts: "$3,000" // https://www.ratehub.ca/mortgage-payment-calculator
   },
 
   // https://rentals.ca/national-rent-report

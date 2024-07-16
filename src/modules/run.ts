@@ -1,7 +1,7 @@
 import { Random } from "random-js";
 import { isEvery, range, sum } from "./utils";
 import Mortgage from "./mortgage";
-import { closingAndTax, cmhc, saleFees } from "./run.helpers";
+import * as helpers from "./run.helpers";
 import * as formula from './formula';
 import parse, { type ParsedInputs } from './inputs/parse';
 import { type TypedInputs } from "./inputs/inputs";
@@ -40,16 +40,23 @@ export type Data = Array<{
 function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   const rnd = new Random();
 
+  const province = opts.province();
+
   const amortization = opts.mortgage.amortization();
   const term = opts.mortgage.term();
   const isFixedRate = Boolean(opts.mortgage.isFixedRate());
   // Make sure the downpayment is between 0 and 1.
   const downpayment = Math.min(Math.max(opts.house.downpayment(), 0), 1);
-
   const capitalGainsTaxRate = opts.rates.bonds.capitalGainsTax();
 
   let currentHousePrice = opts.house.price();
   let currentInterestRate = opts.rates.interest.initial();
+
+  // Closing costs and land transfer tax.
+  const closingAndTax = sum(
+    opts.house.closingCosts(), // fees
+    helpers.landTransferTax(province, currentHousePrice) // land transfer tax
+  );
 
   const mgage = Mortgage({
     balance: currentHousePrice * (1 - downpayment),
@@ -63,8 +70,8 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   // Initial costs of the buyer.
   const month0Costs = [
     currentHousePrice * downpayment, // downpayment
-    closingAndTax(currentHousePrice), // closing and tax
-    cmhc(downpayment, currentHousePrice) // cmhc insurance
+    closingAndTax, // closing costs and land transfer tax
+    helpers.cmhc(downpayment, currentHousePrice) // cmhc insurance
   ];
   // Total initial costs.
   let costs = sum(...month0Costs);
@@ -97,7 +104,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   if (emitMeta) {
     const meta: MetaState = {
       downpayment: month0Costs[0],
-      closingAndTax: month0Costs[1],
+      closingAndTax,
       cmhc: month0Costs[2],
       expenses: monthlyExpenses,
       payment: mgage.payment
@@ -175,8 +182,9 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
       renew = true;
       const movingCosts = sum(
-        saleFees(currentHousePrice),
-        closingAndTax(currentHousePrice)
+        helpers.saleFees(province, currentHousePrice),
+        opts.house.closingCosts(), // closing costs
+        helpers.landTransferTax(province, currentHousePrice) // land transfer tax
       );
       // Add the moving costs to the renter's portfolio.
       buyer.house.costs += movingCosts;

@@ -12,7 +12,9 @@
 - [ ] review TODO notes
 - [x] the alignment of values and median in chart seems off (around 0)
 - [ ] why is the distribution not uniform?
-- [ ] sale costs seem high
+- [x] sale costs seem high
+- [ ] portfolio value in 25 not 24 years
+- [ ] show a read-only province (go with Alberta since it has no land transfer tax); https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
 
 Nice to have
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
