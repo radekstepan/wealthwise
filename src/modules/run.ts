@@ -51,6 +51,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
   let currentHousePrice = opts.house.price();
   let currentInterestRate = opts.rates.interest.initial();
+  let newHousePrice = currentHousePrice; // how much a new home costs
 
   // Closing costs and land transfer tax.
   const closingAndTax = sum(
@@ -122,11 +123,13 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   for (const year of range(amortization)) {
     const housePriceAppreciation = formula.apyToAprMonthly(opts.rates.house.appreciation());
     const bondsReturn = formula.apyToAprMonthly(opts.rates.bonds.return());
-    const moveEvery = opts.scenarios.move();
+    const moveEvery = opts.scenarios.move.tenureYears();
 
     // Property crash?
     if (rnd.bool(Math.min(opts.scenarios.crash.chance(), 1))) {
-      currentHousePrice *= (1 - Math.min(opts.scenarios.crash.drop(), 1));
+      const crashDrop = 1 - Math.min(opts.scenarios.crash.drop(), 1);
+      currentHousePrice *= crashDrop;
+      newHousePrice *= crashDrop;
     }
 
     for (const month of range(12)) {
@@ -151,6 +154,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
       // End of the month, appreciate the house.
       currentHousePrice *= 1 + housePriceAppreciation;
+      newHousePrice *= 1 + housePriceAppreciation;
       buyer.house.value = sum(
         currentHousePrice,
         -mgage.balance, // balance owing
@@ -171,6 +175,9 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       }
     } // end of month
 
+    // Apply premium to new home price.
+    newHousePrice *= 1 + opts.scenarios.move.annualMoveUpCost();
+
     let renew = false;
     if (isFixedRate) {
       // Renew the fixed rate mortgage every 5 years.
@@ -181,10 +188,12 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     // Moving scenario (make sure we do not move in the last year).
     if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
       renew = true;
+
       const movingCosts = sum(
         helpers.saleFees(province, currentHousePrice),
         opts.house.closingCosts(), // closing costs
-        helpers.landTransferTax(province, currentHousePrice) // land transfer tax
+        helpers.landTransferTax(province, currentHousePrice), // land transfer tax
+        Math.max(0, newHousePrice - currentHousePrice) // the premium of getting into new
       );
       // Add the moving costs to the renter's portfolio.
       buyer.house.costs += movingCosts;
@@ -192,6 +201,9 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       renter.portfolio.value += movingCosts;
       // Buyer now pays market rent.
       rent = marketRent;
+
+      // The buyer has a new shiny.
+      currentHousePrice = newHousePrice;
     }
 
     if (renew) {

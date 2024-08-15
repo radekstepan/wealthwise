@@ -1,18 +1,9 @@
-- [x] fix the actual code
-- [x] fix the summary table
-- [x] fix negative invested money (costs < rents)
-- [x] the portfolio appreciate doesn't account for capital gains tax
 - [ ] tests on the core estimate logic
-- [x] pick amortization in years (do a read-only 25 years)
-- [x] checkbox for variable rate read-only
-- [x] capital gains tax a variable
 - [ ] tooltips on each form field
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
 - [ ] review TODO notes
-- [x] the alignment of values and median in chart seems off (around 0)
 - [ ] why is the distribution not uniform?
-- [x] sale costs seem high
 - [ ] portfolio value in 25 not 24 years
 - [ ] show a read-only province (go with Alberta since it has no land transfer tax); https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
 
@@ -23,5 +14,7 @@ Nice to have
 - [ ] Cmd+C should copy an unformatted numeric value
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working
-- [x] type the inputs automatically (parse, run)
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
+- [ ] scenario for how much more expensive (in %) is the new property when moving - 1% pa
+- [ ] extra cost when buying a new property
+- [ ] add British Columbia and Ontario to the list of provinces

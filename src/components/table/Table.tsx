@@ -7,8 +7,8 @@ import { saleFees } from '../../modules/run.helpers';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { type ChartDataPoint } from '../chart/Chart';
-import './table.less';
 import { Province } from '../../config';
+import './table.less';
 
 // The component renders a table with several groups of items, each
 //  containing a label and a value. The value for each item is
@@ -26,8 +26,8 @@ function Table() {
   let median: ChartDataPoint|null = null;
   let years: number|null = null;
   if (dataState.length) {
-    years = dataState[1].length - 1;
-    median = dataState[1][years];
+    years = dataState[1].length;
+    median = dataState[1][years - 1];
   }
 
   return (

@@ -29,11 +29,11 @@ export const inputs = {
 
   rates: {
     interest: { // mortgage
-      initial: "5%", // https://wowa.ca/best-mortgage-rates/5-year/fixed
+      initial: "4.65%", // https://wowa.ca/best-mortgage-rates/5-year/fixed
       future: "3.5% - 6%"
     },
     rent: {
-      controlled: "2% - 4%", // 3% per year on average
+      controlled: "1% - 4%",
       market: "2% - 5%"
     },
     house: {
@@ -49,8 +49,11 @@ export const inputs = {
   scenarios: {
     crash: { // property market crash
       chance: "4% - 8%", // 1x - 2x in 25 years
-      drop: "20%" // each time
+      drop: "10%" // each time
     },
-    move: 5 // move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
+    move: {
+      tenureYears: 5, // move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
+      annualMoveUpCost: "0%", // how much more expensive a shiny new property is going to be
+    }
   }
 };

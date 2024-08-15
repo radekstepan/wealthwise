@@ -203,9 +203,14 @@ export default function Form() {
               field="scenarios.crash.drop"
             />
             <Field
-              label="Moving"
+              label="Years before moving"
               description="move every x years"
-              field="scenarios.move"
+              field="scenarios.move.tenureYears"
+            />
+            <Field
+              label="New home premium"
+              description="yearly new home price premium"
+              field="scenarios.move.annualMoveUpCost"
             />
           </>
         )}
