@@ -1,6 +1,5 @@
 import { pmt } from './formula';
 
-// Normalize small floating-point values to zero and ensure no negative balances
 const normalizeBalance = (val: number): number => {
   if (Math.abs(val) < 0.01) {
     val = 0;
@@ -11,7 +10,6 @@ const normalizeBalance = (val: number): number => {
   return val;
 }
 
-// Class-like function to manage mortgage calculations and operations
 export default function Mortgage(
   init: {
     balance: number, // Property price sans downpayment
@@ -33,6 +31,9 @@ export default function Mortgage(
     },
     get equity() {
       return init.balance - balance;
+    },
+    get remainingAmortization() {
+      return (periods - paidPeriods) / 12;
     },
 
     // Simulate making a mortgage payment
@@ -61,11 +62,30 @@ export default function Mortgage(
       return [principal, interest];
     },
 
+    // Paydown a principal.
+    paydown(principal: number) {
+      balance -= principal;
+
+      if (balance < 0) {
+        throw new Error("Cannot payoff more than the principal amount");
+      } else if (balance === 0) {
+        payment = 0;
+      }
+    },
+
     // Renew the loan with a new interest rate
-    renew(newInterestRate: number) {
+    renew(newInterestRate: number, additionalAmount: number = 0) {
       rate = newInterestRate / 12; // Convert annual rate to monthly
-      periods = periods - paidPeriods; // Adjust remaining periods
-      payment = pmt(rate, periods, -balance); // Recalculate payment
+      
+      // Add the additional amount to the balance.
+      balance += additionalAmount;
+
+      // Adjust remaining periods.
+      periods = periods - paidPeriods;
+
+      // Recalculate payment based on new balance, rate, and periods.
+      payment = pmt(rate, periods, -balance);
+
       paidPeriods = 0; // Reset paid periods count
     },
   };

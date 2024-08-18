@@ -22,7 +22,7 @@ function Page() {
         </div>
         <div className="main">
           <div className="fixed">
-            <h2 className="h2 title">Buy vs rent net profit comparison</h2>
+            <h2 className="h2 title">Buy vs rent net worth comparison</h2>
             <Chart />
             <Dist />
             <Table />

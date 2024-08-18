@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import exec from './exec';
 import {range, sum} from './utils';
-import { type Buyer, type Renter, type Data } from './run';
+import { type Data, type Renter, type Buyer } from './run';
 import { saleFees } from './run.helpers';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
@@ -13,7 +13,7 @@ const BANDS = 7; // distribution bands
 
 type Samples = Array<Data>; // samples * years
 
-export type DataPoint<T extends Buyer | Renter> = T & {
+export type DataPoint<T extends Buyer|Renter> = T & {
   $: number
 }
 
@@ -39,12 +39,18 @@ export default function simulate(
       .map(s => {
         const {buyer} = s[s.length - 1]; // last year in this sample
         return sum(
-          // Net house value.
-          buyer.house.value
-          -buyer.house.costs,
-          // Net portfolio appreciation.
-          buyer.portfolio.value,
-          -buyer.portfolio.costs
+          // House equity.
+          buyer.house.equity
+          // TODO hardcoded province
+          -saleFees(Province.Alberta, buyer.house.value),
+          // Portfolio net.
+          sum(
+            buyer.portfolio.value,
+            -sum(
+              buyer.portfolio.value
+              -buyer.portfolio.costs
+            ) * (1 - buyer.portfolio.capitalGainsTaxRate)
+          )
         );
       })
       .sort(d3.ascending);
@@ -80,33 +86,30 @@ export default function simulate(
       for (const sample of samples) {
         const sampleYear = sample[year];
 
-        const buyerPortfolioNet = sum(
-          sampleYear.buyer.portfolio.value,
-          -sampleYear.buyer.portfolio.costs,
-        );
-        const renterPortfolioNet = sum(
-          sampleYear.renter.portfolio.value,
-          -sampleYear.renter.portfolio.costs,
-        );
-
         buy.push({
           ...sampleYear.buyer,
           $: sum(
-            sampleYear.buyer.house.value,
-            -sampleYear.buyer.house.costs, // 0% capital gains tax
+            sampleYear.buyer.house.equity,
             // TODO hardcoded province
             -saleFees(Province.Alberta, sampleYear.buyer.house.value),
-            sampleYear.buyer.portfolio.value,
-            -sampleYear.buyer.portfolio.costs,
-            -(buyerPortfolioNet * sampleYear.buyer.portfolio.capitalGainsTaxRate)
+            sum(
+              sampleYear.buyer.portfolio.value,
+              -sum(
+                sampleYear.buyer.portfolio.value
+                -sampleYear.buyer.portfolio.costs
+              ) * (1 - sampleYear.buyer.portfolio.capitalGainsTaxRate)
+            )
           )
         });
 
         rent.push({
           ...sampleYear.renter,
           $: sum(
-            renterPortfolioNet,
-            -(renterPortfolioNet * sampleYear.renter.portfolio.capitalGainsTaxRate)
+            sampleYear.renter.portfolio.value,
+            -sum(
+              sampleYear.renter.portfolio.value
+              -sampleYear.renter.portfolio.costs
+            ) * (1 - sampleYear.renter.portfolio.capitalGainsTaxRate)
           )
         });
       }

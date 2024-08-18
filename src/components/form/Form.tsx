@@ -212,6 +212,11 @@ export default function Form() {
               description="yearly new home price premium"
               field="scenarios.move.annualMoveUpCost"
             />
+            <Field
+              label="Principal prepayment"
+              description="% of the original principal each year"
+              field="scenarios.mortgage.anniversaryPaydown"
+            />
           </>
         )}
       </Group>

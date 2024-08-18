@@ -54,6 +54,9 @@ export const inputs = {
     move: {
       tenureYears: 5, // move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
       annualMoveUpCost: "0%", // how much more expensive a shiny new property is going to be
+    },
+    mortgage: {
+      anniversaryPaydown: "0%" // simulate the effect of paying down a percentage of the original principal on the mortgage anniversary
     }
   }
 };

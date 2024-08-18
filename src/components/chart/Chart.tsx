@@ -1,9 +1,9 @@
-import React, {useEffect, useState, useRef, type MutableRefObject} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import * as d3 from 'd3';
 import numbro from 'numbro';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import simulate, { type DataPoint } from '../../modules/simulate';
-import { type Buyer, type Renter } from '../../modules/run';
+import { type Renter, type Buyer } from '../../modules/run';
 import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';

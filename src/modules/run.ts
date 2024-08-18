@@ -15,19 +15,30 @@ interface Asset {
   capitalGainsTaxRate: number, // 0...1
 }
 
-interface House extends Asset {
+export interface House extends Asset {
+  equity: number, // value minus principal balance remaining
   capitalGainsTaxRate: 0, // 0 = owner occupied
+  rentPaid: number,
+  interestPaid: number,
+  principalPaid: number,
+  monthlyExpensesPaid: number,
 }
 
-interface User {
+export interface RentalHouse extends House {
+  value: 0,
+  equity: 0,
+  interestPaid: 0,
+  principalPaid: 0,
+  monthlyExpensesPaid: 0
+}
+
+interface User<THouse extends House> {
   portfolio: Asset,
-  rentPaid: number, 
+  house: THouse,
 }
 
-export interface Renter extends User {};
-export interface Buyer extends User {
-  house: House,
-};
+export type Buyer = User<House>;
+export type Renter = User<RentalHouse>;
 
 // 25 years of data.
 export type Data = Array<{
@@ -59,8 +70,11 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     helpers.landTransferTax(province, currentHousePrice) // land transfer tax
   );
 
+  const anniversaryPaydownRate = opts.scenarios.mortgage.anniversaryPaydown();
+  const originalBalance = currentHousePrice * (1 - downpayment);
+
   const mgage = Mortgage({
-    balance: currentHousePrice * (1 - downpayment),
+    balance: originalBalance,
     rate: currentInterestRate,
     periods: amortization * 12
   });
@@ -68,9 +82,11 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
 
+  const downpaymentAmount = currentHousePrice - originalBalance;
+
   // Initial costs of the buyer.
   const month0Costs = [
-    currentHousePrice * downpayment, // downpayment
+    downpaymentAmount,
     closingAndTax, // closing costs and land transfer tax
     helpers.cmhc(downpayment, currentHousePrice) // cmhc insurance
   ];
@@ -88,10 +104,14 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     portfolio: { costs: 0, value: 0, capitalGainsTaxRate },
     house: {
       costs,
-      value: currentHousePrice * downpayment,
-      capitalGainsTaxRate: 0
-    },
-    rentPaid: 0
+      value: currentHousePrice,
+      equity: downpaymentAmount,
+      capitalGainsTaxRate: 0,
+      rentPaid: 0,
+      interestPaid: 0,
+      principalPaid: downpaymentAmount,
+      monthlyExpensesPaid: 0,
+    }
   };
   const renter: Renter = {
     portfolio: {
@@ -99,7 +119,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       value: costs,
       capitalGainsTaxRate
     },
-    rentPaid: 0
+    house: {
+      costs: 0,
+      value: 0,
+      equity: 0,
+      capitalGainsTaxRate: 0,
+      rentPaid: 0,
+      interestPaid: 0,
+      principalPaid: 0,
+      monthlyExpensesPaid: 0,
+    },
   };
 
   if (emitMeta) {
@@ -134,16 +163,24 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
     for (const month of range(12)) {
       // Pay mortgage (handles empty balance).
-      mgage.pay();
+      const [principal, interest] = mgage.pay();
+
+      // Add up the principal, interest, monthly expenses.
+      buyer.house.principalPaid += principal;
+      buyer.house.interestPaid += interest;
+      buyer.house.monthlyExpensesPaid += monthlyExpenses;
 
       // Pay rent.
-      buyer.rentPaid += rent;
-      renter.rentPaid += rent;
+      buyer.house.rentPaid += rent;
+      renter.house.rentPaid += rent;
+
+      // Buyer and rented costs.
+      buyer.house.costs += monthlyExpenses + mgage.payment;
+      renter.house.costs += rent;
 
       const diff = monthlyExpenses + mgage.payment - rent;
       // Buyer expenses are greater than rent, invest as a renter.
       if (diff > 0) {
-        buyer.house.costs += diff;
         renter.portfolio.costs += diff;
         renter.portfolio.value += diff;
       } else {
@@ -155,7 +192,8 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       // End of the month, appreciate the house.
       currentHousePrice *= 1 + housePriceAppreciation;
       newHousePrice *= 1 + housePriceAppreciation;
-      buyer.house.value = sum(
+      buyer.house.value = currentHousePrice,
+      buyer.house.equity = sum(
         currentHousePrice,
         -mgage.balance, // balance owing
       );
@@ -175,10 +213,31 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       }
     } // end of month
 
+    // Apply anniversary paydown at the end of each year
+    if (mgage.balance > 0 && anniversaryPaydownRate > 0) {
+      // Make sure we don't paydown more than the remaining balance.
+      const paydownAmount = Math.min(mgage.balance, originalBalance * anniversaryPaydownRate);
+
+      if (paydownAmount < 0) {
+        throw new Error("Paydown is negative?");
+      }
+
+      // Reduce the principal.
+      mgage.paydown(paydownAmount);
+      buyer.house.principalPaid += paydownAmount;
+      // The buyer's house equity increases.
+      buyer.house.costs += paydownAmount;
+      buyer.house.equity += paydownAmount;
+      // Add the paydown to renter's portfolio.
+      renter.portfolio.costs += paydownAmount;
+      renter.portfolio.value += paydownAmount;
+    }
+
     // Apply premium to new home price.
     newHousePrice *= 1 + opts.scenarios.move.annualMoveUpCost();
 
     let renew = false;
+    let additionalBalance = 0;
     if (isFixedRate) {
       // Renew the fixed rate mortgage every 5 years.
       if (mgage.balance > 0 && isEvery(year, term)) {
@@ -189,11 +248,19 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
       renew = true;
 
+      // The premium of getting into new to add to the principal.
+      const newHousePremium = Math.max(0, newHousePrice - currentHousePrice);
+
+      // Add the premium towards the balance if the mortgage is still to be paid off.
+      if (mgage.balance) {
+        additionalBalance = newHousePremium;
+      }
+
       const movingCosts = sum(
         helpers.saleFees(province, currentHousePrice),
         opts.house.closingCosts(), // closing costs
         helpers.landTransferTax(province, currentHousePrice), // land transfer tax
-        Math.max(0, newHousePrice - currentHousePrice) // the premium of getting into new
+        !mgage.balance ? newHousePremium : 0 // add the premium as cash if the balance has been paid off
       );
       // Add the moving costs to the renter's portfolio.
       buyer.house.costs += movingCosts;
@@ -202,18 +269,12 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       // Buyer now pays market rent.
       rent = marketRent;
 
-      // The buyer has a new shiny.
       currentHousePrice = newHousePrice;
     }
 
-    if (renew) {
-      mgage.renew(currentInterestRate);
+    if (renew && mgage.balance > 0) {
+      mgage.renew(currentInterestRate, additionalBalance);
     }
-
-    // Update the yearly variables.
-    monthlyExpenses *= 1 + opts.rates.house.expenses();
-    rent *= 1 + opts.rates.rent.controlled();
-    marketRent *= 1 + opts.rates.rent.market();
 
     // TODO sanity check.
     if (buyer.house.costs < 0) {
@@ -231,27 +292,49 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       year,
       // Object, make sure to copy the values.
       buyer: {
-        rentPaid: buyer.rentPaid,
         portfolio: {
-          costs: buyer.portfolio.costs,
+          costs: buyer.portfolio.costs, // money invested
           value: buyer.portfolio.value,
           capitalGainsTaxRate
         },
         house: {
           costs: buyer.house.costs,
           value: buyer.house.value,
-          capitalGainsTaxRate: 0
+          equity: buyer.house.equity,
+          rentPaid: buyer.house.rentPaid,
+          interestPaid: buyer.house.interestPaid,
+          principalPaid: buyer.house.principalPaid,
+          monthlyExpensesPaid: buyer.house.monthlyExpensesPaid,
+          capitalGainsTaxRate: 0,
         }
       },
       renter: {
-        rentPaid: renter.rentPaid,
         portfolio: {
-          costs: renter.portfolio.costs,
+          costs: renter.portfolio.costs, // money invested
           value: renter.portfolio.value,
           capitalGainsTaxRate
+        },
+        house: {
+          costs: renter.portfolio.costs, // rentPaid
+          value: 0,
+          equity: 0,
+          rentPaid: renter.house.rentPaid,
+          interestPaid: 0,
+          principalPaid: 0,
+          monthlyExpensesPaid: 0,
+          capitalGainsTaxRate: 0,
         }
       },
     });
+
+    // Update the yearly variables.
+    monthlyExpenses *= 1 + opts.rates.house.expenses();
+    rent *= 1 + opts.rates.rent.controlled();
+    marketRent *= 1 + opts.rates.rent.market();
+  }
+
+  if (mgage.balance) {
+    throw new Error("Mortgage has not been paid off");
   }
 
   return data;
