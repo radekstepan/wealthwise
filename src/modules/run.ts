@@ -21,6 +21,7 @@ export interface House extends Asset {
   rentPaid: number,
   interestPaid: number,
   principalPaid: number,
+  principalRemaining: number,
   monthlyExpensesPaid: number,
 }
 
@@ -29,6 +30,7 @@ export interface RentalHouse extends House {
   equity: 0,
   interestPaid: 0,
   principalPaid: 0,
+  principalRemaining: 0,
   monthlyExpensesPaid: 0
 }
 
@@ -110,6 +112,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       rentPaid: 0,
       interestPaid: 0,
       principalPaid: downpaymentAmount,
+      principalRemaining: mgage.balance,
       monthlyExpensesPaid: 0,
     }
   };
@@ -127,6 +130,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       rentPaid: 0,
       interestPaid: 0,
       principalPaid: 0,
+      principalRemaining: 0,
       monthlyExpensesPaid: 0,
     },
   };
@@ -304,6 +308,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
           rentPaid: buyer.house.rentPaid,
           interestPaid: buyer.house.interestPaid,
           principalPaid: buyer.house.principalPaid,
+          principalRemaining: mgage.balance,
           monthlyExpensesPaid: buyer.house.monthlyExpensesPaid,
           capitalGainsTaxRate: 0,
         }
@@ -321,6 +326,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
           rentPaid: renter.house.rentPaid,
           interestPaid: 0,
           principalPaid: 0,
+          principalRemaining: 0,
           monthlyExpensesPaid: 0,
           capitalGainsTaxRate: 0,
         }

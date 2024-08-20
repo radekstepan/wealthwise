@@ -5,7 +5,6 @@
 - [ ] review TODO notes
 - [ ] why is the distribution not uniform?
 - [ ] portfolio value in 25 not 24 years
-- [ ] show a read-only province (go with Alberta since it has no land transfer tax); https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
 
 Nice to have
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
@@ -17,8 +16,12 @@ Nice to have
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
 - [x] scenario for how much more expensive (in %) is the new property when moving - 1% pa
 - [ ] extra cost when buying a new property
-- [ ] add British Columbia and Ontario to the list of provinces
 - [x] early prepayment simulation
 - [x] download a spreadsheet of median result to "Check the result yourself"
 - [ ] when looking at net worth each year we apply sale costs to all years, but we move in some years which results in double counting of these fees
-- [ ] show in the chart when rent covers all costs and when principal is paid off
+- [x] show in the chart when rent covers all costs and when principal is paid off
+- [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
+
+Next
+- [ ] show a read-only province (go with Alberta since it has no land transfer tax); https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
+  - add British Columbia and Ontario to the list of provinces

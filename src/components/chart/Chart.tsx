@@ -119,6 +119,7 @@ const update = (
     .duration(500)
     .call(yAxis);
 
+  // The actual data.
   for (const quantile in data) {
     const q = data[quantile];
 
@@ -151,6 +152,95 @@ const update = (
         .y(d => y(d.renter.$)) // renter index
       );
   }
+
+  let mortgagePaidOffYear: number = null;
+  let rentCoversExpensesYear: number = null;
+  for (let year = 0; year < data[1].length && (mortgagePaidOffYear === null || rentCoversExpensesYear === null); year++) {
+    const d = data[1][year];
+    if (year + 1 !== data[1].length) {
+      console.log(year, d.buyer.house.principalRemaining);
+      // Mortgage paid off when there's no principal remaining.
+      if (mortgagePaidOffYear === null && !d.buyer.house.principalRemaining) {
+        mortgagePaidOffYear = year;
+      }
+      // Rent covers expense when the buyer starts investing in their porfolio.
+      if (rentCoversExpensesYear === null && d.buyer.portfolio.costs) {
+        rentCoversExpensesYear = year;
+      }
+    }
+  }
+
+  // Mortgage paid off line.
+  const mortgageLine = svg.selectAll<SVGLineElement, number[]>(".mortgage-line")
+    .data(mortgagePaidOffYear !== null ? [mortgagePaidOffYear] : []);
+  
+  mortgageLine.enter()
+    .append("line")
+    .attr("class", "mortgage-line")
+    .merge(mortgageLine)
+    .transition()
+    .duration(500)
+    .attr("x1", d => x(d))
+    .attr("x2", d => x(d))
+    .attr("y1", 0)
+    .attr("y2", 480)
+    .attr("stroke", "black")
+    .attr("stroke-dasharray", "5,5");
+
+  mortgageLine.exit().remove();
+
+  // Mortgage paid off label.
+  const mortgageLineLabel = svg.selectAll<SVGTextElement, number[]>(".mortgage-label")
+    .data(mortgagePaidOffYear !== null ? [mortgagePaidOffYear] : []);
+
+  mortgageLineLabel.enter()
+    .append("text")
+    .attr("class", "mortgage-label")
+    .merge(mortgageLineLabel)
+    .transition()
+    .duration(500)
+    .attr("x", d => x(d) + 5)
+    .attr("y", 110)
+    .attr("text-anchor", "start")
+    .text("Mortgage paid off");
+
+  mortgageLineLabel.exit().remove();
+
+  // Rent covers expenses line.
+  const rentCoversLine = svg.selectAll<SVGLineElement, number[]>(".rentcovers-line")
+    .data(rentCoversExpensesYear !== null ? [rentCoversExpensesYear] : []);
+  
+  rentCoversLine.enter()
+    .append("line")
+    .attr("class", "rentcovers-line")
+    .merge(rentCoversLine)
+    .transition()
+    .duration(500)
+    .attr("x1", d => x(d))
+    .attr("x2", d => x(d))
+    .attr("y1", 0)
+    .attr("y2", 480)
+    .attr("stroke", "black")
+    .attr("stroke-dasharray", "5,5");
+
+  rentCoversLine.exit().remove();
+
+  // Rent covers expenses label.
+  const rentCoversLineLabel = svg.selectAll<SVGTextElement, number[]>(".rentcovers-label")
+    .data(rentCoversExpensesYear !== null ? [rentCoversExpensesYear] : []);
+
+  rentCoversLineLabel.enter()
+    .append("text")
+    .attr("class", "rentcovers-label")
+    .merge(rentCoversLineLabel)
+    .transition()
+    .duration(500)
+    .attr("x", d => x(d) + 5)
+    .attr("y", 160)
+    .attr("text-anchor", "start")
+    .text("Rent covers expenses");
+
+  rentCoversLineLabel.exit().remove();
 }
 
 const legend = (point: ChartDataPoint) => {

@@ -125,14 +125,38 @@
         stroke-width: 1.5;
       }
     }
+
+    line {
+      stroke: #d8dae5;
+
+      &.mortgage-line, &.rentcovers-line {
+        stroke-width: 0.5px;
+        stroke-dasharray: 5,5;
+        text-anchor: middle;
+      }
+
+      &.mortgage-line {
+        stroke: #52BD95;
+      }
+
+      &.rentcovers-line {
+        stroke: #93c9b5;
+      }
+    }
+    
+    .mortgage-label, .rentcovers-label {
+      font-size: 12px;
+      fill: #52BD95;
+      user-select: none;
+    }
+
+    .mortgage-label {
+      font-weight: bold;
+    }
   
     text {
       font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       text-rendering: optimizeLegibility;
-    }
-  
-    line {
-      stroke: #F9FAFC;
     }
   }
 }

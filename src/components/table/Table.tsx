@@ -239,7 +239,7 @@ function Table() {
                 })}</div>
               </div>
               <div className="item">
-                <div className="label">Rent paid <em>imputed</em></div>
+                <div className="label">Rent paid (imputed)</div>
                 <span className="dot" />
                 <div>{numbro(median.buyer.house.rentPaid).formatCurrency({
                   thousandSeparated: true,
