@@ -44,7 +44,7 @@ function Table() {
         'Principal paid',
         'Interest paid',
         'Expenses',
-        'Transaction costs',
+        'Moving costs',
         'Rent paid',
         'Portfolio ≈ net',
         'Portfolio value',
@@ -73,13 +73,8 @@ function Table() {
         yearData.buyer.house.interestPaid,
         // Monthly expenses.
         yearData.buyer.house.monthlyExpensesPaid,
-        // Costs.
-        sum(
-          yearData.buyer.house.costs,
-          -yearData.buyer.house.principalPaid,
-          -yearData.buyer.house.interestPaid,
-          -yearData.buyer.house.monthlyExpensesPaid,
-        ),
+        // Moving expenses.
+        yearData.buyer.house.movingCostsPaid,
         // Rent paid.
         yearData.buyer.house.rentPaid,
         // Portfolio net.
@@ -213,14 +208,11 @@ function Table() {
                 })}</div>
               </div>
               <div className="item">
-                <div className="label">Transaction costs (closing, realtor etc.)</div>
+                <div className="label">Moving costs (closing, realtor etc.)</div>
                 <span className="dot" />
-                <div>{numbro(sum(
-                  median.buyer.house.costs,
-                  -median.buyer.house.principalPaid,
-                  -median.buyer.house.interestPaid,
-                  -median.buyer.house.monthlyExpensesPaid,
-                )).formatCurrency({
+                <div>{numbro(
+                  median.buyer.house.movingCostsPaid
+                ).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
                 })}</div>

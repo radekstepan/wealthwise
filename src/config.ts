@@ -39,7 +39,7 @@ export const inputs = {
     },
     house: {
       expenses: "3% - 5%", // expenses increases
-      appreciation: "1%" // 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
+      appreciation: "1.25% - 3.57%" // nominal condo appreciation + 2% inflation - 1% move up cost (House Hunt Victoria)
     },
     bonds: {
       return: "3%",

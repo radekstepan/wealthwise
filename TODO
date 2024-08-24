@@ -18,7 +18,7 @@ Nice to have
 - [ ] extra cost when buying a new property
 - [x] early prepayment simulation
 - [x] download a spreadsheet of median result to "Check the result yourself"
-- [ ] when looking at net worth each year we apply sale costs to all years, but we move in some years which results in double counting of these fees
+- [x] when looking at net worth each year we apply sale costs to all years, but we move in some years which results in double counting of these fees
 - [x] show in the chart when rent covers all costs and when principal is paid off
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
 - [ ] make the amounts vertical labels more human readable

@@ -18,25 +18,19 @@ interface Asset {
 }
 
 export interface House extends Asset {
+  rentPaid: number,
   equity: number, // value minus principal balance remaining
   capitalGainsTaxRate: 0, // 0 = owner occupied
-  rentPaid: number,
   interestPaid: number,
   principalPaid: number,
   principalRemaining: number,
   monthlyExpensesPaid: number,
+  movingCostsPaid: number,
 }
 
-export interface RentalHouse extends House {
-  value: 0,
-  equity: 0,
-  interestPaid: 0,
-  principalPaid: 0,
-  principalRemaining: 0,
-  monthlyExpensesPaid: 0
-}
+export type RentalHouse = Pick<House, '$'|'rentPaid'>;
 
-interface User<THouse extends House> {
+interface User<THouse extends House|RentalHouse> {
   $: number, // net worth
   province: Province,
   portfolio: Asset,
@@ -126,6 +120,10 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       principalPaid: downpaymentAmount,
       principalRemaining: mgage.balance,
       monthlyExpensesPaid: 0,
+      movingCostsPaid: sum(
+        month0Costs[1], // closing and tax
+        month0Costs[2] // cmhc
+      ),
     }
   };
   const renter: Renter = {
@@ -139,15 +137,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     },
     house: {
       $: -1,
-      costs: 0,
-      value: 0,
-      equity: 0,
-      capitalGainsTaxRate: 0,
       rentPaid: 0,
-      interestPaid: 0,
-      principalPaid: 0,
-      principalRemaining: 0,
-      monthlyExpensesPaid: 0,
     },
   };
 
@@ -155,7 +145,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     const meta: MetaState = {
       downpayment: month0Costs[0],
       closingAndTax,
-      cmhc: month0Costs[2],
+      cmhc: month0Costs[2], // cmhc
       expenses: monthlyExpenses,
       payment: mgage.payment
     };
@@ -196,7 +186,6 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
       // Buyer and rented costs.
       buyer.house.costs += monthlyExpenses + mgage.payment;
-      renter.house.costs += rent;
 
       const diff = monthlyExpenses + mgage.payment - rent;
       // Buyer expenses are greater than rent, invest as a renter.
@@ -277,7 +266,6 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       }
 
       const movingCosts = sum(
-        // TODO double counting of sale fees
         helpers.saleFees(province, currentHousePrice),
         opts.house.closingCosts(), // closing costs
         helpers.landTransferTax(province, currentHousePrice, false), // land transfer tax
@@ -285,6 +273,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       );
       // Add the moving costs to the renter's portfolio.
       buyer.house.costs += movingCosts;
+      buyer.house.movingCostsPaid += movingCosts;
       renter.portfolio.costs += movingCosts;
       renter.portfolio.value += movingCosts;
       // Buyer now pays market rent.
@@ -353,6 +342,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
           principalPaid: buyer.house.principalPaid,
           principalRemaining: mgage.balance,
           monthlyExpensesPaid: buyer.house.monthlyExpensesPaid,
+          movingCostsPaid: buyer.house.movingCostsPaid,
           capitalGainsTaxRate: 0,
         }
       },
@@ -367,15 +357,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
         },
         house: {
           $: 0,
-          costs: renter.portfolio.costs, // rentPaid
-          value: 0,
-          equity: 0,
           rentPaid: renter.house.rentPaid,
-          interestPaid: 0,
-          principalPaid: 0,
-          principalRemaining: 0,
-          monthlyExpensesPaid: 0,
-          capitalGainsTaxRate: 0,
         }
       },
     });
