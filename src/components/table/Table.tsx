@@ -8,7 +8,6 @@ import { saleFees } from '../../modules/run.helpers';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { type ChartDataPoint } from '../chart/Chart';
-import { Province } from '../../config';
 import './table.less';
 
 const Q2_INDEX = 1;
@@ -37,6 +36,7 @@ function Table() {
     const worksheetData = [
       [
         'Year',
+        'Net worth',
         'Property value',
         'Sale costs',
         'Property equity',
@@ -57,18 +57,16 @@ function Table() {
       worksheetData.push([
         // Year.
         year++,
+        // Net worth.
+        yearData.buyer.$,
         // Property value.
         yearData.buyer.house.value,
         // Sale costs.
-        -sum(saleFees(Province.Alberta, yearData.buyer.house.value)),
+        -sum(saleFees(yearData.buyer.province, yearData.buyer.house.value)),
         // Property equity.
         yearData.buyer.house.equity,
         // Property net.
-        sum(
-          yearData.buyer.house.equity,
-          // TODO hardcoded province
-          -saleFees(Province.Alberta, yearData.buyer.house.value)
-        ),
+        yearData.buyer.house.$,
         // Principal.
         yearData.buyer.house.principalPaid,
         // Mortgage interest.
@@ -85,13 +83,7 @@ function Table() {
         // Rent paid.
         yearData.buyer.house.rentPaid,
         // Portfolio net.
-        sum(
-          yearData.buyer.portfolio.value,
-          -sum(
-            yearData.buyer.portfolio.value,
-            -yearData.buyer.portfolio.costs,
-          ) * yearData.buyer.portfolio.capitalGainsTaxRate
-        ),
+        yearData.buyer.portfolio.$,
         // Portfolio value.
         yearData.buyer.portfolio.value,
         // Capital gains tax.
@@ -176,8 +168,7 @@ function Table() {
                 <div className="label">- Sale costs</div>
                 <span className="dot" />
                 <div>{numbro(
-                  // TODO hardcoded province
-                  saleFees(Province.Alberta, median.buyer.house.value),
+                  saleFees(median.buyer.province, median.buyer.house.value),
                 ).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
@@ -186,11 +177,7 @@ function Table() {
               <div className="item">
                 <div className="label">≈ Net</div>
                 <span className="dot" />
-                <div>{numbro(sum(
-                  median.buyer.house.equity,
-                  // TODO hardcoded province
-                  -saleFees(Province.Alberta, median.buyer.house.value)
-                )).formatCurrency({
+                <div>{numbro(median.buyer.house.$).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
                 })}</div>
@@ -270,13 +257,7 @@ function Table() {
               <div className="item">
                 <div className="label">≈ Net</div>
                 <span className="dot" />
-                <div>{numbro(sum(
-                  median.buyer.portfolio.value,
-                  -sum(
-                    median.buyer.portfolio.value,
-                    -median.buyer.portfolio.costs,
-                  ) * median.buyer.portfolio.capitalGainsTaxRate
-                )).formatCurrency({
+                <div>{numbro(median.buyer.portfolio.$).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
                 })}</div>
@@ -305,13 +286,7 @@ function Table() {
               <div className="item">
                 <div className="label">≈ Net</div>
                 <span className="dot" />
-                <div>{numbro(sum(
-                  median.renter.portfolio.value,
-                  -sum(
-                    median.renter.portfolio.value,
-                    -median.renter.portfolio.costs,
-                  ) * median.renter.portfolio.capitalGainsTaxRate
-                )).formatCurrency({
+                <div>{numbro(median.renter.portfolio.$).formatCurrency({
                   thousandSeparated: true,
                   mantissa: 0
                 })}</div>

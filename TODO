@@ -21,7 +21,11 @@ Nice to have
 - [ ] when looking at net worth each year we apply sale costs to all years, but we move in some years which results in double counting of these fees
 - [x] show in the chart when rent covers all costs and when principal is paid off
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
+- [ ] make the amounts vertical labels more human readable
 
 Next
 - [ ] show a read-only province (go with Alberta since it has no land transfer tax); https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
   - add British Columbia and Ontario to the list of provinces
+  - first time homebuyer checkbox
+  - render provinces as a dropdown
+    - do the same for other booleans

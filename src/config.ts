@@ -1,9 +1,10 @@
 export enum Province {
-  "Alberta"
+  AB,
+  BC
 };
 
 export const inputs = {
-  province: Province.Alberta,
+  province: Province.BC,
 
   mortgage: {
     amortization: 25, // years
@@ -12,8 +13,8 @@ export const inputs = {
   },
 
   house: {
-    price: "$650,000",
-    downpayment: "20%",
+    price: "$680,000",
+    downpayment: "30%",
     maintenance: "$550", // or condo fees
     propertyTax: "$3,100", // yearly
     insurance: "$100", // personal condo insurance
@@ -29,8 +30,8 @@ export const inputs = {
 
   rates: {
     interest: { // mortgage
-      initial: "4.65%", // https://wowa.ca/best-mortgage-rates/5-year/fixed
-      future: "3.5% - 6%"
+      initial: "5%", // https://wowa.ca/best-mortgage-rates/5-year/fixed
+      future: "4% - 5%"
     },
     rent: {
       controlled: "1% - 4%",
@@ -38,10 +39,10 @@ export const inputs = {
     },
     house: {
       expenses: "3% - 5%", // expenses increases
-      appreciation: "1.9%" // 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
+      appreciation: "1%" // 1.9% house price https://www.ceicdata.com/en/indicator/canada/house-prices-growth
     },
     bonds: {
-      return: "3% - 4%",
+      return: "3%",
       capitalGainsTax: "25%" // 50% on 50% (over $250k profit yearly is 66% inclusion rate)
     }
   },
@@ -53,10 +54,10 @@ export const inputs = {
     },
     move: {
       tenureYears: 5, // move every x years https://www.financialsamurai.com/the-median-homeownership-duration-is-too-short-to-build-real-wealth/
-      annualMoveUpCost: "0%", // how much more expensive a shiny new property is going to be
+      annualMoveUpCost: "1%", // how much more expensive a shiny new property is going to be
     },
     mortgage: {
-      anniversaryPaydown: "0%" // simulate the effect of paying down a percentage of the original principal on the mortgage anniversary
+      anniversaryPaydown: "6%" // simulate the effect of paying down a percentage of the original principal on the mortgage anniversary
     }
   }
 };

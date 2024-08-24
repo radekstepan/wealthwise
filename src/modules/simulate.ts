@@ -2,20 +2,14 @@ import * as d3 from 'd3';
 import exec from './exec';
 import {range, sum} from './utils';
 import { type Data, type Renter, type Buyer } from './run';
-import { saleFees } from './run.helpers';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
 import { type TypedInputs } from './inputs/inputs';
-import { Province } from '../config';
 
 const BANDS = 7; // distribution bands
 
 type Samples = Array<Data>; // samples * years
-
-export type DataPoint<T extends Buyer|Renter> = T & {
-  $: number
-}
 
 // Multiple runs/samples.
 // Simulating multiple scenarios for comparing buying vs. renting a property.
@@ -38,20 +32,7 @@ export default function simulate(
     const dist = samples
       .map(s => {
         const {buyer} = s[s.length - 1]; // last year in this sample
-        return sum(
-          // House equity.
-          buyer.house.equity
-          // TODO hardcoded province
-          -saleFees(Province.Alberta, buyer.house.value),
-          // Portfolio net.
-          sum(
-            buyer.portfolio.value,
-            -sum(
-              buyer.portfolio.value
-              -buyer.portfolio.costs
-            ) * (1 - buyer.portfolio.capitalGainsTaxRate)
-          )
-        );
+        return buyer.$;
       })
       .sort(d3.ascending);
 
@@ -81,37 +62,12 @@ export default function simulate(
     const data: ChartData = [[], [], []]; // quantiles
     // For each year.
     for (const year of range(samples[0].length)) {
-      const buy: Array<DataPoint<Buyer>> = [];
-      const rent: Array<DataPoint<Renter>> = [];
+      const buy: Array<Buyer> = [];
+      const rent: Array<Renter> = [];
       for (const sample of samples) {
         const sampleYear = sample[year];
-
-        buy.push({
-          ...sampleYear.buyer,
-          $: sum(
-            sampleYear.buyer.house.equity,
-            // TODO hardcoded province
-            -saleFees(Province.Alberta, sampleYear.buyer.house.value),
-            sum(
-              sampleYear.buyer.portfolio.value,
-              -sum(
-                sampleYear.buyer.portfolio.value
-                -sampleYear.buyer.portfolio.costs
-              ) * (1 - sampleYear.buyer.portfolio.capitalGainsTaxRate)
-            )
-          )
-        });
-
-        rent.push({
-          ...sampleYear.renter,
-          $: sum(
-            sampleYear.renter.portfolio.value,
-            -sum(
-              sampleYear.renter.portfolio.value
-              -sampleYear.renter.portfolio.costs
-            ) * (1 - sampleYear.renter.portfolio.capitalGainsTaxRate)
-          )
-        });
+        buy.push(sampleYear.buyer);
+        rent.push(sampleYear.renter);
       }
   
       buy.sort((a, b) => d3.ascending(a.$, b.$));

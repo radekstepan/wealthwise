@@ -6,10 +6,12 @@ import * as formula from './formula';
 import parse, { type ParsedInputs } from './inputs/parse';
 import { type TypedInputs } from "./inputs/inputs";
 import { type MetaState } from "../atoms/metaAtom";
+import { Province } from "../config";
 
 const SAMPLES = 1000; // number of samples
 
 interface Asset {
+  $: number, // net worth
   costs: number,
   value: number,
   capitalGainsTaxRate: number, // 0...1
@@ -35,6 +37,8 @@ export interface RentalHouse extends House {
 }
 
 interface User<THouse extends House> {
+  $: number, // net worth
+  province: Province,
   portfolio: Asset,
   house: THouse,
 }
@@ -69,7 +73,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   // Closing costs and land transfer tax.
   const closingAndTax = sum(
     opts.house.closingCosts(), // fees
-    helpers.landTransferTax(province, currentHousePrice) // land transfer tax
+    helpers.landTransferTax(province, currentHousePrice, true) // land transfer tax
   );
 
   const anniversaryPaydownRate = opts.scenarios.mortgage.anniversaryPaydown();
@@ -103,8 +107,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   );
 
   const buyer: Buyer = {
-    portfolio: { costs: 0, value: 0, capitalGainsTaxRate },
+    $: 0,
+    province,
+    portfolio: {
+      $: -1,
+      costs: 0,
+      value: 0,
+      capitalGainsTaxRate
+    },
     house: {
+      $: -1,
       costs,
       value: currentHousePrice,
       equity: downpaymentAmount,
@@ -117,12 +129,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
     }
   };
   const renter: Renter = {
+    $: 0,
+    province,
     portfolio: {
+      $: -1,
       costs,
       value: costs,
       capitalGainsTaxRate
     },
     house: {
+      $: -1,
       costs: 0,
       value: 0,
       equity: 0,
@@ -261,9 +277,10 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       }
 
       const movingCosts = sum(
+        // TODO double counting of sale fees
         helpers.saleFees(province, currentHousePrice),
         opts.house.closingCosts(), // closing costs
-        helpers.landTransferTax(province, currentHousePrice), // land transfer tax
+        helpers.landTransferTax(province, currentHousePrice, false), // land transfer tax
         !mgage.balance ? newHousePremium : 0 // add the premium as cash if the balance has been paid off
       );
       // Add the moving costs to the renter's portfolio.
@@ -291,17 +308,43 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       throw new Error('Costs are negative?');
     }
 
+    const buyerHouse$ = sum(
+      buyer.house.equity,
+      -helpers.saleFees(province, buyer.house.value),
+    );
+    const buyerPortfolio$ = sum(
+      buyer.portfolio.value,
+      -sum(
+        buyer.portfolio.value
+        -buyer.portfolio.costs
+      ) * (1 - buyer.portfolio.capitalGainsTaxRate)
+    );
+    const renterPortfolio$ = sum(
+      renter.portfolio.value,
+      -sum(
+        renter.portfolio.value
+        -renter.portfolio.costs
+      ) * (1 - renter.portfolio.capitalGainsTaxRate)
+    );
+
     // Log it.
     data.push({
       year,
-      // Object, make sure to copy the values.
+      // NOTE: Object, make sure to copy the values.
       buyer: {
+        $: sum(
+          buyerHouse$,
+          buyerPortfolio$
+        ),
+        province, // TODO simplify so we don't push extra data across
         portfolio: {
+          $: buyerPortfolio$,
           costs: buyer.portfolio.costs, // money invested
           value: buyer.portfolio.value,
           capitalGainsTaxRate
         },
         house: {
+          $: buyerHouse$,
           costs: buyer.house.costs,
           value: buyer.house.value,
           equity: buyer.house.equity,
@@ -314,12 +357,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
         }
       },
       renter: {
+        $: renterPortfolio$,
+        province, // TODO simplify so we don't push extra data across
         portfolio: {
+          $: renterPortfolio$,
           costs: renter.portfolio.costs, // money invested
           value: renter.portfolio.value,
           capitalGainsTaxRate
         },
         house: {
+          $: 0,
           costs: renter.portfolio.costs, // rentPaid
           value: 0,
           equity: 0,

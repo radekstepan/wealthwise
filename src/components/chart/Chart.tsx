@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import * as d3 from 'd3';
 import numbro from 'numbro';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import simulate, { type DataPoint } from '../../modules/simulate';
+import simulate from '../../modules/simulate';
 import { type Renter, type Buyer } from '../../modules/run';
 import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
@@ -20,8 +20,8 @@ export type ChartData = [
 ];
 
 export interface ChartDataPoint {
-  buyer: DataPoint<Buyer>,
-  renter: DataPoint<Renter>
+  buyer: Buyer,
+  renter: Renter
 }
 
 type Selection = d3.Selection<SVGSVGElement, unknown, null, undefined>;
@@ -158,7 +158,6 @@ const update = (
   for (let year = 0; year < data[1].length && (mortgagePaidOffYear === null || rentCoversExpensesYear === null); year++) {
     const d = data[1][year];
     if (year + 1 !== data[1].length) {
-      console.log(year, d.buyer.house.principalRemaining);
       // Mortgage paid off when there's no principal remaining.
       if (mortgagePaidOffYear === null && !d.buyer.house.principalRemaining) {
         mortgagePaidOffYear = year;
@@ -247,8 +246,8 @@ const legend = (point: ChartDataPoint) => {
   const {buyer, renter} = point;
 
   const d: [
-    ['buy'|'rent', DataPoint<Buyer>|DataPoint<Renter>],
-    ['rent'|'buy', DataPoint<Renter>|DataPoint<Buyer>]
+    ['buy'|'rent', Buyer|Renter],
+    ['rent'|'buy', Renter|Buyer]
   ] = buyer.$ < renter.$
     ? [['buy', buyer], ['rent', renter]]
     : [['rent', renter], ['buy', buyer]];

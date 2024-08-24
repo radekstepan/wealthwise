@@ -1,11 +1,78 @@
 import { Province } from '../config';
 import {sum} from './utils';
 
+const landTransferTaxAB = (houseValue: number) => Math.ceil(houseValue / 5000) * 5;
+
+const landTransferTaxBC = (houseValue: number, isFirstTimeBuyer=true, isNewlyBuilt=false, isLessThanHalfHectare=true) => {
+  // Base tax rates
+  const rate1 = 0.01; // 1% on the first $200,000
+  const rate2 = 0.02; // 2% on $200,000 to $2,000,000
+  const rate3 = 0.03; // 3% on the portion greater than $2,000,000
+  const rate4 = 0.05; // Additional 2% (5% total) on the portion greater than $3,000,000
+
+  let tax = 0;
+
+  // Calculate base tax
+  if (houseValue <= 200000) {
+    tax = houseValue * rate1;
+  } else if (houseValue <= 2000000) {
+    tax = 200000 * rate1 + (houseValue - 200000) * rate2;
+  } else if (houseValue <= 3000000) {
+    tax = 200000 * rate1 + 1800000 * rate2 + (houseValue - 2000000) * rate3;
+  } else {
+    tax = 200000 * rate1 + 1800000 * rate2 + 1000000 * rate3 + (houseValue - 3000000) * rate4;
+  }
+
+  // Apply exemptions
+  if (isFirstTimeBuyer) {
+    if (houseValue <= 500000) {
+      return 0; // Full exemption
+    }
+    if (houseValue < 525000) {
+      // Partial exemption
+      const exemption = 8000 * (525000 - houseValue) / 25000;
+      return Math.max(0, tax - exemption);
+    }
+    if (houseValue <= 835000) {
+      return Math.max(0, tax - 8000); // $8,000 exemption
+    }
+    if (houseValue < 860000) {
+      // Partial exemption
+      const exemption = 8000 * (860000 - houseValue) / 25000;
+      return Math.max(0, tax - exemption);
+    }
+  }
+
+  if (isNewlyBuilt && isLessThanHalfHectare) {
+    if (houseValue <= 750000) {
+      return 0; // Full exemption
+    }
+    if (houseValue <= 800000) {
+      // Partial exemption
+      return tax * (1 - (800000 - houseValue) / 50000);
+    }
+  }
+
+  if (isNewlyBuilt) {
+    if (houseValue <= 1100000) {
+      return 0; // Full exemption
+    }
+    if (houseValue <= 1150000) {
+      // Partial exemption
+      return tax * (1 - (1150000 - houseValue) / 50000);
+    }
+  }
+
+  return tax;
+}
+
 // https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
-export const landTransferTax = (province: Province, houseValue: number) => {
+export const landTransferTax = (province: Province, houseValue: number, isFirstTimeBuyer: boolean) => {
   switch (province) {
-    case Province.Alberta:
-      return Math.ceil(houseValue / 5000) * 5;
+    case Province.AB:
+      return landTransferTaxAB(houseValue);
+    case Province.BC:
+      return landTransferTaxBC(houseValue, isFirstTimeBuyer);
     default:
       return 0;
   }
@@ -44,8 +111,10 @@ export const cmhc = (downpayment: number, price: number) => {
 // https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
 export const saleFees = (province: Province, houseValue: number) => {
   let salesTax = 1;
-  if (province === Province.Alberta) {
+  if (province === Province.AB) {
     salesTax = 1.05;
+  } else if (province === Province.BC) {
+    salesTax = 1.12;
   }
 
   return sum(

@@ -3,8 +3,8 @@ import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import useCollapse from 'react-collapsed';
 import { useAtomValue } from 'jotai';
 import Field from './Field';
-import './form.less';
 import { formAtom } from '../../atoms/formAtom';
+import './form.less';
 
 // Group uses the useCollapse hook to animate the expansion and collapse
 //  of the group. It passes a callback to its children that allows the
@@ -96,6 +96,11 @@ export default function Form() {
               description="% yearly maintenance, taxes and insurance"
               field="rates.house.expenses"
             />
+            <Field
+              label="Province"
+              description="AB or BC"
+              field="province"
+            />
           </>
         )}
       </Group>
@@ -110,12 +115,12 @@ export default function Form() {
             <Field
               focus={isExpandEnd}
               label="Current interest rate"
-              description="% yearly variable mortgage interest rate"
+              description="% yearly mortgage interest rate"
               field="rates.interest.initial"
             />
             <Field
               label="Future interest rate"
-              description="% yearly variable mortgage interest rate"
+              description="% yearly mortgage interest rate"
               field="rates.interest.future"
             />
             <Field
