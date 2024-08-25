@@ -1,12 +1,12 @@
 import React from 'react';
 import numbro from 'numbro';
 import { useAtomValue } from 'jotai';
-import * as xlsx from 'xlsx';
 import Value from './Value';
 import {sum} from '../../modules/utils';
 import { saleFees } from '../../modules/run.helpers';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
+import { useDownloadSheet } from '../../hooks/useDownloadSheet';
 import { type ChartDataPoint } from '../chart/Chart';
 import './table.less';
 
@@ -20,6 +20,8 @@ function Table() {
   const metaState = useAtomValue(metaAtom);
   const dataState = useAtomValue(dataAtom);
 
+  const onDownload = useDownloadSheet();
+
   // Check that the meta atom is initialized.
   if (metaState.downpayment === null) {
     return null;
@@ -31,69 +33,6 @@ function Table() {
     years = dataState[Q2_INDEX].length;
     median = dataState[Q2_INDEX][years - 1];
   }
-
-  const onDownload = () => {
-    const worksheetData = [
-      [
-        'Year',
-        'Net worth',
-        'Property value',
-        'Sale costs',
-        'Property equity',
-        'Property ≈ net',
-        'Principal paid',
-        'Interest paid',
-        'Expenses',
-        'Moving costs',
-        'Rent paid',
-        'Portfolio ≈ net',
-        'Portfolio value',
-        'Capital gains tax'
-      ]
-    ];
-    
-    let year = 1;
-    for (const yearData of dataState[Q2_INDEX]) {     
-      worksheetData.push([
-        // Year.
-        year++,
-        // Net worth.
-        yearData.buyer.$,
-        // Property value.
-        yearData.buyer.house.value,
-        // Sale costs.
-        -sum(saleFees(yearData.buyer.province, yearData.buyer.house.value)),
-        // Property equity.
-        yearData.buyer.house.equity,
-        // Property net.
-        yearData.buyer.house.$,
-        // Principal.
-        yearData.buyer.house.principalPaid,
-        // Mortgage interest.
-        yearData.buyer.house.interestPaid,
-        // Monthly expenses.
-        yearData.buyer.house.monthlyExpensesPaid,
-        // Moving expenses.
-        yearData.buyer.house.movingCostsPaid,
-        // Rent paid.
-        yearData.buyer.house.rentPaid,
-        // Portfolio net.
-        yearData.buyer.portfolio.$,
-        // Portfolio value.
-        yearData.buyer.portfolio.value,
-        // Capital gains tax.
-        -sum(
-          yearData.buyer.portfolio.value,
-          -yearData.buyer.portfolio.costs,
-        ) * yearData.buyer.portfolio.capitalGainsTaxRate
-      ].map(d => d.toString()));
-    }
-
-    const workbook = xlsx.utils.book_new();
-    const worksheet = xlsx.utils.json_to_sheet(worksheetData);
-    xlsx.utils.book_append_sheet(workbook, worksheet, "Buyer");
-    xlsx.writeFile(workbook, "wealthwise.xlsx");
-  };
 
   return (
     <div className="table">
