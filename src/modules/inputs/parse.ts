@@ -1,25 +1,29 @@
 import numbro from 'numbro';
-import { point, normal, Sample } from '../samplers';
+import { normal, invariant, type Sample } from '../samplers';
 import { INPUTS } from '../../const';
 import { type TypedInputs, type InputNode } from './inputs';
+import { Province } from '../../config';
 
 export type ParsedInputs<T> = {
-  [K in keyof T]: T[K] extends InputNode ? Sample : ParsedInputs<T[K]>;
+  [K in keyof T]: T[K] extends InputNode ? 
+    T[K][1] extends INPUTS.PROVINCE ? Sample<Province> : // explicitly call out Province enum
+    Sample : 
+    ParsedInputs<T[K]>;
 };
 
 // Convert an InputNode to a Sample.
-const node = (node: InputNode): Sample => {
+const node = (node: InputNode) => {
   const [val, type] = node;
 
   // Boolean value.
   if (type === INPUTS.BOOLEAN) {
-    return val === 'Yes' ? point(1) : point(0);
+    return val === 'Yes' ? invariant(1) : invariant(0);
   }
 
   // Number.
   if (type === INPUTS.NUMBER) {
     // TODO: handle a range.
-    return point(parseFloat(val));
+    return invariant(parseFloat(val));
   }
 
   // Range.
@@ -39,16 +43,21 @@ const node = (node: InputNode): Sample => {
 
   // Percent.
   if (type === INPUTS.PERCENT) {
-    return point(Number(val.replace('%', '')) / 100);
+    return invariant(Number(val.replace('%', '')) / 100);
   }
 
   // Currency.
   if (type === INPUTS.CURRENCY) {
-    return point(numbro.unformat(val));
+    return invariant(numbro.unformat(val));
+  }
+
+  // Province enum.
+  if (type === INPUTS.PROVINCE) {
+    return invariant(val as Province);
   }
 
   // Default case - treat as a number.
-  return point(Number(val));
+  return invariant(Number(val));
 }
 
 const isInputNode = (val: any): val is InputNode => Array.isArray(val) && val.length === 2;

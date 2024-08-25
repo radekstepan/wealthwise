@@ -73,7 +73,6 @@ export default function Form() {
               focus={isExpandEnd}
               label="Price"
               placeholder="Property price"
-              description="purchase price"
               field="house.price"
             />
             <Field
@@ -98,7 +97,6 @@ export default function Form() {
             />
             <Field
               label="Province"
-              description="AB or BC"
               field="province"
             />
           </>

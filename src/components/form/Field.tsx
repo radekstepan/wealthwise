@@ -8,11 +8,12 @@ import {currencyMask, percentMask, numberMask} from './masks/number';
 import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
 import { formAtom } from '../../atoms/formAtom';
+import { Province } from '../../config';
 
 interface Props {
   label: string;
   field: string;
-  description: string;
+  description?: string;
   placeholder?: string;
   focus?: boolean;
   readOnly?: boolean;
@@ -46,14 +47,27 @@ const Field: FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [focus, ref.current]);
 
-  const onChange = e => {
+  const onChange = useCallback((e) => {
     const newValue = e.target.value;
     setValue(newValue);
-  };
+  }, []);
 
   const onBlur = useCallback(() => {
     const newValue = clean(value);
+    setValue(newValue);
 
+    if (formValue === newValue) {
+      return;
+    }
+
+    // TODO make more performant.
+    const obj = clone(form);
+    opa.set(obj, key, [newValue, type]);
+    setForm(obj);
+  }, [form, formValue, key, setForm, type, value]);
+
+  const onImmediateChange = useCallback((e) => {
+    const newValue = e.target.value;
     setValue(newValue);
 
     if (formValue === newValue) {
@@ -96,10 +110,21 @@ const Field: FC<Props> = ({
         defaultValue={formValue}
       />
     );
+  } else if (type === INPUTS.PROVINCE) {
+    field = (
+      <select {...props} onChange={onImmediateChange}>
+        {Object.entries(Province).map(([, val]) => (
+          <option key={val} value={val}>
+            {val}
+          </option>
+        ))}
+      </select>
+    );
   } else {
     field = (
       <MaskedInput
         {...props}
+        value={value}
         mask={numberMask}
         inputMode="numeric"
         defaultValue={formValue}
@@ -110,7 +135,7 @@ const Field: FC<Props> = ({
   return (
     <div className="field">
       <label className="label">{label}</label>
-      <div className="legend">{description}</div>
+      {description && <div className="legend">{description}</div>}
       {field}
     </div>
   );
