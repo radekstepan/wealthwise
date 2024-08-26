@@ -71,13 +71,13 @@ const update = (svg, x, xAxis, y, yAxis, data) => {
   const dist = svg.selectAll('.bar').data(data);
   
   const barWidth = (width / data.length) - 30;
+  const maxIndex = data.reduce((maxIdx, curr, idx, arr) => 
+    curr[1] > arr[maxIdx][1] ? idx : maxIdx, 0);
 
   dist
     .enter()
     .append("rect")
-    .attr("class", (_d, i) =>
-      i === Math.floor(data.length / 2) ? 'bar median' : 'bar'
-    )
+    .attr("class", (_d, i) => i === maxIndex ? 'bar median' : 'bar')
     .merge(dist)
     .transition()
     .duration(500)

@@ -60,7 +60,6 @@ const Field: FC<Props> = ({
       return;
     }
 
-    // TODO make more performant.
     const obj = clone(form);
     opa.set(obj, key, [newValue, type]);
     setForm(obj);
@@ -74,7 +73,6 @@ const Field: FC<Props> = ({
       return;
     }
 
-    // TODO make more performant.
     const obj = clone(form);
     opa.set(obj, key, [newValue, type]);
     setForm(obj);
@@ -112,7 +110,7 @@ const Field: FC<Props> = ({
     );
   } else if (type === INPUTS.PROVINCE) {
     field = (
-      <select {...props} onChange={onImmediateChange}>
+      <select {...props} onChange={onImmediateChange} onBlur={() => {}}>
         {Object.entries(Province).map(([, val]) => (
           <option key={val} value={val}>
             {val}

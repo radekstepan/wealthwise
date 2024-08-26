@@ -286,7 +286,6 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       mgage.renew(currentInterestRate, additionalBalance);
     }
 
-    // TODO sanity check.
     if (buyer.house.costs < 0) {
       throw new Error('Costs are negative?');
     }
@@ -325,7 +324,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
           buyerHouse$,
           buyerPortfolio$
         ),
-        province, // TODO simplify so we don't push extra data across
+        province,
         portfolio: {
           $: buyerPortfolio$,
           costs: buyer.portfolio.costs, // money invested
@@ -348,7 +347,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       },
       renter: {
         $: renterPortfolio$,
-        province, // TODO simplify so we don't push extra data across
+        province,
         portfolio: {
           $: renterPortfolio$,
           costs: renter.portfolio.costs, // money invested

@@ -7,7 +7,7 @@ import { sum } from "../modules/utils";
 
 const Q2_INDEX = 1;
 const FILE_NAME = "wealthwise.xlsx";
-const COLUMNS = [
+const BUYER_COLUMNS = [
   'Year',
   'Net worth',
   'Property value',
@@ -23,55 +23,82 @@ const COLUMNS = [
   'Portfolio value',
   'Capital gains tax'
 ];
+const RENTER_COLUMNS = [
+  'Year',
+  'Rent paid',
+  'Portfolio ≈ net',
+  'Portfolio value',
+  'Capital gains tax'
+]
 
 export const useDownloadSheet = () => {
   const dataState = useAtomValue(dataAtom);
 
   return useCallback(() => {
-    const worksheetData = [
-      COLUMNS
-    ];
-    
-    let year = 1;
-    for (const yearData of dataState[Q2_INDEX]) {     
-      worksheetData.push([
+    const workbook = xlsx.utils.book_new();
+
+    const buyerJson = dataState[Q2_INDEX].reduce((acc, data, year) => {
+      acc.push([
         // Year.
-        year++,
+        year + 1,
         // Net worth.
-        yearData.buyer.$,
+        data.buyer.$,
         // Property value.
-        yearData.buyer.house.value,
+        data.buyer.house.value,
         // Sale costs.
-        -sum(saleFees(yearData.buyer.province, yearData.buyer.house.value)),
+        -sum(saleFees(data.buyer.province, data.buyer.house.value)),
         // Property equity.
-        yearData.buyer.house.equity,
+        data.buyer.house.equity,
         // Property net.
-        yearData.buyer.house.$,
+        data.buyer.house.$,
         // Principal.
-        yearData.buyer.house.principalPaid,
+        data.buyer.house.principalPaid,
         // Mortgage interest.
-        yearData.buyer.house.interestPaid,
+        data.buyer.house.interestPaid,
         // Monthly expenses.
-        yearData.buyer.house.monthlyExpensesPaid,
+        data.buyer.house.monthlyExpensesPaid,
         // Moving expenses.
-        yearData.buyer.house.movingCostsPaid,
+        data.buyer.house.movingCostsPaid,
         // Rent paid.
-        yearData.buyer.house.rentPaid,
+        data.buyer.house.rentPaid,
         // Portfolio net.
-        yearData.buyer.portfolio.$,
+        data.buyer.portfolio.$,
         // Portfolio value.
-        yearData.buyer.portfolio.value,
+        data.buyer.portfolio.value,
         // Capital gains tax.
         -sum(
-          yearData.buyer.portfolio.value,
-          -yearData.buyer.portfolio.costs,
-        ) * yearData.buyer.portfolio.capitalGainsTaxRate
-      ].map(d => d.toString()));
-    }
+          data.buyer.portfolio.value,
+          -data.buyer.portfolio.costs,
+        ) * data.buyer.portfolio.capitalGainsTaxRate
+      ].map(d => d.toFixed(2)))
+      return acc;
+    }, [BUYER_COLUMNS]);
 
-    const workbook = xlsx.utils.book_new();
-    const worksheet = xlsx.utils.json_to_sheet(worksheetData);
-    xlsx.utils.book_append_sheet(workbook, worksheet, "Buyer");
+    const buyerSheet = xlsx.utils.json_to_sheet(buyerJson);
+    xlsx.utils.book_append_sheet(workbook, buyerSheet, "Buyer");
+
+    const renterJson = dataState[Q2_INDEX].reduce((acc, data, year) => {
+      acc.push([
+        // Year.
+        year + 1,
+        // Rent paid.
+        data.renter.house.rentPaid,
+        // Portfolio net.
+        data.renter.portfolio.$,
+        // Portfolio value.
+        data.renter.portfolio.value,
+        // Capital gains tax.
+        -sum(
+          data.renter.portfolio.value,
+          -data.renter.portfolio.costs,
+        ) * data.renter.portfolio.capitalGainsTaxRate
+      ].map(d => d.toFixed(2)))
+      return acc;
+    }, [RENTER_COLUMNS]);
+
+    const renterSheet = xlsx.utils.json_to_sheet(renterJson);
+    xlsx.utils.book_append_sheet(workbook, renterSheet, "Renter");
+
     xlsx.writeFile(workbook, FILE_NAME);
   }, [dataState]);
 };

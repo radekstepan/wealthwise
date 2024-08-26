@@ -1,25 +1,16 @@
 - [ ] tests on the core estimate logic
-- [ ] tooltips on each form field
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
-- [ ] review TODO notes
-- [ ] why is the distribution not uniform?
-- [ ] portfolio value in 25 not 24 years
+- [x] the distribution keeps showing a median that's not the most frequent band
+- [x] output renter year by year in the spreadsheet
 
 Nice to have
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
-- [ ] legend doesn't flip, shows buyer, renter in that order always
 - [ ] hide ditribution if there's none to show
 - [ ] Cmd+C should copy an unformatted numeric value
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
-- [x] scenario for how much more expensive (in %) is the new property when moving - 1% pa
-- [ ] extra cost when buying a new property
-- [x] early prepayment simulation
-- [x] download a spreadsheet of median result to "Check the result yourself"
-- [x] when looking at net worth each year we apply sale costs to all years, but we move in some years which results in double counting of these fees
-- [x] show in the chart when rent covers all costs and when principal is paid off
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
 - [ ] make the amounts vertical labels more human readable
 - [ ] render fixed/variable as an enum just like a province

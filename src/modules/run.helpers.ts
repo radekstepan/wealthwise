@@ -81,7 +81,7 @@ export const landTransferTax = (province: Province, houseValue: number, isFirstT
 // Calculate the Canada Mortgage and Housing Corporation (CMHC)
 //  insurance premium on a home mortgage loan.
 // https://wowa.ca/calculators/cmhc-insurance
-// TODO only works on max 25 year mortgages
+// NOTE only works on max 25 year mortgages
 export const cmhc = (downpayment: number, price: number) => {
   if (downpayment >= 0.2) {
     return 0;
