@@ -8,7 +8,7 @@ import { type TypedInputs } from "./inputs/inputs";
 import { type MetaState } from "../atoms/metaAtom";
 import { Province } from "../config";
 
-const SAMPLES = 1000; // number of samples
+const SAMPLES = 1; // number of samples
 
 interface Asset {
   $: number, // net worth
@@ -56,7 +56,8 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
   const amortization = opts.mortgage.amortization();
   const term = opts.mortgage.term();
-  const isFixedRate = Boolean(opts.mortgage.isFixedRate());
+  const isFixedRate = opts.mortgage.isFixedRate();
+  console.log({isFixedRate});
   // Make sure the downpayment is between 0 and 1.
   const downpayment = Math.min(Math.max(opts.house.downpayment(), 0), 1);
   const capitalGainsTaxRate = opts.rates.bonds.capitalGainsTax();

@@ -9,7 +9,7 @@ export const inputs = {
   mortgage: {
     amortization: 25, // years
     term: 5, // year; for a fixed rate
-    isFixedRate: "Yes"
+    isFixedRate: true
   },
 
   house: {

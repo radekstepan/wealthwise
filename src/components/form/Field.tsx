@@ -66,7 +66,7 @@ const Field: FC<Props> = ({
   }, [form, formValue, key, setForm, type, value]);
 
   const onImmediateChange = useCallback((e) => {
-    const newValue = e.target.value;
+    const newValue = clean(e.target.value);
     setValue(newValue);
 
     if (formValue === newValue) {
@@ -107,6 +107,13 @@ const Field: FC<Props> = ({
         inputMode="numeric"
         defaultValue={formValue}
       />
+    );
+  } else if (type === INPUTS.BOOLEAN) {
+    field = (
+      <select {...props} value={value ? "Yes" : "No"} onChange={onImmediateChange} onBlur={() => {}}>
+        <option key="Yes" value="Yes">Yes</option>
+        <option key="No" value="No">No</option>
+      </select>
     );
   } else if (type === INPUTS.PROVINCE) {
     field = (

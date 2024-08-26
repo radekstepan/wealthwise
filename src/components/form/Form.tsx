@@ -137,7 +137,6 @@ export default function Form() {
               label="Fixed rate"
               description="is this a fixed rate mortgage"
               field="mortgage.isFixedRate"
-              readOnly
             />
           </>
         )}

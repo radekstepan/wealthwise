@@ -16,8 +16,8 @@ const node = (node: InputNode) => {
   const [val, type] = node;
 
   // Boolean value.
-  if (type === INPUTS.BOOLEAN) {
-    return val === 'Yes' ? invariant(1) : invariant(0);
+  if (typeof val === 'boolean') {
+    return invariant(val);
   }
 
   // Number.
@@ -53,7 +53,7 @@ const node = (node: InputNode) => {
 
   // Province enum.
   if (type === INPUTS.PROVINCE) {
-    return invariant(val as Province);
+    return invariant(val);
   }
 
   // Default case - treat as a number.

@@ -13,6 +13,7 @@ Nice to have
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
 - [ ] make the amounts vertical labels more human readable
-- [ ] render fixed/variable as an enum just like a province
+- [x] render fixed/variable as an enum just like a province
 - [ ] first time homebuyer checkbox or enum
 - [ ] Ontario to the list of provinces
+- [ ] toggle %/$ downpayment value

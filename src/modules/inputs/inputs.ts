@@ -1,33 +1,37 @@
 import { INPUTS } from '../../const';
 import { inputs, Province } from '../../config';
 
-type InputValue = string | number | Province;
+type InputValue = string | number | boolean | Province;
 
 type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends InputValue ? T[P] : DeepReadonly<T[P]>;
 };
 
 export type InputNode =
-  | [string, INPUTS.NUMBER | INPUTS.BOOLEAN | INPUTS.PERCENT | INPUTS.CURRENCY]
+  | [string, INPUTS.NUMBER | INPUTS.PERCENT | INPUTS.CURRENCY]
+  | [boolean, INPUTS.BOOLEAN]
   | [Province, INPUTS.PROVINCE];
 
 type TypedInput<T> = T extends InputValue
   ? T extends Province ? [Province, INPUTS.PROVINCE] : InputNode
   : { [K in keyof T]: TypedInput<T[K]> };
 
-function assignType(val: InputValue): InputNode {
-  if (Object.values(Province).includes(val as Province)) {
-    return [val as Province, INPUTS.PROVINCE];
+export const isProvince = (val: unknown): val is Province => Object.values(Province).includes(val as Province);
+
+function assignType(val: InputValue): InputNode { 
+  if (typeof val === 'boolean') {
+    return [val, INPUTS.BOOLEAN];
   }
 
   if (typeof val === 'number') {
     return [val.toString(), INPUTS.NUMBER];
   }
 
+  if (isProvince(val)) {
+    return [val, INPUTS.PROVINCE];
+  }
+
   if (typeof val === 'string') {
-    if (val === 'Yes' || val === 'No') {
-      return [val, INPUTS.BOOLEAN];
-    }
     if (val.includes('%')) {
       return [val, INPUTS.PERCENT];
     }
@@ -40,7 +44,7 @@ function assignType(val: InputValue): InputNode {
 }
 
 const isInputValue = (val: any): val is InputValue => {
-  if (Object.values(Province).includes(val)) {
+  if (isProvince(val)) {
     return true;
   }
   if (typeof val !== 'object') {
