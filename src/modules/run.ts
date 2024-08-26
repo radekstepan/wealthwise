@@ -32,6 +32,7 @@ export type RentalHouse = Pick<House, '$'|'rentPaid'>;
 
 interface User<THouse extends House|RentalHouse> {
   $: number, // net worth
+  roi: number, // return on investment
   province: Province,
   portfolio: Asset,
   house: THouse,
@@ -102,15 +103,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
 
   const buyer: Buyer = {
     $: 0,
+    roi: 0,
     province,
     portfolio: {
-      $: -1,
+      $: 0,
       costs: 0,
       value: 0,
       capitalGainsTaxRate
     },
     house: {
-      $: -1,
+      $: 0,
       costs,
       value: currentHousePrice,
       equity: downpaymentAmount,
@@ -128,15 +130,16 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
   };
   const renter: Renter = {
     $: 0,
+    roi: 0,
     province,
     portfolio: {
-      $: -1,
+      $: 0,
       costs,
       value: costs,
       capitalGainsTaxRate
     },
     house: {
-      $: -1,
+      $: 0,
       rentPaid: 0,
     },
   };
@@ -184,7 +187,7 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       buyer.house.rentPaid += rent;
       renter.house.rentPaid += rent;
 
-      // Buyer and rented costs.
+      // Buyer and renter costs.
       buyer.house.costs += monthlyExpenses + mgage.payment;
 
       const diff = monthlyExpenses + mgage.payment - rent;
@@ -315,15 +318,19 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
       ) * (1 - renter.portfolio.capitalGainsTaxRate)
     );
 
+    const buyerNet$ = buyerHouse$ + buyerPortfolio$;
+    const renterNet$ = renterPortfolio$;
+
+    const buyerTotalInvestment = buyer.house.costs + buyer.portfolio.costs;
+    const renterTotalInvestment = renter.portfolio.costs;
+
     // Log it.
     data.push({
       year,
       // NOTE: Object, make sure to copy the values.
       buyer: {
-        $: sum(
-          buyerHouse$,
-          buyerPortfolio$
-        ),
+        $: buyerNet$,
+        roi: (buyerNet$ + buyer.house.rentPaid - buyerTotalInvestment) / buyerTotalInvestment,
         province,
         portfolio: {
           $: buyerPortfolio$,
@@ -346,7 +353,8 @@ function run(opts: ParsedInputs<TypedInputs>, emitMeta: boolean): Data {
         }
       },
       renter: {
-        $: renterPortfolio$,
+        $: renterNet$,
+        roi: (renterNet$ - renterTotalInvestment) / renterTotalInvestment,
         province,
         portfolio: {
           $: renterPortfolio$,
