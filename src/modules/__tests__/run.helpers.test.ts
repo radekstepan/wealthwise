@@ -23,7 +23,7 @@ describe('run.helpers', () => {
   describe('saleFees', () => {
     // https://wowa.ca/calculators/cost-selling-house
     test('$500k', () => {
-      expect(saleFees(Province.Alberta, 500000)).toBe(19650);
+      expect(saleFees(Province.AB, 500000)).toBe(19650);
     });
   });
 });

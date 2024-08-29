@@ -3,11 +3,11 @@ import * as d3 from 'd3';
 import numbro from 'numbro';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import simulate from '../../modules/simulate';
-import { type Renter, type Buyer } from '../../modules/run';
 import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { formAtom } from '../../atoms/formAtom';
+import { type Renter, type Buyer } from '../../modules/run/interfaces';
 import './chart.less';
 
 // TODO link to actual years

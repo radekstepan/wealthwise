@@ -1,11 +1,11 @@
 import * as d3 from 'd3';
 import exec from './exec';
-import {range, sum} from './utils';
-import { type Data, type Renter, type Buyer } from './run';
+import {range} from './utils';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
 import { type TypedInputs } from './inputs/inputs';
+import { type Data, type Renter, type Buyer } from './run/interfaces';
 
 const BANDS = 7; // distribution bands
 
