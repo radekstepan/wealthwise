@@ -1,5 +1,4 @@
 import { Province } from "../../config";
-import Mortgage from "../mortgage";
 import { sum } from "../utils";
 import { type Buyer, type Renter } from "./interfaces";
 
@@ -10,7 +9,7 @@ export const initUsers = ({
   province,
   capitalGainsTaxRate,
   currentHousePrice,
-  mgage
+  mortgageBalance
 }: {
   downpaymentAmount: number,
   closingAndTax: number,
@@ -18,7 +17,7 @@ export const initUsers = ({
   province: Province,
   capitalGainsTaxRate: number,
   currentHousePrice: number,
-  mgage: ReturnType<typeof Mortgage>
+  mortgageBalance: number
 }) => {
   // Initial costs of the buyer.
   let costs = sum(
@@ -46,7 +45,7 @@ export const initUsers = ({
       rentPaid: 0,
       interestPaid: 0,
       principalPaid: downpaymentAmount,
-      principalRemaining: mgage.balance,
+      principalRemaining: mortgageBalance,
       monthlyExpensesPaid: 0,
       movingCostsPaid: sum(
         closingAndTax,
