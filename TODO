@@ -1,10 +1,12 @@
 - [ ] tests on the core estimate logic
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
-- [x] the distribution keeps showing a median that's not the most frequent band
-- [x] output renter year by year in the spreadsheet
+- [ ] switch scenario summary to be prepayment % (and make sure it works with 0%)
+- [ ] fix: capital gains rate going up increses renting???
+- [x] show more than 25 years in scenarios
 
 Nice to have
+- [ ] show a monthly how much better off you are in terms of net worth
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
 - [ ] hide ditribution if there's none to show
 - [ ] Cmd+C should copy an unformatted numeric value
@@ -13,7 +15,6 @@ Nice to have
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
 - [ ] make the amounts vertical labels more human readable
-- [x] render fixed/variable as an enum just like a province
 - [ ] first time homebuyer checkbox or enum
 - [ ] Ontario to the list of provinces
 - [ ] toggle %/$ downpayment value

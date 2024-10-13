@@ -9,6 +9,7 @@ import { type ParsedInputs } from "../inputs/parse";
 export function initSim(opts: ParsedInputs<TypedInputs>) {
   const province = opts.province();
   const amortization = opts.mortgage.amortization();
+  const simulateYears = opts.scenarios.simulate.years();
   const term = opts.mortgage.term();
   const isFixedRate = opts.mortgage.isFixedRate();
   // Make sure the downpayment is between 0 and 1.
@@ -45,6 +46,6 @@ export function initSim(opts: ParsedInputs<TypedInputs>) {
     province, amortization, term, isFixedRate, downpayment, capitalGainsTaxRate,
     currentHousePrice, currentInterestRate, newHousePrice, closingAndTax,
     originalBalance, mortgage, rent, marketRent, downpaymentAmount, cmhc,
-    monthlyExpenses, buyer, renter
+    monthlyExpenses, buyer, renter, simulateYears
   };
 };

@@ -10,9 +10,6 @@ import { formAtom } from '../../atoms/formAtom';
 import { type Renter, type Buyer } from '../../modules/run/interfaces';
 import './chart.less';
 
-// TODO link to actual years
-const DOMAIN_X = [0, 24]; // years - 1 (inclusive)
-
 export type ChartData = [
   q1: Array<ChartDataPoint>, // 5th - years of data
   q2: Array<ChartDataPoint>, // median - years of data
@@ -107,7 +104,7 @@ const update = (
     Math.max(max, d.buyer.$, d.renter.$)
   , -Infinity);
 
-  x.domain(DOMAIN_X);
+  x.domain([0, _median.length - 1]); // years - 1 exclusive
   y.domain([min$, max$]); // $ net worth
 
   svg.selectAll<any, string>(".x-axis")

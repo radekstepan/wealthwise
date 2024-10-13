@@ -10,7 +10,7 @@ export const simMove = ({
   moveEvery,
   renew,
   year,
-  amortization,
+  simulateYears,
   mortgage,
   newHousePrice,
   currentHousePrice,
@@ -24,7 +24,7 @@ export const simMove = ({
   moveEvery: number,
   renew: boolean,
   year: number,
-  amortization: number,
+  simulateYears: number,
   mortgage: ReturnType<typeof Mortgage>,
   newHousePrice: number,
   currentHousePrice: number,
@@ -41,7 +41,7 @@ export const simMove = ({
   let additionalBalance = 0;
 
   // Moving scenario (make sure we do not move in the last year).
-  if (moveEvery > 0 && isEvery(year, moveEvery) && year !== amortization) {
+  if (moveEvery > 0 && isEvery(year, moveEvery) && year !== simulateYears) {
     nextRenew = true;
 
     // The premium of getting into new to add to the principal.

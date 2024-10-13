@@ -190,9 +190,14 @@ export default function Form() {
           </>
         )}
       </Group>
-      <Group title="Scenarios" summary={form.scenarios.crash.drop[0]}>
+      <Group title="Scenarios" summary={`Move every ${form.scenarios.move.tenureYears[0]} year${form.scenarios.move.tenureYears[0] === '1' ? '' : 's'}`}>
         {({isExpandEnd}) => (
           <>
+            <Field
+              label="Simulation"
+              description="simulate x years"
+              field="scenarios.simulate.years"
+            />
             <Field
               label="Property price drop chance"
               description="% chance over the amortization period"

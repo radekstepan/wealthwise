@@ -80,7 +80,7 @@ export function simYear(year: number, init: ReturnType<typeof initSim>, opts: Pa
     moveEvery,
     renew,
     year,
-    amortization: init.amortization,
+    simulateYears: init.simulateYears,
     mortgage,
     newHousePrice,
     currentHousePrice,

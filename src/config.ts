@@ -48,6 +48,9 @@ export const inputs = {
   },
 
   scenarios: {
+    simulate: {
+      years: 25 // how many years to simulate
+    },
     crash: { // property market crash
       chance: "4% - 8%", // 1x - 2x in 25 years
       drop: "10%" // each time

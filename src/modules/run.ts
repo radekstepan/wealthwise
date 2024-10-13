@@ -21,15 +21,15 @@ function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
 
   // Data for each year.
   const data: Data = [];
-  
-  for (const year of range(init.amortization)) {
+
+  for (const year of range(init.simulateYears)) {
     const {yearData, updatedValues} = simYear(year, init, opts, rnd);
     data.push(yearData);
     // Update init with the new values for the next iteration.
     init = {...init, ...updatedValues};
   }
 
-  if (init.mortgage.balance) {
+  if (init.mortgage.balance && init.simulateYears >= init.amortization) {
     throw new Error("Mortgage has not been paid off");
   }
 
