@@ -20,16 +20,16 @@ export const logYear = (opts: {
   const buyerPortfolio$ = sum(
     buyer.portfolio.value,
     -sum(
-      buyer.portfolio.value
+      buyer.portfolio.value,
       -buyer.portfolio.costs
-    ) * (1 - buyer.portfolio.capitalGainsTaxRate)
+    ) * buyer.portfolio.capitalGainsTaxRate
   );
   const renterPortfolio$ = sum(
     renter.portfolio.value,
     -sum(
-      renter.portfolio.value
+      renter.portfolio.value,
       -renter.portfolio.costs
-    ) * (1 - renter.portfolio.capitalGainsTaxRate)
+    ) * renter.portfolio.capitalGainsTaxRate
   );
 
   const buyerNet$ = buyerHouse$ + buyerPortfolio$;
