@@ -43,25 +43,25 @@ const landTransferTaxBC = (houseValue: number, isFirstTimeBuyer=true, isNewlyBui
     }
   }
 
-  if (isNewlyBuilt && isLessThanHalfHectare) {
-    if (houseValue <= 750000) {
-      return 0; // Full exemption
-    }
-    if (houseValue <= 800000) {
-      // Partial exemption
-      return tax * (1 - (800000 - houseValue) / 50000);
-    }
-  }
+  // if (isNewlyBuilt && isLessThanHalfHectare) {
+  //   if (houseValue <= 750000) {
+  //     return 0; // Full exemption
+  //   }
+  //   if (houseValue <= 800000) {
+  //     // Partial exemption
+  //     return tax * (1 - (800000 - houseValue) / 50000);
+  //   }
+  // }
 
-  if (isNewlyBuilt) {
-    if (houseValue <= 1100000) {
-      return 0; // Full exemption
-    }
-    if (houseValue <= 1150000) {
-      // Partial exemption
-      return tax * (1 - (1150000 - houseValue) / 50000);
-    }
-  }
+  // if (isNewlyBuilt) {
+  //   if (houseValue <= 1100000) {
+  //     return 0; // Full exemption
+  //   }
+  //   if (houseValue <= 1150000) {
+  //     // Partial exemption
+  //     return tax * (1 - (1150000 - houseValue) / 50000);
+  //   }
+  // }
 
   return tax;
 }

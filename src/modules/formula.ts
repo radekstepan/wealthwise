@@ -19,4 +19,10 @@ export const apyToAprMonthly = (apy: number) => {
   return (apy < 0 ? -1 : 1) * monthly;
 }
 
-export const pmt = (rate: number, nper: number, pv: number) => rate * pv * Math.pow((1 + rate), nper) / (1 - Math.pow((1 + rate), nper));
+export const pmt = (rate: number, nper: number, pv: number) => {
+  if (rate === 0) {
+    return -pv / nper;
+  }
+
+  return rate * pv * Math.pow((1 + rate), nper) / (1 - Math.pow((1 + rate), nper));
+};

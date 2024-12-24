@@ -36,11 +36,11 @@ function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
   return data;
 }
 
-self.onmessage = ({data: {inputs}}: {
-  data: {inputs: TypedInputs}
+self.onmessage = ({data: {inputs, samples}}: {
+  data: {inputs: TypedInputs, samples: number}
 }) => {
   const opts = parse(inputs);
-  const res = range(SAMPLES).map((i) => run(opts, !i));
+  const res = range(samples || SAMPLES).map((i) => run(opts, !i));
 
   self.postMessage({action: 'res', res});
 };

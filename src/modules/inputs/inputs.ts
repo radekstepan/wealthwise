@@ -56,7 +56,7 @@ const isInputValue = (val: any): val is InputValue => {
   return false;
 };
 
-function walkAndAssignTypes<T extends object>(obj: DeepReadonly<T>): TypedInput<T> {
+export function walkAndAssignTypes<T extends object>(obj: DeepReadonly<T>): TypedInput<T> {
   const result: any = {};
 
   for (const [key, value] of Object.entries(obj)) {
