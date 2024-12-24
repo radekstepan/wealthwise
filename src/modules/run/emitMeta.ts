@@ -25,5 +25,5 @@ export function emitMeta({
   self.postMessage({
     action: 'meta',
     meta
-  });
+  }, '*');
 };

@@ -42,5 +42,5 @@ self.onmessage = ({data: {inputs, samples}}: {
   const opts = parse(inputs);
   const res = range(samples || SAMPLES).map((i) => run(opts, !i));
 
-  self.postMessage({action: 'res', res});
+  self.postMessage({action: 'res', res}, '*');
 };

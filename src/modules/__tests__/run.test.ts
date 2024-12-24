@@ -59,27 +59,28 @@ export const inputs = {
 const typedInputs = walkAndAssignTypes(inputs);
 
 describe('run', () => {
-  const originalSelf = global.self;
-  
+  let postMessageSpy: jest.SpyInstance;
+
   beforeEach(() => {
-    global.self = {
-      postMessage: jest.fn(),
-      onmessage: null,
-    } as any;
-    
+    postMessageSpy = jest.spyOn(self, 'postMessage');
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    global.self = originalSelf;
+    postMessageSpy.mockRestore();
   });
+
 
   it('should run the simulation', () => {
     require('../run.ts');
 
-    self.onmessage!({ data: { inputs: typedInputs, samples: 1 } } as MessageEvent);
+    const messageEvent = new MessageEvent('message', {
+      data: { inputs: typedInputs, samples: 1 }
+    });
+    
+    self.dispatchEvent(messageEvent);
 
-    const messages = (global.self.postMessage as jest.Mock).mock.calls;
+    const messages = postMessageSpy.mock.calls;
     
     expect(messages).toHaveLength(2);
     expect(messages[0][0]).toEqual({
