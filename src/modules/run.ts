@@ -7,6 +7,7 @@ import * as helpers from "./fees";
 import { simulateYear } from "./simulate/simulateYear";
 import Mortgage from "./mortgage";
 import { type MetaState } from "../atoms/metaAtom";
+import { postMessage } from "./postMessage";
 
 const SAMPLES = 1000; // number of samples
 
@@ -114,10 +115,10 @@ function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
       payment: mortgage.payment
     };
 
-    self.postMessage({
+    postMessage({
       action: 'meta',
       meta
-    }, '*');
+    });
   }
 
   // Data for each year.
@@ -143,5 +144,5 @@ self.onmessage = ({data: {inputs, samples}}: {
   const opts = parse(inputs);
   const res = range(samples || SAMPLES).map((i) => run(opts, !i));
 
-  self.postMessage({action: 'res', res}, '*');
+  postMessage({action: 'res', res});
 };
