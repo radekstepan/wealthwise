@@ -1,7 +1,7 @@
-import { Province } from '../../config';
-import { landTransferTax, cmhc, saleFees } from '../run.helpers';
+import { Province } from '../../interfaces';
+import { landTransferTax, cmhc, saleFees } from '../fees';
 
-describe('run.helpers', () => {
+describe('fees', () => {
   describe('cmhc', () => {
     test('5% on $150k', () => {
       expect(cmhc(0.05, 150000)).toBe(5700);
@@ -53,6 +53,70 @@ describe('run.helpers', () => {
 
       test('calculates tax for property over $3,000,000', () => {
         expect(landTransferTax(Province.BC, 3500000, false)).toBe(93000);
+      });
+    });
+
+    describe('Ontario', () => {
+      test('calculates tax for property under $55,000', () => {
+        expect(landTransferTax(Province.ON, 50000, false)).toBe(250);
+      });
+  
+      test('calculates tax for property between $55,000 and $250,000', () => {
+        expect(landTransferTax(Province.ON, 200000, false)).toBe(1725);
+      });
+  
+      test('calculates tax for property between $250,000 and $400,000', () => {
+        expect(landTransferTax(Province.ON, 300000, false)).toBe(2975);
+      });
+  
+      test('calculates tax for property between $400,000 and $2,000,000', () => {
+        expect(landTransferTax(Province.ON, 500000, false)).toBe(6475);
+      });
+  
+      test('calculates tax for property over $2,000,000', () => {
+        expect(landTransferTax(Province.ON, 2500000, false)).toBe(48975);
+      });
+    });
+
+    describe('Ontario (Toronto)', () => {
+      test('calculates tax for property under $55,000', () => {
+        expect(landTransferTax(Province.Toronto, 50000, false)).toBe(500);
+      });
+    
+      test('calculates tax for property between $55,000 and $250,000', () => {
+        expect(landTransferTax(Province.Toronto, 200000, false)).toBe(3450);
+      });
+    
+      test('calculates tax for property between $250,000 and $400,000', () => {
+        expect(landTransferTax(Province.Toronto, 300000, false)).toBe(5950);
+      });
+    
+      test('calculates tax for property between $400,000 and $2,000,000', () => {
+        expect(landTransferTax(Province.Toronto, 500000, false)).toBe(12950);
+      });
+    
+      test('calculates tax for property between $2M and $3M', () => {
+        expect(landTransferTax(Province.Toronto, 2500000, false)).toBe(97950); 
+      });
+    
+      test('calculates tax for property between $3M and $4M', () => {
+        expect(landTransferTax(Province.Toronto, 3500000, false)).toBe(152950);
+      });
+    
+      test('calculates tax for property between $4M and $5M', () => {
+        expect(landTransferTax(Province.Toronto, 4500000, false)).toBe(217950);
+      });
+    
+      test('calculates tax for property between $5M and $10M', () => {
+        expect(landTransferTax(Province.Toronto, 7500000, false)).toBe(452950);
+      });
+    
+      test('calculates tax for property between $10M and $20M', () => {
+        expect(landTransferTax(Province.Toronto, 15000000, false)).toBe(1102950);
+      });
+    
+      test('calculates tax for property over $20M', () => {
+        expect(landTransferTax(Province.Toronto, 25000000, false)).toBe(2052950);
       });
     });
   });

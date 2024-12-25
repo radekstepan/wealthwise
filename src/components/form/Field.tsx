@@ -8,7 +8,7 @@ import {currencyMask, percentMask, numberMask} from './masks/number';
 import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
 import { formAtom } from '../../atoms/formAtom';
-import { Province } from '../../config';
+import { Province } from '../../interfaces';
 
 interface Props {
   label: string;

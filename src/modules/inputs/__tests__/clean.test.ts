@@ -1,6 +1,6 @@
 import clean from '../clean';
 import { isProvince } from '../inputs';
-import { Province } from '../../../config';
+import { Province } from '../../../interfaces';
 
 jest.mock('numeraljs', () => ({
   __esModule: true,

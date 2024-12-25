@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useAtomValue } from "jotai";
 import * as xlsx from 'xlsx';
 import { dataAtom } from "../atoms/dataAtom";
-import { saleFees } from "../modules/run.helpers";
+import { saleFees } from "../modules/fees";
 import { sum } from "../modules/utils";
 
 const Q2_INDEX = 1;

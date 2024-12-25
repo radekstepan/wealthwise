@@ -1,4 +1,4 @@
-import { Province } from '../../config';
+import { Province } from '../../interfaces';
 import { formAtom } from '../formAtom';
 
 describe('formAtom', () => {

@@ -1,4 +1,4 @@
-import { Province } from '../config';
+import { Province } from '../interfaces';
 import {sum} from './utils';
 
 const landTransferTaxAB = (houseValue: number) => Math.ceil(houseValue / 5000) * 5;
@@ -66,6 +66,115 @@ const landTransferTaxBC = (houseValue: number, isFirstTimeBuyer=true, isNewlyBui
   return tax;
 }
 
+const landTransferTaxON = (houseValue: number) => {
+  let tax = 0;
+  
+  // First bracket: 0.5% up to $55,000
+  if (houseValue <= 55000) {
+    tax = houseValue * 0.005;
+  } else {
+    tax += 55000 * 0.005;
+    
+    // Second bracket: 1% from $55,001 to $250,000
+    if (houseValue <= 250000) {
+      tax += (houseValue - 55000) * 0.01;
+    } else {
+      tax += (250000 - 55000) * 0.01;
+      
+      // Third bracket: 1.5% from $250,001 to $400,000
+      if (houseValue <= 400000) {
+        tax += (houseValue - 250000) * 0.015;
+      } else {
+        tax += (400000 - 250000) * 0.015;
+        
+        // Fourth bracket: 2% from $400,001 to $2,000,000
+        if (houseValue <= 2000000) {
+          tax += (houseValue - 400000) * 0.02;
+        } else {
+          tax += (2000000 - 400000) * 0.02;
+          
+          // Fifth bracket: 2.5% over $2,000,000
+          tax += (houseValue - 2000000) * 0.025;
+        }
+      }
+    }
+  }
+  
+  return tax;
+};
+
+const landTransferTaxToronto = (houseValue: number) => {
+  let tax = 0;
+  
+  // First bracket: 0.5% up to $55,000
+  if (houseValue <= 55000) {
+    tax = houseValue * 0.005;
+  } else {
+    tax += 55000 * 0.005;
+    
+    // Second bracket: 1% from $55,001 to $250,000
+    if (houseValue <= 250000) {
+      tax += (houseValue - 55000) * 0.01;
+    } else {
+      tax += (250000 - 55000) * 0.01;
+      
+      // Third bracket: 1.5% from $250,001 to $400,000
+      if (houseValue <= 400000) {
+        tax += (houseValue - 250000) * 0.015;
+      } else {
+        tax += (400000 - 250000) * 0.015;
+        
+        // Fourth bracket: 2% from $400,001 to $2,000,000
+        if (houseValue <= 2000000) {
+          tax += (houseValue - 400000) * 0.02;
+        } else {
+          tax += (2000000 - 400000) * 0.02;
+          
+          // Fifth bracket: 2.5% from $2M to $3M
+          if (houseValue <= 3000000) {
+            tax += (houseValue - 2000000) * 0.025;
+          } else {
+            tax += (3000000 - 2000000) * 0.025;
+            
+            // Sixth bracket: 3.5% from $3M to $4M
+            if (houseValue <= 4000000) {
+              tax += (houseValue - 3000000) * 0.035;
+            } else {
+              tax += (4000000 - 3000000) * 0.035;
+              
+              // Seventh bracket: 4.5% from $4M to $5M
+              if (houseValue <= 5000000) {
+                tax += (houseValue - 4000000) * 0.045;
+              } else {
+                tax += (5000000 - 4000000) * 0.045;
+                
+                // Eighth bracket: 5.5% from $5M to $10M
+                if (houseValue <= 10000000) {
+                  tax += (houseValue - 5000000) * 0.055;
+                } else {
+                  tax += (10000000 - 5000000) * 0.055;
+                  
+                  // Ninth bracket: 6.5% from $10M to $20M
+                  if (houseValue <= 20000000) {
+                    tax += (houseValue - 10000000) * 0.065;
+                  } else {
+                    tax += (20000000 - 10000000) * 0.065;
+                    
+                    // Final bracket: 7.5% over $20M
+                    tax += (houseValue - 20000000) * 0.075;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return tax;
+};
+
 // https://www.truenorthmortgage.ca/tools/land-transfer-tax-calculator
 export const landTransferTax = (province: Province, houseValue: number, isFirstTimeBuyer: boolean) => {
   switch (province) {
@@ -73,6 +182,10 @@ export const landTransferTax = (province: Province, houseValue: number, isFirstT
       return landTransferTaxAB(houseValue);
     case Province.BC:
       return landTransferTaxBC(houseValue, isFirstTimeBuyer);
+    case Province.ON:
+      return landTransferTaxON(houseValue);
+    case Province.Toronto:
+      return landTransferTaxON(houseValue) + landTransferTaxToronto(houseValue);
     default:
       return 0;
   }

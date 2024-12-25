@@ -1,4 +1,9 @@
-import { Province } from "./config";
+export enum Province {
+  AB = "Alberta",
+  BC = "British Columbia",
+  ON = "Ontario",
+  Toronto = "Ontario (Toronto)",
+}
 
 interface Asset {
   $: number, // net worth

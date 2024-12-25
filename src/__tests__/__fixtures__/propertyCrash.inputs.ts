@@ -1,4 +1,4 @@
-import { Province } from "../../config";
+import { Province } from "../../interfaces";
 import { walkAndAssignTypes } from "../../modules/inputs/inputs";
 
 export const inputs = {

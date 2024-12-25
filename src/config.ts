@@ -1,7 +1,4 @@
-export enum Province {
-  AB = "Alberta",
-  BC = "British Columbia"
-}
+import { Province } from "./interfaces";
 
 export const inputs = {
   province: Province.BC,

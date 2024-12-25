@@ -5,7 +5,7 @@ import * as xlsx from 'xlsx';
 import {useDownloadSheet} from '../useDownloadSheet';
 import {dataAtom} from '../../atoms/dataAtom';
 import {type ChartData} from '../../components/chart/Chart';
-import {Province} from '../../config';
+import {Province} from '../../interfaces';
 
 jest.mock('xlsx', () => ({
   utils: {

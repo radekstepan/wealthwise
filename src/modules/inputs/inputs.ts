@@ -1,5 +1,6 @@
 import { INPUTS } from '../../const';
-import { inputs, Province } from '../../config';
+import { inputs } from '../../config';
+import { Province } from '../../interfaces';
 
 type InputValue = string | number | boolean | Province;
 

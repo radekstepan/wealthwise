@@ -3,7 +3,7 @@ import { range, sum } from "./utils";
 import parse, { type ParsedInputs } from './inputs/parse';
 import { type TypedInputs } from "./inputs/inputs";
 import { type Buyer, type Renter, type Data } from "../interfaces";
-import * as helpers from "./run.helpers";
+import * as helpers from "./fees";
 import { simulateYear } from "./simulate/simulateYear";
 import Mortgage from "./mortgage";
 import { type MetaState } from "../atoms/metaAtom";

@@ -1,8 +1,7 @@
 import { sum } from "./utils";
-import * as helpers from "./run.helpers";
-import { type Province } from "../config";
+import * as helpers from "./fees";
 import Mortgage from "./mortgage";
-import { type Renter, type Buyer } from "../interfaces";
+import { type Renter, type Buyer, type Province } from "../interfaces";
 
 export const logYear = (opts: {
   year: number,

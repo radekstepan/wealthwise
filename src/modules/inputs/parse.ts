@@ -2,7 +2,7 @@ import numbro from 'numbro';
 import { normal, invariant, type Sample } from '../samplers';
 import { INPUTS } from '../../const';
 import { type TypedInputs, type InputNode } from './inputs';
-import { Province } from '../../config';
+import { Province } from '../../interfaces';
 
 export type ParsedInputs<T> = {
   [K in keyof T]: T[K] extends InputNode ? 

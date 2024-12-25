@@ -1,10 +1,9 @@
 import { sum } from "mathjs";
 import Mortgage from "../mortgage";
 import { isEvery } from "../utils";
-import { Province } from "../../config";
-import * as helpers from "../run.helpers";
+import * as helpers from "../fees";
 import { type Sample } from "../samplers";
-import { type Buyer, type Renter } from "../../interfaces";
+import { type Buyer, type Renter, type Province } from "../../interfaces";
 
 export const simulateMove = ({
   moveEvery,

@@ -3,7 +3,7 @@ import numbro from 'numbro';
 import { useAtomValue } from 'jotai';
 import Value from './Value';
 import {sum} from '../../modules/utils';
-import { saleFees } from '../../modules/run.helpers';
+import { saleFees } from '../../modules/fees';
 import { metaAtom } from '../../atoms/metaAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { useDownloadSheet } from '../../hooks/useDownloadSheet';
