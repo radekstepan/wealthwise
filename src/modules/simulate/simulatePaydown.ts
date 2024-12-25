@@ -1,7 +1,7 @@
 import Mortgage from "../mortgage";
-import { type Buyer, type Renter } from "./interfaces";
+import { type Buyer, type Renter } from "../../interfaces";
 
-export const simPaydown = ({
+export const simulatePaydown = ({
   mortgage,
   anniversaryPaydownRate,
   originalBalance,

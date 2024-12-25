@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import {range} from './utils';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type DistState } from '../atoms/distAtom';
-import { type Data, type Renter, type Buyer } from './run/interfaces';
+import { type Data, type Renter, type Buyer } from '../interfaces';
 
 const BANDS = 7; // distribution bands
 

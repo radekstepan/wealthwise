@@ -1,16 +1,15 @@
 import { Random } from "random-js";
 import * as formula from '../formula';
-import { initSim } from "./initSim";
 import { isEvery, range } from "../utils";
-import { simPaydown } from "./simPaydown";
-import { simMonth } from "./simMonth";
-import { simCrash } from "./simCrash";
+import { simulatePaydown } from "./simulatePaydown";
+import { simulateMonth } from "./simulateMonth";
+import { simulateCrash } from "./simulateCrash";
+import { simulateMove } from "./simulateMove";
+import { logYear } from "../logYear";
 import { type TypedInputs } from "../inputs/inputs";
 import { type ParsedInputs } from "../inputs/parse";
-import { simMove } from "./simMove";
-import { logYear } from "./logYear";
 
-export function simYear(year: number, init: ReturnType<typeof initSim>, opts: ParsedInputs<TypedInputs>, random: Random) {
+export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedInputs>, random: Random) {
   let {
     currentHousePrice, newHousePrice, currentInterestRate,
     monthlyExpenses, rent, marketRent
@@ -26,7 +25,7 @@ export function simYear(year: number, init: ReturnType<typeof initSim>, opts: Pa
   const anniversaryPaydownRate = opts.scenarios.mortgage.anniversaryPaydown();
 
   // Property crash?
-  const crashDrop = simCrash({random, opts});
+  const crashDrop = simulateCrash({random, opts});
   if (crashDrop) {
     currentHousePrice *= crashDrop;
     newHousePrice *= crashDrop;      
@@ -34,7 +33,7 @@ export function simYear(year: number, init: ReturnType<typeof initSim>, opts: Pa
 
   // Simulate each month of the year.
   for (const month of range(12)) {
-    const nextMonth = simMonth({
+    const nextMonth = simulateMonth({
       month,
       mortgage,
       buyer,
@@ -55,7 +54,7 @@ export function simYear(year: number, init: ReturnType<typeof initSim>, opts: Pa
   }
 
   // Apply anniversary paydown at the end of each year.
-  simPaydown({
+  simulatePaydown({
     mortgage,
     anniversaryPaydownRate,
     originalBalance,
@@ -76,7 +75,7 @@ export function simYear(year: number, init: ReturnType<typeof initSim>, opts: Pa
   }
 
   // Moving scenario (make sure we do not move in the last year).
-  const nextMove = simMove({
+  const nextMove = simulateMove({
     moveEvery,
     renew,
     year,

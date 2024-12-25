@@ -1,4 +1,4 @@
-import { Province } from "../../config";
+import { Province } from "./config";
 
 interface Asset {
   $: number, // net worth

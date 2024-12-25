@@ -1,6 +1,10 @@
 module.exports = {
   preset: 'ts-jest/presets/js-with-ts',
   testEnvironment: 'jsdom',
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/__fixtures__/'
+  ],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],

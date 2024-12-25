@@ -1,8 +1,6 @@
-import * as d3 from 'd3';
 import { onSimulateRes } from '../onSimulateRes';
 import { type ChartData } from '../../components/chart/Chart';
 import { type DistState } from '../../atoms/distAtom';
-import { type Data } from '../run/interfaces';
 
 describe('onSimulateRes', () => {
   let setDist: jest.Mock<(next: DistState) => void>;

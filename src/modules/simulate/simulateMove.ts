@@ -4,9 +4,9 @@ import { isEvery } from "../utils";
 import { Province } from "../../config";
 import * as helpers from "../run.helpers";
 import { type Sample } from "../samplers";
-import { type Buyer, type Renter } from "./interfaces";
+import { type Buyer, type Renter } from "../../interfaces";
 
-export const simMove = ({
+export const simulateMove = ({
   moveEvery,
   renew,
   year,

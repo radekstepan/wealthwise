@@ -1,9 +1,9 @@
 import Mortgage from "../mortgage";
 import { isEvery, sum } from "../utils";
 import { type Sample } from "../samplers";
-import { type Buyer, type Renter } from "./interfaces";
+import { type Buyer, type Renter } from "../../interfaces";
 
-export const simMonth = ({
+export const simulateMonth = ({
   month,
   mortgage,
   buyer,

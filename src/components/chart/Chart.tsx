@@ -7,7 +7,7 @@ import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { formAtom } from '../../atoms/formAtom';
-import { type Renter, type Buyer } from '../../modules/run/interfaces';
+import { type Renter, type Buyer } from '../../interfaces';
 import './chart.less';
 
 export type ChartData = [

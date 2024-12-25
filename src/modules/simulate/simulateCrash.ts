@@ -2,7 +2,7 @@ import {type Random} from 'random-js';
 import { type ParsedInputs } from '../inputs/parse';
 import { type TypedInputs } from "../inputs/inputs";
 
-export const simCrash = ({
+export const simulateCrash = ({
   random,
   opts
 }: {
