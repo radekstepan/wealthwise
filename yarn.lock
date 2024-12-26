@@ -1036,14 +1036,6 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@formulajs/formulajs@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@formulajs/formulajs/-/formulajs-3.1.1.tgz#b1e9c359e65978eb080288193cc7b09f8c08e93b"
-  integrity sha512-0JJM4q5nEE1+hOdN+08Pfz9C/Z88hbwLfRcmDWQog9AoSm11FDkq17PJzpklVidmjCajAJzFmuGIMz/lWnojsA==
-  dependencies:
-    bessel "^1.0.2"
-    jstat "^1.9.5"
-
 "@hot-loader/react-dom@^17.0.2+4.13.0":
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/@hot-loader/react-dom/-/react-dom-17.0.2.tgz#0b24e484093e8f97eb5c72bebdda44fc20bc8400"
@@ -2347,11 +2339,6 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
-
-bessel@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/bessel/-/bessel-1.0.2.tgz#828812291e0b62e94959cdea43fac186e8a7202d"
-  integrity sha512-Al3nHGQGqDYqqinXhQzmwmcRToe/3WyBv4N8aZc5Pef8xw2neZlR9VPi84Sa23JtgWcucu18HxVZrnI0fn2etw==
 
 big.js@^5.2.2:
   version "5.2.2"

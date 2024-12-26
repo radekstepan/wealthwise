@@ -1,4 +1,4 @@
-import { r, round, range, range1, sum, isEvery, within } from '../utils';
+import { r, round, range, range1, sum, isEvery } from '../utils';
 
 describe('utils', () => {
   describe('isEvery', () => {
@@ -64,32 +64,6 @@ describe('utils', () => {
       expect(isEvery(2, 2)).toBeTruthy();
       expect(isEvery(4, 2)).toBeTruthy();
       expect(isEvery(5, 2)).toBeFalsy();
-    });
-  });
-
-  describe('within', () => {
-    test('returns number within range', () => {
-      const generator = jest.fn().mockReturnValue(5);
-      expect(within(generator, 1, 10)).toBe(5);
-      expect(generator).toHaveBeenCalledTimes(1);
-    });
-
-    test('keeps trying until number is within range', () => {
-      const generator = jest
-        .fn()
-        .mockReturnValueOnce(0)
-        .mockReturnValueOnce(11)
-        .mockReturnValue(5);
-      
-      expect(within(generator, 1, 10)).toBe(5);
-      expect(generator).toHaveBeenCalledTimes(3);
-    });
-
-    test('throws error if no number found within range after 1000 tries', () => {
-      const generator = jest.fn().mockReturnValue(0);
-      
-      expect(() => within(generator, 1, 10)).toThrow('All generated numbers fell out of range');
-      expect(generator).toHaveBeenCalledTimes(1000);
     });
   });
 });

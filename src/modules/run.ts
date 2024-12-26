@@ -139,7 +139,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 }
 
 // Export for web worker.
-if (typeof self !== 'undefined' && self.onmessage) {
+if (typeof self !== 'undefined') {
   self.onmessage = ({data: {inputs, samples}}: {
     data: {inputs: TypedInputs, samples: number}
   }) => {
