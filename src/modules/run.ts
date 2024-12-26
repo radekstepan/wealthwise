@@ -12,7 +12,7 @@ import { postMessage } from "./postMessage";
 const SAMPLES = 1000; // number of samples
 
 // A single random simulation run.
-function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
+export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
   const rnd = new Random();
   
   // Initialize simulation state
@@ -138,11 +138,14 @@ function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
   return data;
 }
 
-self.onmessage = ({data: {inputs, samples}}: {
-  data: {inputs: TypedInputs, samples: number}
-}) => {
-  const opts = parse(inputs);
-  const res = range(samples || SAMPLES).map((i) => run(opts, !i));
+// Export for web worker.
+if (typeof self !== 'undefined' && self.onmessage) {
+  self.onmessage = ({data: {inputs, samples}}: {
+    data: {inputs: TypedInputs, samples: number}
+  }) => {
+    const opts = parse(inputs);
+    const res = range(samples || SAMPLES).map((i) => run(opts, !i));
 
-  postMessage({action: 'res', res});
-};
+    postMessage({action: 'res', res});
+  };
+}

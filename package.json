@@ -13,7 +13,8 @@
     "build-prod": "webpack --mode production",
     "start": "webpack serve --hot --mode development",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "benchmark": "npx tsx bin/benchmark.ts"
   },
   "dependencies": {
     "@testing-library/react-hooks": "8.0.1",
@@ -28,7 +29,6 @@
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
     "@formulajs/formulajs": "^3.1.1",
     "@hot-loader/react-dom": "^17.0.2+4.13.0",
     "@rematch/core": "^2.2.0",
@@ -54,6 +54,7 @@
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "mathjs": "^10.4.1",
+    "mitata": "^1.0.23",
     "normalize.css": "^8.0.1",
     "numbro": "^2.3.6",
     "numeraljs": "^1.5.6",
