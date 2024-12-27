@@ -13,7 +13,7 @@
     "build-prod": "webpack --mode production",
     "start": "webpack serve --hot --mode development",
     "test": "jest",
-    "test:coverage": "jest --coverage",
+    "coverage": "jest --coverage",
     "benchmark": "npx tsx bin/benchmark.ts"
   },
   "dependencies": {

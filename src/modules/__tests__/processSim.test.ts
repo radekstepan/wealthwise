@@ -1,8 +1,8 @@
-import { onSimulateRes } from '../onSimulateRes';
+import { processSim } from '../processSim';
 import { type ChartData } from '../../components/chart/Chart';
 import { type DistState } from '../../atoms/distAtom';
 
-describe('onSimulateRes', () => {
+describe('processSim', () => {
   let setDist: jest.Mock<(next: DistState) => void>;
   let setData: jest.Mock<(data: ChartData) => void>;
   let mockSamples: any;
@@ -46,7 +46,7 @@ describe('onSimulateRes', () => {
   });
 
   test('should calculate distribution bands using actual quantiles', () => {
-    const handler = onSimulateRes(setDist, setData);
+    const handler = processSim(setDist, setData);
     handler(mockSamples);
 
     expect(setDist).toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('onSimulateRes', () => {
   });
 
   test('should calculate chart data with accurate quantiles', () => {
-    const handler = onSimulateRes(setDist, setData);
+    const handler = processSim(setDist, setData);
     handler(mockSamples);
 
     expect(setData).toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('onSimulateRes', () => {
       }
     ]) as any;
 
-    const handler = onSimulateRes(setDist, setData);
+    const handler = processSim(setDist, setData);
     handler(largeSamples);
 
     const dataCall = setData.mock.calls[0][0];
@@ -100,7 +100,7 @@ describe('onSimulateRes', () => {
   });
 
   test('should maintain consistent band sizes', () => {
-    const handler = onSimulateRes(setDist, setData);
+    const handler = processSim(setDist, setData);
     handler(mockSamples);
 
     const distCall = setDist.mock.calls[0][0];
@@ -139,7 +139,7 @@ describe('onSimulateRes', () => {
       ]
     ];
 
-    const handler = onSimulateRes(setDist, setData);
+    const handler = processSim(setDist, setData);
     handler(samplesWithOutliers);
 
     const distCall = setDist.mock.calls[0][0];

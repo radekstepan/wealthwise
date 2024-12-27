@@ -8,7 +8,7 @@ const BANDS = 7; // distribution bands
 
 type Samples = Array<Data>; // samples * years
 
-export const onSimulateRes = (
+export const processSim = (
   setDist: (next: DistState) => void,
   setData: (data: ChartData) => void
 ) => (samples: Samples) => {

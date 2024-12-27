@@ -3,12 +3,7 @@ import {type ChartData } from '../components/chart/Chart';
 import { type MetaState } from '../atoms/metaAtom';
 import { type DistState } from '../atoms/distAtom';
 import { type TypedInputs } from './inputs/inputs';
-import { type Data } from '../interfaces';
-import { onSimulateRes } from './onSimulateRes';
-
-const BANDS = 7; // distribution bands
-
-type Samples = Array<Data>; // samples * years
+import { processSim } from './processSim';
 
 // Multiple runs/samples.
 // Simulating multiple scenarios for comparing buying vs. renting a property.
@@ -26,5 +21,5 @@ export default function simulate(
 
   child.on('meta', setMeta);
 
-  child.on('res', onSimulateRes(setDist, setData));
+  child.on('res', processSim(setDist, setData));
 }
