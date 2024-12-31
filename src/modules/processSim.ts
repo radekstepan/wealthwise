@@ -6,7 +6,7 @@ import { type Data, type Renter, type Buyer } from '../interfaces';
 
 const BANDS = 7; // distribution bands
 
-type Samples = Array<Data>; // samples * years
+export type Samples = Array<Data>; // samples * years
 
 export const processSim = (
   setDist: (next: DistState) => void,
@@ -38,7 +38,7 @@ export const processSim = (
     }
   }
 
-  setDist(bands.map((d, i) => [
+  setDist(bands.length < BANDS ? null : bands.map((d, i) => [
     [min + (i * band), min + ((1 + i) * band)],
     d
   ]));

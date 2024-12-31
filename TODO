@@ -1,12 +1,11 @@
 - [x] tests on the core estimate logic
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
-- [ ] switch scenario summary to be prepayment % (and make sure it works with 0%)
 
 Nice to have
 - [ ] show a monthly how much better off you are in terms of net worth
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
-- [ ] hide distribution if there's none to show
+- [x] hide distribution if there's none to show
 - [ ] Cmd+C should copy an unformatted numeric value
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working

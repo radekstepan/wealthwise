@@ -1,9 +1,9 @@
 import { distAtom, type DistState } from '../distAtom';
 
 describe('distAtom', () => {
-  it('should initialize with an empty array', () => {
+  it('should initialize', () => {
     const initialValue = distAtom.init;
-    expect(initialValue).toEqual([]);
+    expect(initialValue).toBeNull();
   });
 
   it('should match the DistState type structure', () => {
