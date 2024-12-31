@@ -11,7 +11,7 @@ Nice to have
 - [ ] flip animation on the legend not working
 - [ ] simulate "x" years (needs to subtract mortgage in the table)
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
-- [ ] make the amounts vertical labels more human readable
+- [x] make the amounts vertical labels more human readable
 - [ ] first time homebuyer checkbox or enum
 - [x] Ontario to the list of provinces
 - [ ] sensitivity analysis

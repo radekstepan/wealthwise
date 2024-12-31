@@ -32,23 +32,26 @@ const init = (ref) => {
     .attr('class', 'y-axis');
 
   // Define X and Y axes
-  const x = d3.scaleBand().range([0, width]).padding(0.1);
+  const x = d3.scaleBand().range([0, width]).padding(0.4);
   const y = d3.scaleLinear().range([height, 0]);
 
-  const xAxis = d3.axisBottom(x).tickFormat((d) =>
-    d.map((n) => '$' + numbro(n).format({
+  const xAxis = d3.axisBottom(x).tickFormat((d) => {
+    const [min, max] = d;
+    const center = (min + max) / 2;
+
+    return numbro(center).format({
+      prefix: '$',
       average: true,
       optionalMantissa: true,
-      mantissa: n > 500000 ? 2 : 0,
-      negative: 'parenthesis',
-    })).join(' - ')
-  );
+      mantissa: 2,
+    });
+  });
   const yAxis = d3.axisLeft(y);
 
   return [svg, x, xAxis, y, yAxis];
 };
 
-const update = (svg, x, xAxis, y, yAxis, data) => {
+const update = (svg, x, xAxis, y, _yAxis, data) => {
   const { height } = svg.node().getBoundingClientRect();
 
   if (!data) {
