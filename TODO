@@ -1,17 +1,13 @@
-- [x] tests on the core estimate logic
 - [ ] have a way to contact me, my face with a little bio and an email address
 - [ ] arrows describing the different sections
+- [ ] simulation section with years and number of samples
 
 Nice to have
 - [ ] show a monthly how much better off you are in terms of net worth
 - [ ] fix <20% down on a >1mil property - show an alert or change the downpayment for the user and show warning
-- [x] hide distribution if there's none to show
 - [ ] Cmd+C should copy an unformatted numeric value
 - [ ] test if a new RNG seed is needed for each run
 - [ ] flip animation on the legend not working
-- [ ] simulate "x" years (needs to subtract mortgage in the table)
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
-- [x] make the amounts vertical labels more human readable
 - [ ] first time homebuyer checkbox or enum
-- [x] Ontario to the list of provinces
 - [ ] sensitivity analysis
