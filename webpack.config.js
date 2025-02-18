@@ -37,7 +37,9 @@ const config = {
     ]
   },
   devServer: {
-    'static': {
+    historyApiFallback: true,
+    hot: true,
+    static: {
       directory: './dist'
     }
   },

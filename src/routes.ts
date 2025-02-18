@@ -3,12 +3,14 @@ import React from "react";
 export enum AppRoute {
   home,
   run,
+  faq,
   notFound,
 }
 
 export type RouteParams = {
   [AppRoute.home]: undefined;
   [AppRoute.run]: undefined;
+  [AppRoute.faq]: undefined;
   [AppRoute.notFound]: undefined;
 };
 
@@ -24,6 +26,11 @@ export const routes = [
     name: AppRoute.run,
     path: "/run",
     view: React.lazy(() => import("./pages/Run")),
+  },
+  {
+    name: AppRoute.faq,
+    path: "/faq",
+    view: React.lazy(() => import("./pages/FAQ")),
   },
   {
     name: AppRoute.notFound,

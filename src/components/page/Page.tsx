@@ -13,10 +13,9 @@ function Page() {
         <div className="topbar">
           <div className="logo">wealthwise</div>
           <div className="nav">
-            <Link routeName={AppRoute.run}>Simulator</Link>
             <Link routeName={AppRoute.home}>Overview</Link>
-            <Link href="#">Changelog</Link>
-            <Link href="#">Issues</Link>
+            <Link routeName={AppRoute.run}>Simulator</Link>
+            <Link routeName={AppRoute.faq}>FAQ</Link>
             <Link href="#">Source Code</Link>
           </div>
         </div>

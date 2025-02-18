@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Link from "../components/link/Link";
+import { AppRoute } from "../routes";
 
 const Home: React.FC = () => {
   useEffect(() => {
@@ -13,7 +14,7 @@ const Home: React.FC = () => {
         <p><strong>Finally, a simple, no-nonsense way to see if buying a home really beats renting—backed by thousands of Monte Carlo simulations. All in your browser. All open source.</strong></p>
 
         <div className="home__cta">
-          <Link href="/simulate" className="button">Launch the Simulator</Link>
+          <Link routeName={AppRoute.run} className="button">Launch the Simulator</Link>
         </div>
 
         {/**<hr />*/}
