@@ -1,16 +1,14 @@
 import React, { useEffect } from "react";
-import Link from "../components/link/Link";
-import { AppRoute } from "../routes";
 
 const FAQ: React.FC = () => {
   useEffect(() => {
-    document.title = "Simulator Settings Explained";
+    document.title = "Wealthwise FAQ";
   }, []);
 
   return (
     <div className="home">
       <header className="home__header">
-        <h1>Buy vs Rent Simulator: Settings Explained</h1>
+        <h1>Buy vs Rent Simulator: FAQ</h1>
         <p>
           This guide details each simulation parameter used in our Buy vs Rent Calculator. Explore the inputs and understand how they affect the simulation.
         </p>
@@ -32,7 +30,7 @@ const FAQ: React.FC = () => {
             <li>A downloadable spreadsheet with a detailed year-by-year breakdown.</li>
           </ul>
           <p>
-            Net worth is calculated as the sum of your property and portfolio values. In the renting scenario, if rent exceeds expenses, the surplus is funneled into your portfolio as imputed rent savings. Even for buyers, an imputed rent component is considered to reflect the cost of living in your own home.
+            Net worth is calculated as the sum of your property and portfolio values. For renters, they start with a large portfolio which equals that of buyer's downpayment and purchase cost. In the buyer scenario, if rent exceeds expenses, the surplus is funneled into a portfolio as imputed rent savings.
           </p>
         </section>
 
@@ -43,13 +41,7 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Price</h3>
             <p>
-              The listing price or market value of the property, which is fundamental in determining the mortgage principal and overall investment.
-            </p>
-          </div>
-          <div>
-            <h3>Downpayment</h3>
-            <p>
-              The percentage of the purchase price paid upfront. A higher downpayment reduces the financed amount.
+              The listing price of the property.
             </p>
           </div>
           <div>
@@ -79,7 +71,7 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Province</h3>
             <p>
-              The jurisdiction where the property is located. Tax rates, fees, and regulations vary by province.
+              The jurisdiction where the property is located. Land transfer taxes vary by province.
             </p>
           </div>
         </section>
@@ -91,13 +83,13 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Downpayment</h3>
             <p>
-              (Reiterated) The percentage of the purchase price paid upfront, which lowers the mortgage principal.
+              The percentage of the purchase price paid upfront.
             </p>
           </div>
           <div>
             <h3>Current Interest Rate</h3>
             <p>
-              The prevailing mortgage rate, directly affecting your monthly payments.
+              The prevailing mortgage rate.
             </p>
           </div>
           <div>
@@ -145,7 +137,7 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Rent Increases</h3>
             <p>
-              The expected annual percentage increase in the current rental payment, often subject to regulatory limits.
+              The expected annual percentage increase in the current rental payment, often subject to regulatory limits (rent control).
             </p>
           </div>
           <div>
@@ -177,7 +169,7 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Capital Gains Tax</h3>
             <p>
-              The effective tax rate on gains from property or investment sales, reducing net returns.
+              The effective tax rate on gains from investment sales, reducing net returns. Property taxes are not considered in this simulation (owner occupier).
             </p>
           </div>
         </section>
@@ -203,47 +195,98 @@ const FAQ: React.FC = () => {
           <div>
             <h3>Property Price Drop Amount</h3>
             <p>
-              The percentage reduction in property value during a downturn event.
+              The percentage by which property values may decline if a market correction occurs.
             </p>
           </div>
           <div>
-            <h3>Years Before Moving</h3>
+            <h3>Move Every N Years</h3>
             <p>
-              The interval (in years) between property moves, which influences transaction costs and timing.
+              How often you expect to move or upgrade your property. This factors in transaction costs like realtor fees, legal fees, and land transfer taxes which can significantly impact long-term wealth accumulation.
             </p>
           </div>
           <div>
-            <h3>New Home Premium</h3>
+            <h3>Anniversary Principal Paydown</h3>
             <p>
-              The additional cost percentage incurred when purchasing a new property, accounting for the typical premium on new acquisitions.
-            </p>
-          </div>
-          <div>
-            <h3>Principal Prepayment</h3>
-            <p>
-              The percentage of the original mortgage principal paid down annually on the mortgage anniversary, reducing total interest expenses.
+              The percentage of your original mortgage balance you plan to pay down each year through lump sum payments. This accelerates mortgage repayment and reduces interest costs.
             </p>
           </div>
         </section>
 
-        <section>
+        {/* Advanced Concepts */}
+        <section id="advanced">
+          <h2>Advanced Concepts</h2>
           <p>
-            Many inputs allow for range values (e.g., "3% - 5%") so that our Monte Carlo simulation can run hundreds of iterations to quantify volatility. Adjust these parameters to align with your financial strategy and assumptions.
+            Understanding how the simulation handles complex scenarios.
           </p>
+          <div>
+            <h3>Monte Carlo Method</h3>
+            <p>
+              The simulator runs hundreds of iterations with random variations in key parameters (within your specified ranges). This produces a distribution of possible outcomes, helping you understand both the potential and risks of your decision.
+            </p>
+          </div>
+          <div>
+            <h3>Percentile Bands</h3>
+            <p>
+              The chart shows three key percentile bands (5th, 50th, and 95th). The middle band (50th) represents the median outcome, while the outer bands show potential upside (95th) and downside (5th) scenarios. This helps visualize the range of possible outcomes.
+            </p>
+          </div>
+          <div>
+            <h3>Net Worth Calculation</h3>
+            <p>
+              Net worth is calculated as: Property Value + Portfolio Value - Mortgage Balance. For renters, it's simply their Portfolio Value. The simulation accounts for:
+            </p>
+            <ul>
+              <li>Property appreciation/depreciation</li>
+              <li>Mortgage principal reduction</li>
+              <li>Investment returns on saved money</li>
+              <li>Transaction costs when moving</li>
+              <li>Tax implications of property sales</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Imputed Rent</h3>
+            <p>
+              Even homeowners "pay rent" to themselves (imputed rent). This cost is considered in the simulation to accurately compare scenarios.
+            </p>
+          </div>
+        </section>
+
+        {/* Tips */}
+        <section id="tips">
+          <h2>Tips for Using the Simulator</h2>
           <p>
-            For further details or to review the underlying code, please visit our{" "}
-            <a
-              href="https://github.com/your-repo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home__github-link"
-            >
-              GitHub repository
-            </a>.
+            Get the most out of your simulation analysis.
           </p>
-          <p>
-            <strong>Happy Simulating!</strong>
-          </p>
+          <div>
+            <h3>Use Realistic Ranges</h3>
+            <p>
+              When setting ranges (e.g., for future interest rates or property appreciation), use wider ranges to account for uncertainty over longer time horizons. Historical data can help inform these ranges.
+            </p>
+          </div>
+          <div>
+            <h3>Consider Multiple Scenarios</h3>
+            <p>
+              Run several simulations with different assumptions. For example, compare scenarios with:
+            </p>
+            <ul>
+              <li>Different downpayment amounts</li>
+              <li>Various property appreciation rates</li>
+              <li>Different moving frequencies</li>
+              <li>Conservative vs. optimistic market conditions</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Interpreting Results</h3>
+            <p>
+              Focus on the range of outcomes rather than just the median. Consider your risk tolerance when evaluating the spread between the 5th and 95th percentiles. A wider spread indicates more uncertainty in the outcomes.
+            </p>
+          </div>
+          <div>
+            <h3>Download Detailed Results</h3>
+            <p>
+              Use the spreadsheet download feature to analyze year-by-year projections. This can help identify key milestones like when a buying scenario might overtake renting, or the impact of moving costs over time.
+            </p>
+          </div>
         </section>
       </main>
     </div>

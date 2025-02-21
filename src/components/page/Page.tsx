@@ -16,7 +16,7 @@ function Page() {
             <Link routeName={AppRoute.home}>Overview</Link>
             <Link routeName={AppRoute.run}>Simulator</Link>
             <Link routeName={AppRoute.faq}>FAQ</Link>
-            <Link href="#">Source Code</Link>
+            <Link href="https://github.com/radekstepan/wealthwise" target="_new">Source Code</Link>
           </div>
         </div>
         <React.Suspense fallback={<Loader />}>

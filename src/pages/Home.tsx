@@ -77,13 +77,12 @@ const Home: React.FC = () => {
             <li><strong>Click “Simulate”</strong></li>
           </ol>
           <p>Grab your results, exhale, and walk away with a clearer vision of what <em>might</em> happen if you buy or keep renting. No sign-up. No gotchas. Just the data.</p>
+          <p><strong>Happy Simulating — and May the Best Scenario Win!</strong></p>
         </section>
 
         <blockquote>
           <p><strong>Disclaimer</strong>: This simulator is not financial advice. It’s a tool to help you explore outcomes under different assumptions. Always consider consulting a qualified professional for advice specific to your situation.</p>
         </blockquote>
-
-        <p><strong>Happy Simulating—and May the Best Scenario Win!</strong></p>
       </main>
     </div>
   )
