@@ -66,7 +66,7 @@ const Home: React.FC = () => {
 
         <section>
           <h2>Check Out the Code</h2>
-          <p>We believe in transparency. <a href="#" className="home__github-link">View our GitHub repo</a> to see how it all works under the hood. Fork it, hack it, or just read through the Monte Carlo logic yourself.</p>
+          <p>We believe in transparency. <a href="https://github.com/radekstepan/wealthwise" target="_new" className="home__github-link">View our GitHub repo</a> to see how it all works under the hood. Fork it, hack it, or just read through the Monte Carlo logic yourself.</p>
         </section>
 
         <section>
