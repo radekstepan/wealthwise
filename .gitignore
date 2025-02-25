@@ -11,3 +11,5 @@ coverage/
 ._*
 .Trashes
 Thumbs.db
+.env
+.aider*
