@@ -4,6 +4,19 @@
 @green: #52BD95;
 @orange: #e6a524;
 
+@font-family: 'Josefin Sans', sans-serif;
+@font-weight-bold: 500;
+@font-size-large: 1.6rem;
+@font-size-medium: 1.4rem;
+@font-size-small: 1.1rem;
+@line-height: 1.5;
+@color-text: #333;
+@color-text-dark: #2c3e50;
+@color-link: @title;
+@color-link-hover: darken(@title, 15%);
+@color-border: #e5e5e5;
+@color-border-top: @title;
+
 .page {
   height: 100%;
 
@@ -86,8 +99,8 @@
 }
 
 .home, .faq {
-  font-family: 'Josefin Sans', sans-serif;
-  color: #333;
+  font-family: @font-family;
+  color: @color-text;
   max-width: 1200px;
   margin: 0 auto;
   background: none;
@@ -105,6 +118,7 @@
       line-height: 1.1;
       letter-spacing: -1px;
       max-width: 800px;
+      font-weight: @font-weight-bold;
 
       @media (max-width: 768px) {
         font-size: 2.4rem;
@@ -112,15 +126,15 @@
     }
 
     p {
-      font-size: 1.4rem;
+      font-size: @font-size-medium;
       max-width: 600px;
       margin-bottom: 32px;
-      line-height: 1.4;
-      color: #333;
+      line-height: @line-height;
+      color: @color-text;
       
       strong {
-        font-weight: 500;
-        color: #2c3e50;
+        font-weight: @font-weight-bold;
+        color: @color-text-dark;
       }
 
       @media (max-width: 768px) {
@@ -146,7 +160,7 @@
       border-radius: 4px;
       padding: 24px;
       position: relative;
-      border: 1px solid #e5e5e5;
+      border: 1px solid @color-border;
       border-top: 3px solid;
       background: white;
 
@@ -163,38 +177,38 @@
       }
 
       h2 {
-        font-size: 1.6rem;
+        font-size: @font-size-large;
         margin-bottom: 16px;
-        color: #2c3e50;
+        color: @color-text-dark;
         letter-spacing: -0.5px;
         line-height: 1.1;
-        font-weight: 500;
+        font-weight: @font-weight-bold;
 
         @media (max-width: 768px) {
-          font-size: 1.4rem;
+          font-size: @font-size-medium;
         }
       }
 
       p {
-        font-size: 1.1rem;
-        line-height: 1.5;
+        font-size: @font-size-small;
+        line-height: @line-height;
         margin-bottom: 12px;
         color: #666;
 
         a {
-          color: @title;
+          color: @color-link;
           text-decoration: none;
           border-bottom: 1px solid currentColor;
           
           &:hover {
-            color: darken(@title, 15%);
+            color: @color-link-hover;
           }
         }
       }
 
       strong {
-        font-weight: 500;
-        color: #2c3e50;
+        font-weight: @font-weight-bold;
+        color: @color-text-dark;
       }
 
       ul,
@@ -203,14 +217,14 @@
         padding-left: 20px;
 
         li {
-          font-size: 1.1rem;
+          font-size: @font-size-small;
           margin-bottom: 8px;
-          line-height: 1.5;
+          line-height: @line-height;
           color: #666;
 
           strong {
-            font-weight: 500;
-            color: #2c3e50;
+            font-weight: @font-weight-bold;
+            color: @color-text-dark;
           }
         }
       }
@@ -248,8 +262,8 @@
     color: @green;
     text-decoration: none;
     border-bottom: 1px solid currentColor;
-    font-weight: 500;
-    font-size: 1.1rem;
+    font-weight: @font-weight-bold;
+    font-size: @font-size-small;
   
     &:hover {
       color: darken(@green, 10%);
@@ -266,7 +280,7 @@
       border-radius: 4px;
       text-decoration: none;
       font-size: 1.2rem;
-      font-weight: 500;
+      font-weight: @font-weight-bold;
       letter-spacing: -0.3px;
 
       &:hover {
@@ -274,7 +288,7 @@
       }
 
       @media (max-width: 768px) {
-        font-size: 1.1rem;
+        font-size: @font-size-small;
         padding: 14px 28px 12px;
       }
     }
