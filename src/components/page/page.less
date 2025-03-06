@@ -9,6 +9,7 @@
 @font-size-large: 1.6rem;
 @font-size-medium: 1.4rem;
 @font-size-small: 1.1rem;
+@font-size-tiny: 0.7rem;
 @line-height: 1.5;
 @color-text: #333;
 @color-text-dark: #2c3e50;
@@ -98,6 +99,66 @@
   }
 }
 
+.footer {
+  background: #fff;
+  color: #666;
+  padding: 16px 0;
+  margin-top: auto;
+  border-top: 1px solid @color-border;
+  
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    
+    p {
+      margin: 0;
+      font-size: @font-size-tiny;
+      color: #999;
+      line-height: 1.5;
+    }
+
+    .link {
+      color: @color-link;
+      padding: 0;
+      margin: 0;
+      font-size: inherit;
+      
+      &:hover {
+        color: @color-link-hover;
+        background: inherit;
+      }
+    }
+
+    .heart {
+      fill: #E53935;
+      width: 0.8em;
+      height: 0.8em;
+    }
+
+    .canada {
+      fill: #FF0000;
+      width: 0.85em;
+      height: 0.85em;
+    }
+  }
+
+  &__email {
+    span {
+      display: none;
+    }
+  }
+}
+
+// Ensure footer spans full width on Run page
+.Run .footer {
+  margin-left: -16px;
+  margin-right: -16px;
+  padding: 16px 0;
+  background: #fff;
+  border-top: 1px solid @color-border;
+}
+
 .home, .faq {
   font-family: @font-family;
   color: @color-text;
@@ -154,7 +215,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
-    padding: 0 32px 48px;
+    padding: 0 32px 20px;
 
     section {
       border-radius: 4px;

@@ -4,6 +4,7 @@ import {routes, AppRoute} from "../../routes";
 import RemountProvider from "../../providers/RemountProvider";
 import Loader from "../loader/Loader";
 import Link from '../link/Link';
+import { Footer } from '../footer/Footer';
 import './page.less';
 
 function Page() {
@@ -26,6 +27,7 @@ function Page() {
             ))}
           </Router>
         </React.Suspense>
+        <Footer />
       </div>
     </RemountProvider>
   );
