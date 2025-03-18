@@ -18,14 +18,10 @@
 @color-border: #e5e5e5;
 @color-border-top: @title;
 
-.page {
-  height: 100%;
-
-  .title {
-    color: @title;
-  }
-
+.wrapper {
   .topbar {
+    margin: 0 auto;
+    max-width: 1000px;
     padding: 24px 16px 16px 16px;
     display: flex;
 
@@ -62,102 +58,132 @@
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-  }
 
-  .flex {
-    display: flex;
-    min-height: 100%;
+      .link {
+        font-weight: bold;
+        color: #2c3e50;
 
-    .sidebar {
-      min-height: 100%;
-      background: #fafafa;
-      margin-right: 16px;
-      width: 34%;
-      padding-bottom: 16px;
-      //border-right: 1px solid #e6e6ec;
-    }
+        &:hover {
+          color: @title;
+          background: #3b82f61a;
+        }
 
-    .main {
-      min-height: 100%;
-      background: #fff;
-      padding: 16px;
-      width: 66%;
-      position: relative;
-      border: 1px solid #e6e6ec;
-      border-bottom: 0;
+        &.run {
+          // color: rgb(13, 148, 136);
+          // color: #fff;
+          // background: darken(@green, 5%);
+          background: @title;
+          color: #fff;
+          
+          &:hover {
+            // background: darken(rgb(240, 253, 250), 3%);
+            background: darken(@title, 10%);
+          }
 
-      .fixed {
-        position: sticky;
-        top: 16px;
+          // &.active {
+          //   color: #fff;
+          //   background: darken(@green, 5%);
+          // }
+        }
       }
     }
-
-    .h2 {
-      margin-top: 10px;
-    }
   }
-}
 
-.footer {
-  background: #fff;
-  color: #666;
-  padding: 16px 0;
-  margin-top: auto;
-  border-top: 1px solid @color-border;
-  
-  &__content {
-    max-width: 1200px;
+  .page {
     margin: 0 auto;
-    text-align: center;
-    
-    p {
-      margin: 0;
-      font-size: @font-size-tiny;
-      color: #999;
-      line-height: 1.5;
+    max-width: 1000px;
+    height: 100%;
+
+    .title {
+      color: @title;
     }
 
-    .link {
-      color: @color-link;
-      padding: 0;
-      margin: 0;
-      font-size: inherit;
-      
-      &:hover {
-        color: @color-link-hover;
-        background: inherit;
+    .flex {
+      display: flex;
+      min-height: 100%;
+
+      .sidebar {
+        min-height: 100%;
+        background: #fafafa;
+        margin-right: 16px;
+        width: 34%;
+        padding-bottom: 16px;
+        //border-right: 1px solid #e6e6ec;
+      }
+
+      .main {
+        min-height: 100%;
+        background: #fff;
+        padding: 16px;
+        width: 66%;
+        position: relative;
+        border: 1px solid #e6e6ec;
+        border-bottom: 0;
+
+        .fixed {
+          position: sticky;
+          top: 16px;
+        }
+      }
+
+      .h2 {
+        margin-top: 10px;
       }
     }
-
-    .heart {
-      fill: #E53935;
-      width: 0.8em;
-      height: 0.8em;
-    }
-
-    .canada {
-      fill: #FF0000;
-      width: 0.85em;
-      height: 0.85em;
-    }
   }
 
-  &__email {
-    span {
-      display: none;
+  .footer {
+    background: #fff;
+    color: #666;
+    padding: 16px 0;
+    margin-top: auto;
+    border-top: 1px solid @color-border;
+    
+    &__content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      
+      p {
+        margin: 0;
+        font-size: @font-size-tiny;
+        color: #999;
+        line-height: 1.5;
+      }
+  
+      .link {
+        color: @color-link;
+        padding: 0;
+        margin: 0;
+        font-size: inherit;
+        
+        &:hover {
+          color: @color-link-hover;
+          background: inherit;
+        }
+      }
+  
+      .heart {
+        fill: #E53935;
+        width: 0.8em;
+        height: 0.8em;
+      }
+  
+      .canada {
+        fill: #FF0000;
+        width: 0.85em;
+        height: 0.85em;
+      }
     }
-  }
+  
+    &__email {
+      span {
+        display: none;
+      }
+    }
+  }  
 }
 
-// Ensure footer spans full width on Run page
-.Run .footer {
-  margin-left: -16px;
-  margin-right: -16px;
-  padding: 16px 0;
-  background: #fff;
-  border-top: 1px solid @color-border;
-}
 
 .home, .faq {
   font-family: @font-family;

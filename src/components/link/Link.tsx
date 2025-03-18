@@ -16,6 +16,8 @@ interface Props<T = AppRoute> {
   onClick?: (evt: React.MouseEvent<HTMLAnchorElement>) => void;
   /** Link content */
   children: ReactNode;
+  /** Additional class names */
+  className?: string;
   /** Additional props spread to the anchor element */
   [key: string]: unknown;
 }
@@ -26,6 +28,7 @@ const Link: React.FC<Props> = ({
   state,
   onClick,
   children,
+  className,
   ...rest
 }) => {
   const { goTo, getHref } = useRouter();
@@ -80,7 +83,7 @@ const Link: React.FC<Props> = ({
 
   return (
     <a
-      className={cls("link", active && "active")}
+      className={cls("link", className, active && "active")}
       href={computedHref}
       onClick={handleClick}
       {...rest}
