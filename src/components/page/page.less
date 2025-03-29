@@ -198,6 +198,42 @@
     margin-bottom: 32px;
     background: none;
 
+    &-content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 40px;
+
+      @media (max-width: 768px) { // Stack columns on smaller screens
+        flex-direction: column;
+        align-items: stretch; // Let items fill width when stacked
+        gap: 30px;
+      }
+    }
+
+    &-text {
+      flex: 3;
+      min-width: 0;
+    }
+
+    &-chart {
+      flex: 2;
+      min-width: 0;
+
+       // Ensure the chart container div fills the flex item
+      > div {
+        width: 100%;
+        height: 100%;
+      }
+
+       @media (max-width: 768px) {
+         max-width: 450px;
+         margin: 0 auto;
+         flex-basis: auto; // Reset basis when stacking
+         height: 200px; // Ensure height is maintained when stacked
+       }
+    }
+
     h1 {
       font-size: 3.2rem;
       color: @title;

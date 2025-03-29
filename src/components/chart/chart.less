@@ -7,8 +7,40 @@
 
 .chart {
   position: relative;
+  min-height: 500px;
+
+  .svg {
+    opacity: 0; // Start transparent
+    transition: opacity 0.5s ease-in-out; // Smooth transition for opacity
+    // Ensure SVG takes up space even when transparent (height set by parent/CSS)
+    width: 100%;
+    height: 100%; // Inherit height from parent or specific CSS
+  }
+
+  &.loaded .svg {
+    opacity: 1; // Fade in when loaded class is added
+  }
+
+  .chart-loader-overlay {
+    position: absolute;
+    top: 0; // Position relative to .chart parent
+    left: 0;
+    width: 100%;
+    height: 100%; // Takes full space of the chart area
+    display: flex; // Use flexbox to center the loader
+    align-items: center; // Vertical centering
+    justify-content: center; // Horizontal centering
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.85); // Semi-transparent white overlay
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+  }
 
   .legend {
+    font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+    z-index: 5; // Ensure legend is on top
     position: absolute;
     width: 160px;
     top: 10px;
@@ -19,7 +51,7 @@
     font-size: 12px;
 
     &.left {
-      left: 0;
+      left: 35px;
     }
 
     &.right {
@@ -158,5 +190,68 @@
       font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       text-rendering: optimizeLegibility;
     }
+  }
+}
+
+.mini-chart {
+  position: relative;
+  min-height: 180px; // Match container height from Home.tsx style prop
+  overflow: hidden;
+
+  .svg {
+    margin: 0;
+
+    // Style lines for mini view
+    .buy-line.mini,
+    .rent-line.mini {
+      stroke-width: 0.5;
+      opacity: 0.5;
+      &.median {
+         stroke-width: 1.5;
+         opacity: 1;
+      }
+    }
+
+    .domain {
+      display: block;
+      stroke: #ccc;
+    }
+    .tick line {
+      stroke: #ccc;
+    }
+    .tick text {
+      display: block;
+      font-size: 9px;
+      fill: #666;
+    }
+
+     // Hide mortgage/rent covers lines and labels in mini mode
+    .mortgage-line, .mortgage-label,
+    .rentcovers-line, .rentcovers-label {
+      display: none;
+    }
+
+    text {
+      font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      text-rendering: optimizeLegibility;
+    }
+  }
+
+  // Adjust legend position if needed for mini, or hide it
+  .legend {
+    width: 120px;
+    padding: 8px;
+    font-size: 10px;
+    top: 5px;
+    &.left {
+      left: 50px;
+    }
+    &.right {
+      right: 20px;
+    }
+  }
+
+  .chart-loader-overlay {
+    display: none; // hide just in case
   }
 }

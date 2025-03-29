@@ -141,10 +141,13 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 // Export for web worker.
 if (typeof self !== 'undefined') {
   self.onmessage = ({data: {inputs, samples}}: {
-    data: {inputs: TypedInputs, samples: number}
+    data: {inputs: TypedInputs, samples?: number}
   }) => {
     const opts = parse(inputs);
-    const res = range(samples || SAMPLES).map((i) => run(opts, !i));
+    // Use the passed 'samples' count, or the default SAMPLES constant
+    const numSamples = typeof samples === 'number' && samples > 0 ? samples : SAMPLES;
+    console.log(`Worker running ${numSamples} samples.`);
+    const res = range(numSamples).map((i) => run(opts, !i));
 
     postMessage({action: 'res', res});
   };

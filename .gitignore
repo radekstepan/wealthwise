@@ -13,3 +13,4 @@ coverage/
 Thumbs.db
 .env
 .aider*
+repomix-output.xml

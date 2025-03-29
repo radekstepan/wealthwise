@@ -4,10 +4,11 @@ const worker = new Worker(new URL('./run.ts', import.meta.url));
 
 // A utility for running code in a separate thread and emitting
 //  events when certain messages are received from the Worker object.
-export default function exec(inputs: TypedInputs) {
+export default function exec(inputs: TypedInputs, samples?: number) {
   const evt = new EventEmitter();
 
-  worker.postMessage({inputs});
+  // Pass inputs and samples count to the worker
+  worker.postMessage({ inputs, samples });
 
   worker.onmessage = ({data}) => {
     switch (data.action) {

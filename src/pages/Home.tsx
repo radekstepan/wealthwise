@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Link from "../components/link/Link";
 import { AppRoute } from "../routes";
+import Chart from "../components/chart/Chart";
 
 const Home: React.FC = () => {
   useEffect(() => {
@@ -10,14 +11,22 @@ const Home: React.FC = () => {
   return (
     <div className="home">
       <header className="home__header">
-        <h1>Buy or Rent? Let This Free Monte Carlo Simulator Guide You</h1>
-        <p><strong>Finally, a simple, no-nonsense way to see if buying a home really beats renting—backed by thousands of Monte Carlo simulations. All in your browser. All open source.</strong></p>
+        <div className="home__header-content">
+          <div className="home__header-text">
+            <h1>Buy or Rent? Let This Free Monte Carlo Simulator Guide You</h1>
+            <p><strong>Finally, a simple, no-nonsense way to see if buying a home really beats renting—backed by thousands of Monte Carlo simulations. All in your browser. All open source.</strong></p>
 
-        <div className="home__cta">
-          <Link routeName={AppRoute.run} className="button">Launch the Simulator</Link>
+            <div className="home__cta">
+              <Link routeName={AppRoute.run} className="button">Launch the Simulator</Link>
+            </div>
+          </div>
+
+          <div className="home__header-chart">
+            <div style={{ maxWidth: '400px', height: '200px', margin: '20px auto 30px' }}>
+              <Chart isMini />
+            </div>
+          </div>
         </div>
-
-        {/**<hr />*/}
       </header>
 
       <main className="home__main">

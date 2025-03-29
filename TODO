@@ -1,6 +1,7 @@
 Next
 - [ ] simulation section with years and number of samples
-- [x] add hello@wealthwi.se in a footer section that fits all pages
+- [ ] make sure hard reloading links works
+- [x] show a mini version of the chart on the homepage
 
 Nice to have
 - [ ] show a monthly how much better off you are in terms of net worth
@@ -11,3 +12,11 @@ Nice to have
 - [ ] for mortgage and rent covers lines, figure out if label should show left or right based on how much "distance" we have from edges of the chart. Or show a floating label.
 - [ ] first time homebuyer checkbox or enum
 - [ ] sensitivity analysis
+  - ML.RandomForestRegression
+  - ML.DecisionTreeRegression
+  - ML.PLS
+- [ ] try https://million.dev/docs and optimize the UI
+- [ ] package the app so it can run on desktop https://neutralino.js.org/docs/
+- [ ] area difference chart https://airbnb.io/visx/threshold (be able to toggle between them)
+- [ ] i18n in French (using i18next)
+- [ ] Driver.JS progress

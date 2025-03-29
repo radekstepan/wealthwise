@@ -15,11 +15,11 @@ export default function simulate(
   inputs: TypedInputs,
   setMeta: (next: MetaState) => void,
   setDist: (next: DistState) => void,
-  setData: (data: ChartData) => void
+  setData: (data: ChartData) => void,
+  samples?: number
 ) {
-  const child = exec(inputs);
+  const child = exec(inputs, samples);
 
   child.on('meta', setMeta);
-
   child.on('res', processSim(setDist, setData));
 }
