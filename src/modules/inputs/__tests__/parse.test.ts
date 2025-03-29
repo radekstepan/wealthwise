@@ -205,11 +205,11 @@ describe('modules/inputs/parse', () => {
         expect(isSampler < number > (sampler, 'number')).toBe(true);
         expect(sampler()).toBe(50);
       });
-      // it('should parse samples (with comma)', () => {
-      //   const sampler = parsedOutput.scenarios.simulate.samples;
-      //   expect(isSampler < number > (sampler, 'number')).toBe(true);
-      //   expect(sampler()).toBe(1000); // Verify comma was handled
-      // });
+      it('should parse samples (with comma)', () => {
+        const sampler = parsedOutput.scenarios.simulate.samples;
+        expect(isSampler < number > (sampler, 'number')).toBe(true);
+        expect(sampler()).toBe(1000); // Verify comma was handled
+      });
     });
     describe('crash', () => {
       it('should parse chance', () => {

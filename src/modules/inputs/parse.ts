@@ -23,7 +23,17 @@ const node = (node: InputNode) => {
   // Number.
   if (type === INPUTS.NUMBER) {
     // TODO: handle a range.
-    return invariant(parseFloat(val));
+    try {
+      // Strip all non-digits
+      const digitsOnly = val.replace(/\D/g, '');
+      // Parse as integer (base 10)
+      const parsedInt = parseInt(digitsOnly, 10);
+      // Return invariant, defaulting to 0 if parsing failed (e.g., empty string after stripping)
+      return invariant<number>(isNaN(parsedInt) ? 0 : parsedInt);
+    } catch (e) {
+      console.warn(`Failed to parse INPUTS.NUMBER string: '${val}', defaulting to 0.`, e);
+      return invariant<number>(0);
+    }
   }
 
   // Range.
