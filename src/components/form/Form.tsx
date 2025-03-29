@@ -199,6 +199,7 @@ export default function Form() {
               field="scenarios.simulate.years"
             />
             <Field
+              readOnly
               label="Number of Samples"
               description="Simulations to run (higher = smoother, slower)"
               field="scenarios.simulate.samples"
