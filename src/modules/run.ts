@@ -9,7 +9,7 @@ import Mortgage from "./mortgage";
 import { type MetaState } from "../atoms/metaAtom";
 import { postMessage } from "./postMessage";
 
-const SAMPLES = 1000; // number of samples
+const SAMPLES = 1000; // default fallback
 
 // A single random simulation run.
 export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
@@ -140,13 +140,22 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 
 // Export for web worker.
 if (typeof self !== 'undefined') {
-  self.onmessage = ({data: {inputs, samples}}: {
+  self.onmessage = ({data: {inputs, samples}}: { // 'samples' is the potential override
     data: {inputs: TypedInputs, samples?: number}
   }) => {
-    const opts = parse(inputs);
-    // Use the passed 'samples' count, or the default SAMPLES constant
-    const numSamples = typeof samples === 'number' && samples > 0 ? samples : SAMPLES;
-    console.log(`Worker running ${numSamples} samples.`);
+    const opts = parse(inputs); // Parse the raw inputs received
+    
+    let numSamples: number;
+    if (typeof samples === 'number' && samples > 0) {
+        numSamples = samples;
+        console.log(`Worker using samples override: ${numSamples}`);
+    } else {
+        numSamples = opts.scenarios.simulate.samples() || SAMPLES;
+        console.log(`Worker using samples from form input: ${numSamples}`);
+    }
+
+    numSamples = Math.max(1, numSamples);
+
     const res = range(numSamples).map((i) => run(opts, !i));
 
     postMessage({action: 'res', res});

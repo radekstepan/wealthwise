@@ -199,6 +199,11 @@ export default function Form() {
               field="scenarios.simulate.years"
             />
             <Field
+              label="Number of Samples"
+              description="Simulations to run (higher = smoother, slower)"
+              field="scenarios.simulate.samples"
+            />
+            <Field
               label="Property price drop chance"
               description="% chance over the amortization period"
               field="scenarios.crash.chance"

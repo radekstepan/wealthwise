@@ -1,6 +1,6 @@
 Next
-- [ ] simulation section with years and number of samples
-- [ ] make sure hard reloading links works
+- [x] simulation section with years and number of samples
+- [x] make sure hard reloading links works
 - [x] show a mini version of the chart on the homepage
 
 Nice to have

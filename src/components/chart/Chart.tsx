@@ -37,7 +37,6 @@ type ChartInit = [
 ];
 
 const MINI_CHART_SAMPLES = 50; // Fewer samples for the homepage chart
-const FULL_CHART_SAMPLES = 1000; // Default samples for the main simulator chart (should match run.ts default)
 
 const init = (
   ref: HTMLDivElement,
@@ -286,10 +285,15 @@ export default function Chart({isMini = false}) {
 
   // Run simulation (always runs, triggered by form changes)
   useEffect(() => {
-    const samplesToRun = isMini ? MINI_CHART_SAMPLES : FULL_CHART_SAMPLES;
-    console.log(`Running simulation for chart instance (isMini: ${isMini}) with ${samplesToRun} samples.`);
-    setIsLoading(true);
-    simulate(form, setMeta, setDist, setData, samplesToRun);
+    if (isMini) {
+        console.log(`Triggering mini simulation with ${MINI_CHART_SAMPLES} samples.`);
+        setIsLoading(true);
+        simulate(form, setMeta, setDist, setData, MINI_CHART_SAMPLES);
+    } else {
+        console.log("Triggering full simulation (samples determined by form input in worker).");
+        setIsLoading(true);
+        simulate(form, setMeta, setDist, setData);
+    }
   }, [form, isMini, setMeta, setDist, setData]);
 
   // Update graph visualization when data or graph instance changes
