@@ -32,8 +32,7 @@ type ChartInit = [
   Scale,
   Axis,
   Scale,
-  Axis,
-  number
+  Axis
 ];
 
 const MINI_CHART_SAMPLES = 50; // Fewer samples for the homepage chart
@@ -48,7 +47,7 @@ const init = (
   const wrapper = root.node().getBoundingClientRect();
 
   // Adjust dimensions and margins for mini chart
-  var margin = isMini ? { top: 10, right: 15, bottom: 20, left: 45 } : { top: 0, right: 10, bottom: 20, left: 25 }; // Give mini more left margin for Y axis
+  var margin = isMini ? { top: 10, right: 15, bottom: 20, left: 45 } : { top: 0, right: 10, bottom: 20, left: 30 }; // Give mini more left margin for Y axis
   const chartWidth = wrapper.width - margin.left - margin.right;
   // Make mini height slightly taller to accommodate axes
   const height = (isMini ? 150 : 500) - margin.top - margin.bottom;
@@ -102,7 +101,7 @@ const init = (
       spaceSeparated: false // Compact for mini
     }));
 
-  return [svg, x, xAxis, y, yAxis, chartWidth];
+  return [svg, x, xAxis, y, yAxis];
 }
 
 const update = (
@@ -113,7 +112,6 @@ const update = (
   yAxis: Axis,
   data: ChartData,
   isMini: boolean,
-  chartWidth: number
 ) => {
   if (!data || !data[1] || data[1].length === 0) return;
 
@@ -306,8 +304,8 @@ export default function Chart({isMini = false}) {
     // Check if graph is initialized and data is available
     if (graph && chartData && chartData[1] && chartData[1].length > 0) {
        console.log('update chart visualization, isMini:', isMini);
-       const [svg, x, xAxis, y, yAxis, chartWidth] = graph;
-       update(svg, x, xAxis, y, yAxis, chartData, isMini, chartWidth);
+       const [svg, x, xAxis, y, yAxis] = graph;
+       update(svg, x, xAxis, y, yAxis, chartData, isMini);
       // Set loading false AFTER update potentially draws something
       setIsLoading(false);
       // Set hasLoadedOnce to true after the first successful load

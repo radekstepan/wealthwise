@@ -2,7 +2,7 @@ Next
 - [x] simulation section with years and number of samples
 - [x] make sure hard reloading links works
 - [x] show a mini version of the chart on the homepage
-- [ ] the vertical legend is too far left so an overlay doesn't completely cover it
+- [x] the vertical legend is too far left so an overlay doesn't completely cover it
 
 Nice to have
 - [ ] show a monthly how much better off you are in terms of net worth
