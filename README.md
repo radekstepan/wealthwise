@@ -6,6 +6,8 @@ Wealthwise is an advanced **Monte Carlo simulator** designed to help analyze the
 
 The tool is entirely **browser-based**, ensuring user privacy, and is **open source**.
 
+![Screenshot](screenshot.png)
+
 ### Features
 
 -   **Monte Carlo Analysis:** Runs 1,000+ random iterations based on your inputs (including ranges) to model uncertainty.
