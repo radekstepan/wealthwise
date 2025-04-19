@@ -57,11 +57,11 @@ function Table() {
             <Value d={metaState.downpayment} />
           </div>
           <div className="item">
-            <div className="label">Closing costs</div>
+            <div className="label">Closing costs & land transfer tax</div>
             <span className="dot" />
             <Value d={metaState.closingAndTax} />
           </div>
-          {metaState.cmhc ? <div className="item">
+          {metaState.cmhc > 0 ? <div className="item">
             <div className="label">CMHC insurance</div>
             <span className="dot" />
             <Value d={metaState.cmhc} />

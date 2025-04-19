@@ -91,12 +91,19 @@ export default function Form() {
               field="house.insurance"
             />
             <Field
+              label="Closing costs"
+              description="Estimated costs like legal fees, appraisal"
+              field="house.closingCosts"
+            />
+            {/* Land Transfer Tax is calculated automatically based on Province and Price */}
+            <Field
               label="Expenses increases"
               description="% yearly maintenance, taxes and insurance"
               field="rates.house.expenses"
             />
             <Field
               label="Province"
+              description="Determines land transfer tax"
               field="province"
             />
           </>

@@ -15,7 +15,7 @@ export const inputs = {
     maintenance: "$586", // or condo fees
     propertyTax: "$3,733", // yearly
     insurance: "$100", // personal condo insurance
-    closingCosts: "$3,000" // https://www.ratehub.ca/mortgage-payment-calculator
+    closingCosts: "$3,000" // Fixed closing costs (legal, appraisal etc.) - LTT is calculated separately
   },
 
   // https://rentals.ca/national-rent-report
