@@ -18,7 +18,8 @@ export const inputs = {
   },
   rent: {
     current: "$2,050",
-    market: "$2,500"
+    market: "$2,500",
+    rentalIncome: "$0",
   },
   rates: {
     interest: {
@@ -27,7 +28,8 @@ export const inputs = {
     },
     rent: {
       controlled: "2.5%",
-      market: "3.5%"
+      market: "3.5%",
+      rentalIncome: "0%"
     },
     house: {
       expenses: "3.25%",
@@ -40,7 +42,8 @@ export const inputs = {
   },
   scenarios: {
     simulate: {
-      years: 50
+      years: 50,
+      samples: 1000
     },
     crash: {
       chance: "0%",

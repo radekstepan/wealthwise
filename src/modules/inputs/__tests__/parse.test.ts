@@ -21,7 +21,8 @@ const mockInputs: TypedInputs = {
   },
   rent: {
     current: ["$2,050", INPUTS.CURRENCY],
-    market: ["$2,500", INPUTS.CURRENCY]
+    market: ["$2,500", INPUTS.CURRENCY],
+    rentalIncome: ["$500", INPUTS.CURRENCY],
   },
   rates: {
     interest: {
@@ -30,7 +31,8 @@ const mockInputs: TypedInputs = {
     },
     rent: {
       controlled: ["1% - 4%", INPUTS.PERCENT],
-      market: ["2% - 5%", INPUTS.PERCENT]
+      market: ["2% - 5%", INPUTS.PERCENT],
+      rentalIncome: ["3%", INPUTS.PERCENT]
     },
     house: {
       expenses: ["2% - 4.5%", INPUTS.PERCENT],
@@ -55,7 +57,7 @@ const mockInputs: TypedInputs = {
       annualMoveUpCost: ["1%", INPUTS.PERCENT]
     },
     mortgage: {
-      anniversaryPaydown: ["0%", INPUTS.NUMBER],
+      anniversaryPaydown: ["0%", INPUTS.PERCENT],
     }
   }
 };
@@ -76,6 +78,9 @@ describe('modules/inputs/parse', () => {
     }
     return typeof value === expectedType;
   }
+
+  // --- Tests for specific fields ---
+  // (province, mortgage, house, rent, rates.interest, rates.bonds.capitalGainsTax, scenarios remain the same)
 
   it('should parse province correctly', () => {
     const sampler = parsedOutput.province;
@@ -145,8 +150,19 @@ describe('modules/inputs/parse', () => {
       expect(isSampler < number > (sampler, 'number')).toBe(true);
       expect(sampler()).toBe(2500);
     });
+    it('should parse rental income', () => {
+      const sampler = parsedOutput.rent.rentalIncome;
+      expect(isSampler < number > (sampler, 'number')).toBe(true);
+      expect(sampler()).toBe(500);
+    });
+    it('should parse rental income increase', () => {
+      const sampler = parsedOutput.rates.rent.rentalIncome;
+      expect(isSampler < number > (sampler, 'number')).toBe(true);
+      expect(sampler()).toBeCloseTo(0.03);
+    });
   });
 
+  // --- Tests for ranges ---
   describe('rates', () => {
     describe('interest', () => {
       it('should parse initial', () => {
@@ -157,38 +173,38 @@ describe('modules/inputs/parse', () => {
       it('should parse future range', () => {
         const sampler = parsedOutput.rates.interest.future;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number'); // Check return type
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
     });
     describe('rent', () => {
       it('should parse controlled range', () => {
         const sampler = parsedOutput.rates.rent.controlled;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number');
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
       it('should parse market range', () => {
         const sampler = parsedOutput.rates.rent.market;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number');
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
     });
     describe('house', () => {
       it('should parse expenses range', () => {
         const sampler = parsedOutput.rates.house.expenses;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number');
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
       it('should parse appreciation range', () => {
         const sampler = parsedOutput.rates.house.appreciation;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number');
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
     });
     describe('bonds', () => {
       it('should parse return range', () => {
         const sampler = parsedOutput.rates.bonds.return;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
-        expect(typeof sampler()).toBe('number');
+        expect(typeof sampler()).toBe('number'); // Check return type only
       });
       it('should parse capitalGainsTax', () => {
         const sampler = parsedOutput.rates.bonds.capitalGainsTax;
@@ -236,7 +252,7 @@ describe('modules/inputs/parse', () => {
       });
     });
     describe('mortgage', () => {
-      it('should parse anniversaryPaydown (as number despite % value)', () => {
+      it('should parse anniversaryPaydown (as percent)', () => {
         const sampler = parsedOutput.scenarios.mortgage.anniversaryPaydown;
         expect(isSampler < number > (sampler, 'number')).toBe(true);
         expect(sampler()).toBeCloseTo(0); // numbro.unformat("0%") should yield 0

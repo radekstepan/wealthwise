@@ -12,7 +12,7 @@ import { type ParsedInputs } from "../inputs/parse";
 export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedInputs>, random: Random) {
   let {
     currentHousePrice, newHousePrice, currentInterestRate,
-    monthlyExpenses, rent, marketRent
+    monthlyExpenses, rent, marketRent, rentalIncome
   } = init;
 
   const {
@@ -40,6 +40,7 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
       renter,
       monthlyExpenses,
       rent,
+      rentalIncome,
       housePriceAppreciation,
       bondsReturn,
       currentHousePrice,
@@ -119,6 +120,7 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
   monthlyExpenses *= 1 + opts.rates.house.expenses();
   rent *= 1 + opts.rates.rent.controlled();
   marketRent *= 1 + opts.rates.rent.market();
+  rentalIncome *= 1 + opts.rates.rent.rentalIncome();
 
   // Return updated values along with the year's data
   return {
@@ -132,7 +134,8 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
       renter,
       monthlyExpenses,
       rent,
-      marketRent
+      marketRent,
+      rentalIncome
     }
   };
 };

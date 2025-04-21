@@ -41,6 +41,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 
   let rent = opts.rent.current();
   let marketRent = opts.rent.market();
+  let rentalIncome = opts.rent.rentalIncome();
 
   const downpaymentAmount = currentHousePrice - originalBalance;
   const cmhc = helpers.cmhc(downpayment, currentHousePrice);
@@ -102,7 +103,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
   let init = {
     province, amortization, term, isFixedRate, downpayment, capitalGainsTaxRate,
     currentHousePrice, currentInterestRate, newHousePrice, closingAndTax,
-    originalBalance, mortgage, rent, marketRent, downpaymentAmount, cmhc,
+    originalBalance, mortgage, rent, marketRent, rentalIncome, downpaymentAmount, cmhc,
     monthlyExpenses, buyer, renter, simulateYears
   };
 

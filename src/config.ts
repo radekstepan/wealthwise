@@ -22,7 +22,8 @@ export const inputs = {
   // https://www.rentfaster.ca/ab/calgary/rentals/townhouse
   rent: {
     current: "$2,050",
-    market: "$2,500"
+    market: "$2,500",
+    rentalIncome: "$0",
   },
 
   rates: {
@@ -32,7 +33,8 @@ export const inputs = {
     },
     rent: {
       controlled: "1% - 4%",
-      market: "2% - 5%"
+      market: "2% - 5%",
+      rentalIncome: "1% - 4%"
     },
     house: {
       expenses: "2% - 4.5%", // expenses increases

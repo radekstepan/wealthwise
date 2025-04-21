@@ -151,14 +151,14 @@ export default function Form() {
               field="rent.current"
             />
             <Field
-              label="Market rent"
-              description="monthly"
-              field="rent.market"
-            />
-            <Field
               label="Rent increases"
               description="% yearly"
               field="rates.rent.controlled"
+            />
+            <Field
+              label="Market rent"
+              description="monthly"
+              field="rent.market"
             />
             <Field
               label="Market rent increases"
@@ -176,6 +176,16 @@ export default function Form() {
               label="Property appreciation"
               description="% yearly"
               field="rates.house.appreciation"
+            />
+            <Field
+              label="Rental income"
+              description="monthly income from renting part of the property; e.g. duplex, basement suite etc."
+              field="rent.rentalIncome"
+            />
+            <Field
+              label="Rental income increases"
+              description="% yearly"
+              field="rates.rent.rentalIncome"
             />
             <Field
               label="Safe investment return"

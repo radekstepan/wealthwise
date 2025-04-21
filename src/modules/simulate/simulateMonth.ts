@@ -10,6 +10,7 @@ export const simulateMonth = ({
   renter,
   monthlyExpenses,
   rent,
+  rentalIncome,
   housePriceAppreciation,
   bondsReturn,
   currentHousePrice,
@@ -24,6 +25,7 @@ export const simulateMonth = ({
   renter: Renter,
   monthlyExpenses: number,
   rent: number,
+  rentalIncome: number,
   housePriceAppreciation: number,
   bondsReturn: number,
   currentHousePrice: number,
@@ -41,19 +43,28 @@ export const simulateMonth = ({
   buyer.house.monthlyExpensesPaid += monthlyExpenses;
 
   // Pay rent.
-  buyer.house.rentPaid += rent;
+  buyer.house.rentPaid += rent; // buyer still has imputed rent cost
   renter.house.rentPaid += rent;
 
-  // Buyer and renter costs.
-  buyer.house.costs += monthlyExpenses + mortgage.payment;
+  // Buyer total cash outlay for housing this month
+  const buyerMonthlyOutlay = monthlyExpenses + mortgage.payment;
+  // Renter total cash outlay for housing this month
+  const renterMonthlyOutlay = rent;
 
-  const diff = monthlyExpenses + mortgage.payment - rent;
-  // Buyer expenses are greater than rent, invest as a renter.
+  // Buyer and renter costs.
+  buyer.house.costs += buyerMonthlyOutlay; // costs include expenses and mortgage payment
+
+  // Difference in cash flow between buyer and renter
+  // Positive diff means buyer spends more, renter invests the difference
+  // Negative diff means renter spends more, buyer invests the difference (or less is drawn from portfolio)
+  const diff = buyerMonthlyOutlay - renterMonthlyOutlay - rentalIncome; // subtract rental income from buyer's effective outlay
+
   if (diff > 0) {
+    // Buyer expenses (after income) are greater than rent, renter invests the difference.
     renter.portfolio.costs += diff;
     renter.portfolio.value += diff;
   } else {
-    // Buyer expenses are less than rent, invest as a buyer.
+    // Renter expenses are greater or buyer has net income, buyer invests the difference.
     buyer.portfolio.costs += -diff;
     buyer.portfolio.value += -diff;
   }
