@@ -29,7 +29,7 @@ function Table() {
 
   let median: ChartDataPoint|null = null;
   let years: number|null = null;
-  if (dataState.length) {
+  if (dataState.length && dataState[Q2_INDEX]?.length > 0) {
     years = dataState[Q2_INDEX].length;
     median = dataState[Q2_INDEX][years - 1];
   }
@@ -38,7 +38,7 @@ function Table() {
     <div className="table">
       <div className="header">
         <h3 className="h3 title">Your results</h3>
-        <div><input type="button" value="Download spreadsheet" onClick={onDownload} /></div>
+        {median && <div><input type="button" value="Download spreadsheet" onClick={onDownload} /></div>}
       </div>
       <div className="list">
         <div className="group">
@@ -164,6 +164,16 @@ function Table() {
                   mantissa: 0
                 })}</div>
               </div>
+              {median.buyer.house.rentalIncomeReceived > 0 && (
+                <div className="item">
+                  <div className="label">Rental income received</div>
+                  <span className="dot" />
+                  <div>{numbro(median.buyer.house.rentalIncomeReceived).formatCurrency({
+                    thousandSeparated: true,
+                    mantissa: 0
+                  })}</div>
+                </div>
+              )}
             </div>
             <div className="group">
               <div className="item bold">

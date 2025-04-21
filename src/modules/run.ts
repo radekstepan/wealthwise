@@ -14,7 +14,7 @@ const SAMPLES = 1000; // default fallback
 // A single random simulation run.
 export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Data {
   const rnd = new Random();
-  
+
   // Initialize simulation state
   const province = opts.province();
   const amortization = opts.mortgage.amortization();
@@ -23,7 +23,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
   const isFixedRate = opts.mortgage.isFixedRate();
   const downpayment = Math.min(Math.max(opts.house.downpayment(), 0), 1);
   const capitalGainsTaxRate = opts.rates.bonds.capitalGainsTax();
-  
+
   let currentHousePrice = opts.house.price();
   let currentInterestRate = opts.rates.interest.initial();
   let newHousePrice = currentHousePrice;
@@ -74,6 +74,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
       equity: downpaymentAmount,
       capitalGainsTaxRate: 0,
       rentPaid: 0,
+      rentalIncomeReceived: 0,
       interestPaid: 0,
       principalPaid: downpaymentAmount,
       principalRemaining: mortgage.balance,
@@ -145,7 +146,7 @@ if (typeof self !== 'undefined') {
     data: {inputs: TypedInputs, samples?: number}
   }) => {
     const opts = parse(inputs); // Parse the raw inputs received
-    
+
     let numSamples: number;
     if (typeof samples === 'number' && samples > 0) {
         numSamples = samples;

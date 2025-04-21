@@ -57,6 +57,7 @@ export const logYear = (opts: {
         value: buyer.house.value,
         equity: buyer.house.equity,
         rentPaid: buyer.house.rentPaid,
+        rentalIncomeReceived: buyer.house.rentalIncomeReceived,
         interestPaid: buyer.house.interestPaid,
         principalPaid: buyer.house.principalPaid,
         principalRemaining: mortgage.balance,

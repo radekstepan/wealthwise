@@ -14,6 +14,7 @@ interface Asset {
 
 export interface House extends Asset {
   rentPaid: number,
+  rentalIncomeReceived: number,
   equity: number, // value minus principal balance remaining
   capitalGainsTaxRate: 0, // 0 = owner occupied
   interestPaid: number,

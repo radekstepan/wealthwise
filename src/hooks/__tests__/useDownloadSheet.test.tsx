@@ -29,6 +29,7 @@ describe('useDownloadSheet', () => {
           value: 500000,
           capitalGainsTaxRate: 0,
           rentPaid: 0,
+          rentalIncomeReceived: 1200,
           equity: 100000,
           interestPaid: 15000,
           principalPaid: 20000,
@@ -59,7 +60,7 @@ describe('useDownloadSheet', () => {
         },
       }
     }],
-    [{ // Q2 - median 
+    [{ // Q2 - median
       buyer: {
         $: 100000,
         roi: 0.05,
@@ -70,6 +71,7 @@ describe('useDownloadSheet', () => {
           value: 500000,
           capitalGainsTaxRate: 0,
           rentPaid: 0,
+          rentalIncomeReceived: 1200,
           equity: 100000,
           interestPaid: 15000,
           principalPaid: 20000,
@@ -111,6 +113,7 @@ describe('useDownloadSheet', () => {
           value: 500000,
           capitalGainsTaxRate: 0,
           rentPaid: 0,
+          rentalIncomeReceived: 1200,
           equity: 100000,
           interestPaid: 15000,
           principalPaid: 20000,
@@ -154,8 +157,8 @@ describe('useDownloadSheet', () => {
   const Wrapper: WrapperComponent<any> = ({children}) => (
     <Provider store={store}>{children}</Provider>
   );
-  
-  const renderHookWithStore = () => 
+
+  const renderHookWithStore = () =>
     renderHook(() => useDownloadSheet(), {
       wrapper: Wrapper
     });
@@ -167,8 +170,9 @@ describe('useDownloadSheet', () => {
     result.current();
 
     const jsonToSheetCalls = (xlsx.utils.json_to_sheet as jest.Mock).mock.calls;
-    const buyerData = jsonToSheetCalls[0][0];
+    const buyerData = jsonToSheetCalls[0][0]; // Buyer data is the first sheet
 
+    // Check header row
     expect(buyerData[0]).toEqual([
       'Year',
       'Net worth',
@@ -181,29 +185,32 @@ describe('useDownloadSheet', () => {
       'Interest paid',
       'Expenses',
       'Moving costs',
-      'Rent paid',
+      'Rent paid (imputed)',
+      'Rental income received',
       'Portfolio ≈ net',
       'Portfolio value',
       'Capital gains tax'
     ]);
 
-    const dataRow = buyerData[1];
+    // Check data row
+    const dataRow = buyerData[1]; // First data row (Year 1)
     expect(dataRow).toEqual([
-      '1',
-      '100000.00',
-      '5.00%',
-      '500000.00',
-      '-20910.00',
-      '100000.00',
-      '80000.00',
-      '20000.00',
-      '15000.00',
-      '1000.00',
-      '5000.00',
-      '0.00',
-      '20000.00',
-      '25000.00',
-      '-3450.00'
+      '1',          // Year
+      '100000.00',  // Net worth
+      '5.00%',      // ROI
+      '500000.00',  // Property value
+      '-20910.00',  // Sale costs
+      '100000.00',  // Property equity
+      '80000.00',   // Property ≈ net
+      '20000.00',   // Principal paid
+      '15000.00',   // Interest paid
+      '1000.00',    // Expenses
+      '5000.00',    // Moving costs
+      '0.00',       // Rent paid (imputed)
+      '1200.00',    // Rental income received
+      '20000.00',   // Portfolio ≈ net
+      '25000.00',   // Portfolio value
+      '-3450.00'    // Capital gains tax
     ]);
   });
 
@@ -214,8 +221,9 @@ describe('useDownloadSheet', () => {
     result.current();
 
     const jsonToSheetCalls = (xlsx.utils.json_to_sheet as jest.Mock).mock.calls;
-    const renterData = jsonToSheetCalls[1][0];
+    const renterData = jsonToSheetCalls[1][0]; // Renter data is the second sheet
 
+    // Check header row
     expect(renterData[0]).toEqual([
       'Year',
       'Net worth',
@@ -225,14 +233,15 @@ describe('useDownloadSheet', () => {
       'Capital gains tax'
     ]);
 
+    // Check data row
     const dataRow = renterData[1];
     expect(dataRow).toEqual([
-      '1',
-      '150000.00',
-      '6.00%',
-      '24000.00',
-      '160000.00',
-      '-23250.00'
+      '1',          // Year
+      '150000.00',  // Net worth
+      '6.00%',      // ROI
+      '24000.00',   // Rent paid
+      '160000.00',  // Portfolio value
+      '-23250.00'   // Capital gains tax
     ]);
   });
 

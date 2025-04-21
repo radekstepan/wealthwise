@@ -1,5 +1,5 @@
 Next
-- [ ] Show rental income in the Buyer XLS sheet after column "Rent paid (imputed)" and show the same number in the table as well
+- [x] Show rental income in the Buyer XLS sheet after column "Rent paid (imputed)" and show the same number in the table as well
 - [ ] Expose the `house.closingCosts` field in the UI, Property section right before the Province field
 
 Nice to have

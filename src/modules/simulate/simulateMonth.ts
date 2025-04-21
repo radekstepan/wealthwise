@@ -41,6 +41,7 @@ export const simulateMonth = ({
   buyer.house.principalPaid += principal;
   buyer.house.interestPaid += interest;
   buyer.house.monthlyExpensesPaid += monthlyExpenses;
+  buyer.house.rentalIncomeReceived += rentalIncome;
 
   // Pay rent.
   buyer.house.rentPaid += rent; // buyer still has imputed rent cost

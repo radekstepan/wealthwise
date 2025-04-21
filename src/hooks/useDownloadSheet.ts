@@ -19,7 +19,8 @@ const BUYER_COLUMNS = [
   'Interest paid',
   'Expenses',
   'Moving costs',
-  'Rent paid',
+  'Rent paid (imputed)',
+  'Rental income received',
   'Portfolio ≈ net',
   'Portfolio value',
   'Capital gains tax'
@@ -63,8 +64,10 @@ export const useDownloadSheet = () => {
         data.buyer.house.monthlyExpensesPaid.toFixed(2),
         // Moving expenses.
         data.buyer.house.movingCostsPaid.toFixed(2),
-        // Rent paid.
+        // Rent paid (imputed).
         data.buyer.house.rentPaid.toFixed(2),
+        // Rental Income Received.
+        data.buyer.house.rentalIncomeReceived.toFixed(2),
         // Portfolio net.
         data.buyer.portfolio.$.toFixed(2),
         // Portfolio value.
@@ -78,7 +81,7 @@ export const useDownloadSheet = () => {
       return acc;
     }, [BUYER_COLUMNS]);
 
-    const buyerSheet = xlsx.utils.json_to_sheet(buyerJson);
+    const buyerSheet = xlsx.utils.json_to_sheet(buyerJson, {skipHeader: true});
     xlsx.utils.book_append_sheet(workbook, buyerSheet, "Buyer");
 
     const renterJson = dataState[Q2_INDEX].reduce((acc, data, year) => {
@@ -102,7 +105,7 @@ export const useDownloadSheet = () => {
       return acc;
     }, [RENTER_COLUMNS]);
 
-    const renterSheet = xlsx.utils.json_to_sheet(renterJson);
+    const renterSheet = xlsx.utils.json_to_sheet(renterJson, {skipHeader: true});
     xlsx.utils.book_append_sheet(workbook, renterSheet, "Renter");
 
     xlsx.writeFile(workbook, FILE_NAME);
