@@ -22,8 +22,17 @@ describe('fees', () => {
 
   describe('saleFees', () => {
     // https://wowa.ca/calculators/cost-selling-house
-    test('$500k', () => {
-      expect(saleFees(Province.AB, 500000)).toBe(19650);
+    test('$500k AB', () => {
+      expect(saleFees(Province.AB, 500000)).toBeCloseTo(19650, 0);
+    });
+    test('$500k BC', () => {
+      expect(saleFees(Province.BC, 500000)).toBeCloseTo(20910, 0);
+    });
+    test('$500k ON', () => {
+      expect(saleFees(Province.ON, 500000)).toBeCloseTo(18750, 0);
+    });
+    test('$500k NoLTT', () => {
+      expect(saleFees(Province.NoLTT, 500000)).toBeCloseTo(0, 0);
     });
   });
 
@@ -54,25 +63,41 @@ describe('fees', () => {
       test('calculates tax for property over $3,000,000', () => {
         expect(landTransferTax(Province.BC, 3500000, false)).toBe(93000);
       });
+
+      test('calculates partial exemption for first-time buyer between $500k-$525k', () => {
+        expect(landTransferTax(Province.BC, 510000, true)).toBe(3400);
+      });
+
+      test('applies $8000 exemption for first-time buyer between $525k-$835k', () => {
+        expect(landTransferTax(Province.BC, 700000, true)).toBe(4000);
+      });
+
+      test('calculates partial exemption for first-time buyer between $835k-$860k', () => {
+        expect(landTransferTax(Province.BC, 845000, true)).toBe(10100);
+      });
+
+      test('no exemption for first-time buyer over $860k', () => {
+        expect(landTransferTax(Province.BC, 875000, true)).toBe(15500);
+      });
     });
 
     describe('Ontario', () => {
       test('calculates tax for property under $55,000', () => {
         expect(landTransferTax(Province.ON, 50000, false)).toBe(250);
       });
-  
+
       test('calculates tax for property between $55,000 and $250,000', () => {
         expect(landTransferTax(Province.ON, 200000, false)).toBe(1725);
       });
-  
+
       test('calculates tax for property between $250,000 and $400,000', () => {
         expect(landTransferTax(Province.ON, 300000, false)).toBe(2975);
       });
-  
+
       test('calculates tax for property between $400,000 and $2,000,000', () => {
         expect(landTransferTax(Province.ON, 500000, false)).toBe(6475);
       });
-  
+
       test('calculates tax for property over $2,000,000', () => {
         expect(landTransferTax(Province.ON, 2500000, false)).toBe(48975);
       });
@@ -82,41 +107,49 @@ describe('fees', () => {
       test('calculates tax for property under $55,000', () => {
         expect(landTransferTax(Province.Toronto, 50000, false)).toBe(500);
       });
-    
+
       test('calculates tax for property between $55,000 and $250,000', () => {
         expect(landTransferTax(Province.Toronto, 200000, false)).toBe(3450);
       });
-    
+
       test('calculates tax for property between $250,000 and $400,000', () => {
         expect(landTransferTax(Province.Toronto, 300000, false)).toBe(5950);
       });
-    
+
       test('calculates tax for property between $400,000 and $2,000,000', () => {
         expect(landTransferTax(Province.Toronto, 500000, false)).toBe(12950);
       });
-    
+
       test('calculates tax for property between $2M and $3M', () => {
-        expect(landTransferTax(Province.Toronto, 2500000, false)).toBe(97950); 
+        expect(landTransferTax(Province.Toronto, 2500000, false)).toBe(97950);
       });
-    
+
       test('calculates tax for property between $3M and $4M', () => {
         expect(landTransferTax(Province.Toronto, 3500000, false)).toBe(152950);
       });
-    
+
       test('calculates tax for property between $4M and $5M', () => {
         expect(landTransferTax(Province.Toronto, 4500000, false)).toBe(217950);
       });
-    
+
       test('calculates tax for property between $5M and $10M', () => {
         expect(landTransferTax(Province.Toronto, 7500000, false)).toBe(452950);
       });
-    
+
       test('calculates tax for property between $10M and $20M', () => {
         expect(landTransferTax(Province.Toronto, 15000000, false)).toBe(1102950);
       });
-    
+
       test('calculates tax for property over $20M', () => {
         expect(landTransferTax(Province.Toronto, 25000000, false)).toBe(2052950);
+      });
+    });
+
+    describe('No Land Transfer Tax', () => {
+      test('calculates zero tax regardless of house value or buyer status', () => {
+        expect(landTransferTax(Province.NoLTT, 50000, false)).toBe(0);
+        expect(landTransferTax(Province.NoLTT, 500000, true)).toBe(0);
+        expect(landTransferTax(Province.NoLTT, 2500000, false)).toBe(0);
       });
     });
   });
@@ -147,37 +180,4 @@ describe('fees', () => {
     });
   });
 
-  describe('saleFees', () => {
-    describe('Alberta', () => {
-      test('calculates fees for $500k', () => {
-        expect(saleFees(Province.AB, 500000)).toBe(19650);
-      });
-    });
-
-    describe('British Columbia', () => {
-      test('calculates fees for $300k in British Columbia', () => {
-        expect(saleFees(Province.BC, 300000)).toBeCloseTo(14190);
-      });
-  
-      test('calculates fees for $100k in Alberta', () => {
-        expect(saleFees(Province.AB, 100000)).toBeCloseTo(7050);
-      });
-
-      test('calculates partial exemption for first-time buyer between $500k-$525k', () => {
-        expect(landTransferTax(Province.BC, 510000, true)).toBe(3400);
-      });
-    
-      test('applies $8000 exemption for first-time buyer between $525k-$835k', () => {
-        expect(landTransferTax(Province.BC, 700000, true)).toBe(4000);
-      });
-    
-      test('calculates partial exemption for first-time buyer between $835k-$860k', () => {
-        expect(landTransferTax(Province.BC, 845000, true)).toBe(10100);
-      });
-    
-      test('no exemption for first-time buyer over $860k', () => {
-        expect(landTransferTax(Province.BC, 875000, true)).toBe(15500);
-      });
-    });
-  });
 });

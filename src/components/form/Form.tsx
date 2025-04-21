@@ -96,6 +96,11 @@ export default function Form() {
               field="rates.house.expenses"
             />
             <Field
+              label="Closing costs"
+              description="legal fees, title insurance etc."
+              field="house.closingCosts"
+            />
+            <Field
               label="Province"
               field="province"
             />

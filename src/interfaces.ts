@@ -3,6 +3,7 @@ export enum Province {
   BC = "British Columbia",
   ON = "Ontario",
   Toronto = "Ontario (Toronto)",
+  NoLTT = "No Land Transfer Tax",
 }
 
 interface Asset {
