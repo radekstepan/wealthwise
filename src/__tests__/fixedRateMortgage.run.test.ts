@@ -41,7 +41,8 @@ describe('simulate a fixed rate mortgage', () => {
 
     expect(messages[1][0]).toEqual({
       action: 'res',
-      res: expect.any(Array)
+      res: expect.any(Array),
+      carryingCosts: expect.any(Array)
     });
 
     expect(messages[1][0].res).toHaveLength(1);

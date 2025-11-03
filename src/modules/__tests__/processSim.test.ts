@@ -1,29 +1,114 @@
 import { processSim, type Samples } from '../processSim';
 import { type ChartData } from '../../components/chart/Chart';
 import { type DistState } from '../../atoms/distAtom';
+import { Province, type MonthlyCarryingCost } from '../../interfaces';
+
+const makeMonthlyCost = (absoluteMonth: number, gross: number): MonthlyCarryingCost => {
+  const equityDelta = gross * 0.4;
+  return {
+    absoluteMonth,
+    year: Math.floor(absoluteMonth / 12),
+    month: absoluteMonth % 12,
+    gross,
+    net: gross - equityDelta,
+    rent: 1200,
+    rentalIncome: 0,
+    principal: equityDelta * 0.6,
+    appreciation: equityDelta * 0.4,
+    equityDelta,
+    opportunityCost: gross * 0.05,
+    components: [
+      { category: 'interest', amount: gross * 0.5 },
+      { category: 'property_tax', amount: gross * 0.2 },
+      { category: 'insurance', amount: gross * 0.1 },
+      { category: 'maintenance', amount: gross * 0.2 },
+    ]
+  };
+};
 
 describe('processSim', () => {
   let setDist: jest.Mock<(next: DistState) => void>;
   let setData: jest.Mock<(data: ChartData) => void>;
+  let setCarryingCosts: jest.Mock;
   
   const getSamples = (n: number) => Array(n).fill(0).map<any>((_, i) => [
     {
-      buyer: { $: 150000 + (i * 1000) },
-      renter: { $: 75000 + (i * 500) }
+      buyer: {
+        $: 150000 + (i * 1000),
+        roi: 0,
+        province: Province.BC,
+        portfolio: { $: 0, costs: 0, value: 0, capitalGainsTaxRate: 0 },
+        house: {
+          $: 0,
+          costs: 0,
+          value: 0,
+          equity: 0,
+          rentPaid: 0,
+          rentalIncomeReceived: 0,
+          interestPaid: 0,
+          principalPaid: 0,
+          principalRemaining: 0,
+          monthlyExpensesPaid: 0,
+          movingCostsPaid: 0,
+          capitalGainsTaxRate: 0,
+          carryingCosts: [makeMonthlyCost(0, 900 + i * 10)]
+        }
+      },
+      renter: {
+        $: 75000 + (i * 500),
+        roi: 0,
+        province: Province.BC,
+        portfolio: { $: 0, costs: 0, value: 0, capitalGainsTaxRate: 0 },
+        house: { $: 0, rentPaid: 0 }
+      }
     },
     {
-      buyer: { $: 200000 + (i * 1000) },
-      renter: { $: 100000 + (i * 500) }
+      buyer: {
+        $: 200000 + (i * 1000),
+        roi: 0,
+        province: Province.BC,
+        portfolio: { $: 0, costs: 0, value: 0, capitalGainsTaxRate: 0 },
+        house: {
+          $: 0,
+          costs: 0,
+          value: 0,
+          equity: 0,
+          rentPaid: 0,
+          rentalIncomeReceived: 0,
+          interestPaid: 0,
+          principalPaid: 0,
+          principalRemaining: 0,
+          monthlyExpensesPaid: 0,
+          movingCostsPaid: 0,
+          capitalGainsTaxRate: 0,
+          carryingCosts: [makeMonthlyCost(12, 1000 + i * 10)]
+        }
+      },
+      renter: {
+        $: 100000 + (i * 500),
+        roi: 0,
+        province: Province.BC,
+        portfolio: { $: 0, costs: 0, value: 0, capitalGainsTaxRate: 0 },
+        house: { $: 0, rentPaid: 0 }
+      }
     }
   ]);
 
   beforeEach(() => {
     setDist = jest.fn();
     setData = jest.fn();
+    setCarryingCosts = jest.fn();
+  });
+
+  test('skips carrying cost aggregation when setter is omitted', () => {
+    const handler = processSim(setDist, setData);
+    expect(() => handler(getSamples(10) as Samples)).not.toThrow();
+
+    expect(setData).toHaveBeenCalled();
   });
 
   test('should calculate distribution bands using actual quantiles', () => {
-    const handler = processSim(setDist, setData);
+    const handler = processSim(setDist, setData, setCarryingCosts);
     handler(getSamples(100));
 
     expect(setDist).toHaveBeenCalled();
@@ -41,7 +126,7 @@ describe('processSim', () => {
   });
 
   test('should calculate chart data with accurate quantiles', () => {
-    const handler = processSim(setDist, setData);
+    const handler = processSim(setDist, setData, setCarryingCosts);
     handler(getSamples(100));
 
     expect(setData).toHaveBeenCalled();
@@ -56,7 +141,7 @@ describe('processSim', () => {
   });
 
   test('should handle a small dataset correctly', () => {
-    const handler = processSim(setDist, setData);
+    const handler = processSim(setDist, setData, setCarryingCosts);
     handler(getSamples(2));
 
     expect(setDist).toHaveBeenCalled();
@@ -88,7 +173,7 @@ describe('processSim', () => {
       }
     ]) as any;
 
-    const handler = processSim(setDist, setData);
+  const handler = processSim(setDist, setData, setCarryingCosts);
     handler(largeSamples);
 
     const dataCall = setData.mock.calls[0][0];
@@ -97,16 +182,16 @@ describe('processSim', () => {
   });
 
   test('should maintain consistent band sizes', () => {
-    const handler = processSim(setDist, setData);
+    const handler = processSim(setDist, setData, setCarryingCosts);
     handler(getSamples(100));
 
     const distCall = setDist.mock.calls[0][0];
     
     // Check that all bands have the same size
-    const bandSizes = distCall.map(band => band[0][1] - band[0][0]);
-    const firstBandSize = bandSizes[0];
+  const bandSizes = (distCall as any[]).map((band: any) => band[0][1] - band[0][0]);
+  const firstBandSize = bandSizes[0];
     
-    bandSizes.forEach(size => {
+  bandSizes.forEach((size: number) => {
       expect(Math.abs(size - firstBandSize)).toBeLessThan(0.0001); // Account for floating point
     });
   });
@@ -136,16 +221,57 @@ describe('processSim', () => {
       ]
     ];
 
-    const handler = processSim(setDist, setData);
+  const handler = processSim(setDist, setData, setCarryingCosts);
     handler(samplesWithOutliers);
 
     const distCall = setDist.mock.calls[0][0];
     
     // Verify outliers don't break the distribution
-    expect(distCall.every(band => 
+    expect((distCall as any[]).every((band: any) => 
       Number.isFinite(band[0][0]) && 
       Number.isFinite(band[0][1]) &&
       Number.isFinite(band[1])
     )).toBe(true);
+  });
+  test('should aggregate carrying cost series', () => {
+    const handler = processSim(setDist, setData, setCarryingCosts);
+    handler(getSamples(10));
+
+    expect(setCarryingCosts).toHaveBeenCalled();
+    const series = setCarryingCosts.mock.calls[0][0];
+
+    expect(Array.isArray(series)).toBe(true);
+    expect(series.length).toBeGreaterThan(0);
+    expect(series[0].components.interest).toBeGreaterThan(0);
+  });
+
+  test('uses pre-aggregated carrying costs when provided', () => {
+    const handler = processSim(setDist, setData, setCarryingCosts);
+    const samples = getSamples(5) as Samples;
+    const preAggregated = [{
+      absoluteMonth: 0,
+      year: 0,
+      month: 0,
+      gross: 1000,
+      net: 800,
+      rent: 1200,
+      rentalIncome: 0,
+      opportunityCost: 50,
+      equityDelta: 200,
+      principal: 120,
+      appreciation: 80,
+      components: {
+        interest: 400,
+        property_tax: 200,
+        insurance: 100,
+        maintenance: 150,
+        hoa: 100,
+        other: 50
+      }
+    }];
+
+    handler({ samples, carryingCosts: preAggregated });
+
+    expect(setCarryingCosts).toHaveBeenCalledWith(preAggregated);
   });
 });

@@ -41,7 +41,9 @@ describe('simulate a variable rate mortgage', () => {
 
     expect(messages[1][0]).toEqual({
       action: 'res',
-      res: expect.any(Array)
+      carryingCosts: expect.any(Array),
+      res: expect.any(Array),
+      runId: undefined,
     });
 
     expect(messages[1][0].res).toHaveLength(1);

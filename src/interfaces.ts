@@ -13,6 +13,59 @@ interface Asset {
   capitalGainsTaxRate: number, // 0...1
 }
 
+export type CarryingCostCategory =
+  | 'interest'
+  | 'property_tax'
+  | 'insurance'
+  | 'maintenance'
+  | 'hoa'
+  | 'other';
+
+export interface MonthlyCarryingCostComponent {
+  category: CarryingCostCategory,
+  amount: number,
+}
+
+export interface MonthlyCarryingCost {
+  absoluteMonth: number,
+  year: number,
+  month: number,
+  gross: number,
+  net: number,
+  rent: number,
+  rentalIncome: number,
+  principal: number,
+  appreciation: number,
+  equityDelta: number,
+  opportunityCost: number,
+  components: Array<MonthlyCarryingCostComponent>,
+}
+
+export interface CarryingCostSeriesPoint {
+  absoluteMonth: number,
+  year: number,
+  month: number,
+  gross: number,
+  net: number,
+  rent: number,
+  rentalIncome: number,
+  opportunityCost: number,
+  equityDelta: number,
+  principal: number,
+  appreciation: number,
+  components: Record<CarryingCostCategory, number>,
+}
+
+export type CarryingCostSeries = Array<CarryingCostSeriesPoint>;
+
+export interface MonthlyExpenseBreakdown {
+  maintenance: number,
+  propertyTax: number,
+  insurance: number,
+  hoa: number,
+  other: number,
+}
+
 export interface House extends Asset {
   rentPaid: number,
   rentalIncomeReceived: number,
@@ -23,6 +76,7 @@ export interface House extends Asset {
   principalRemaining: number,
   monthlyExpensesPaid: number,
   movingCostsPaid: number,
+  carryingCosts?: Array<MonthlyCarryingCost>,
 }
 
 export type RentalHouse = Pick<House, '$'|'rentPaid'>;

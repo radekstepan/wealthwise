@@ -6,6 +6,9 @@ import simulate from '../../modules/simulate';
 import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';
+import { carryingCostAtom, carryingCostLoadingAtom } from '../../atoms/carryingCostAtom';
+import { simulationLoadingAtom } from '../../atoms/simulationLoadingAtom';
+import { carryingCostTabAtom } from '../../atoms/carryingCostTabAtom';
 import { formAtom } from '../../atoms/formAtom';
 import { cls } from '../../utils/css';
 import Loader from '../loader/Loader'
@@ -34,6 +37,11 @@ type ChartInit = [
   Scale,
   Axis
 ];
+
+interface ChartProps {
+  isMini?: boolean;
+  isActive?: boolean;
+}
 
 const MINI_CHART_SAMPLES = 50; // Fewer samples for the homepage chart
 
@@ -251,48 +259,104 @@ const legend = (point: ChartDataPoint) => {
 // The chart is intended to visualize the net worth of a person
 //  over time, given different scenarios such as buying or
 //  renting a home.
-export default function Chart({isMini = false}) {
+export default function Chart({ isMini = false, isActive = true }: ChartProps) {
   const el = useRef<HTMLDivElement>(null);
   const [graph, setGraph] = useState<ChartInit | null>(null);
   const [pointer, setPointer] = useState(1);
   const [point, setPoint] = useState<ChartDataPoint | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const activeRunIdRef = useRef<number | null>(null);
 
   const form = useAtomValue(formAtom);
   const [chartData, setData] = useAtom(dataAtom);
   const setMeta = useSetAtom(metaAtom);
   const setDist = useSetAtom(distAtom);
+  const setCarryingCosts = useSetAtom(carryingCostAtom);
+  const setCarryingCostsLoading = useSetAtom(carryingCostLoadingAtom);
+  const setSimulationLoading = useSetAtom(simulationLoadingAtom);
+  const carryingCostTabActive = useAtomValue(carryingCostTabAtom);
+  const shouldRenderChart = isMini || isActive;
+  const shouldSimulate = isMini || isActive || carryingCostTabActive;
 
   // Initialize graph
   useEffect(() => {
-    if (el.current) {
-       console.log('init chart, isMini:', isMini);
-       const graphInstance = init(el.current, setPointer, isMini);
-       setGraph(graphInstance);
-       setIsLoading(true); // Start in loading state
-       setHasLoadedOnce(false); // Reset loading state on new init
+    if (!shouldRenderChart) {
+      if (el.current) {
+        d3.select(el.current).select('svg').remove();
+      }
+      setGraph(null);
+      return undefined;
+    }
+
+    if (!el.current) {
+      return undefined;
+    }
+
+    {
+      console.log('init chart, isMini:', isMini);
+      const graphInstance = init(el.current, setPointer, isMini);
+      setGraph(graphInstance);
+      setIsLoading(true);
+      setHasLoadedOnce(false);
     }
     return () => {
       if (el.current) {
         d3.select(el.current).select('svg').remove();
-        setGraph(null); // Clear graph state on unmount
       }
+      setGraph(null);
     };
-  }, [isMini]); // Re-initialize only if isMini changes
+  }, [isMini, shouldRenderChart]);
 
   // Run simulation (always runs, triggered by form changes)
   useEffect(() => {
-    if (isMini) {
-        console.log(`Triggering mini simulation with ${MINI_CHART_SAMPLES} samples.`);
+  if (!shouldSimulate) {
+    return;
+  }
+  if (isMini) {
+    console.log(`Triggering mini simulation with ${MINI_CHART_SAMPLES} samples.`);
+    setIsLoading(true);
+    simulate(form, setMeta, setDist, setData, setCarryingCosts, {
+      samples: MINI_CHART_SAMPLES,
+      includeCarryingCosts: false,
+      setCarryingCostsLoading,
+      setSimulationLoading,
+      onRunStart: (runId) => {
+        activeRunIdRef.current = runId;
         setIsLoading(true);
-        simulate(form, setMeta, setDist, setData, MINI_CHART_SAMPLES);
-    } else {
-        console.log("Triggering full simulation (samples determined by form input in worker).");
+        setHasLoadedOnce(false);
+      },
+      onRunComplete: (runId) => {
+        if (activeRunIdRef.current !== runId) {
+          return;
+        }
+        activeRunIdRef.current = null;
+        setIsLoading(false);
+        setHasLoadedOnce(true);
+      }
+    });
+  } else {
+    console.log("Triggering full simulation (samples determined by form input in worker).");
+    simulate(form, setMeta, setDist, setData, setCarryingCosts, {
+      includeCarryingCosts: carryingCostTabActive,
+      setCarryingCostsLoading,
+      setSimulationLoading,
+      onRunStart: (runId) => {
+        activeRunIdRef.current = runId;
         setIsLoading(true);
-        simulate(form, setMeta, setDist, setData);
-    }
-  }, [form, isMini, setMeta, setDist, setData]);
+        setHasLoadedOnce(false);
+      },
+      onRunComplete: (runId) => {
+        if (activeRunIdRef.current !== runId) {
+          return;
+        }
+        activeRunIdRef.current = null;
+        setIsLoading(false);
+        setHasLoadedOnce(true);
+      }
+    });
+  }
+  }, [form, isMini, shouldSimulate, setMeta, setDist, setData, setCarryingCosts, carryingCostTabActive, setCarryingCostsLoading]);
 
   // Update graph visualization when data or graph instance changes
   useEffect(() => {
@@ -306,10 +370,7 @@ export default function Chart({isMini = false}) {
        console.log('update chart visualization, isMini:', isMini);
        const [svg, x, xAxis, y, yAxis] = graph;
        update(svg, x, xAxis, y, yAxis, chartData, isMini);
-      // Set loading false AFTER update potentially draws something
-      setIsLoading(false);
-      // Set hasLoadedOnce to true after the first successful load
-      if (!hasLoadedOnce) {
+      if (!hasLoadedOnce && activeRunIdRef.current === null) {
           setHasLoadedOnce(true);
       }
     } else {
@@ -317,7 +378,6 @@ export default function Chart({isMini = false}) {
       console.log('Chart data invalid or empty, clearing visualization.');
       const chartContent = graph[0]?.select<SVGGElement>('g');
       chartContent?.selectAll("path, line, text").remove();
-      setIsLoading(true); // Keep showing loader if data is bad/empty
     }
   }, [chartData, graph, isMini, hasLoadedOnce]);
 

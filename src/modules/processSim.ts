@@ -2,16 +2,35 @@ import * as d3 from 'd3';
 import {range} from './utils';
 import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type DistState } from '../atoms/distAtom';
-import { type Data, type Renter, type Buyer } from '../interfaces';
+import {
+  type Data,
+  type Renter,
+  type Buyer,
+  type CarryingCostSeries
+} from '../interfaces';
+import { collectCarryingCostSeries } from './carryingCostAggregator';
 
 const BANDS = 7; // distribution bands
 
 export type Samples = Array<Data>; // samples * years
 
+export type SimulationResultsPayload =
+  | Samples
+  | {
+      samples: Samples;
+      carryingCosts?: CarryingCostSeries;
+    };
+
 export const processSim = (
   setDist: (next: DistState) => void,
-  setData: (data: ChartData) => void
-) => (samples: Samples) => {
+  setData: (data: ChartData) => void,
+  setCarryingCosts?: (data: CarryingCostSeries) => void
+) => (payload: SimulationResultsPayload) => {
+  const samples: Samples = Array.isArray(payload) ? payload : payload.samples;
+  const aggregatedCarryingCosts = Array.isArray(payload)
+    ? undefined
+    : payload.carryingCosts;
+
   // Distribution of end results as a buyer (net worth).
   const dist = samples
     .map(s => {
@@ -72,4 +91,12 @@ export const processSim = (
   }
 
   setData(data);
+
+  if (setCarryingCosts) {
+    if (aggregatedCarryingCosts) {
+      setCarryingCosts(aggregatedCarryingCosts);
+    } else {
+      setCarryingCosts(collectCarryingCostSeries(samples));
+    }
+  }
 };

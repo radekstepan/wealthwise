@@ -1,16 +1,17 @@
 import { sum } from "./utils";
 import * as helpers from "./fees";
 import Mortgage from "./mortgage";
-import { type Renter, type Buyer, type Province } from "../interfaces";
+import { type Renter, type Buyer, type Province, type MonthlyCarryingCost } from "../interfaces";
 
 export const logYear = (opts: {
   year: number,
   renter: Renter,
   buyer: Buyer,
   province: Province,
-  mortgage: ReturnType<typeof Mortgage>
+  mortgage: ReturnType<typeof Mortgage>,
+  carryingCosts?: Array<MonthlyCarryingCost>
 }) => {
-  const {year, renter, buyer, province, mortgage} = opts;
+  const {year, renter, buyer, province, mortgage, carryingCosts = []} = opts;
 
   const buyerHouse$ = sum(
     buyer.house.equity,
@@ -63,7 +64,11 @@ export const logYear = (opts: {
         principalRemaining: mortgage.balance,
         monthlyExpensesPaid: buyer.house.monthlyExpensesPaid,
         movingCostsPaid: buyer.house.movingCostsPaid,
-        capitalGainsTaxRate: buyer.house.capitalGainsTaxRate
+        capitalGainsTaxRate: buyer.house.capitalGainsTaxRate,
+        carryingCosts: carryingCosts.map(cost => ({
+          ...cost,
+          components: cost.components.map(component => ({...component}))
+        }))
       }
     },
     renter: {

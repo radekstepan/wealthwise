@@ -2,12 +2,13 @@ import { Random } from "random-js";
 import { range, sum } from "./utils";
 import parse, { type ParsedInputs } from './inputs/parse';
 import { type TypedInputs } from "./inputs/inputs";
-import { type Buyer, type Renter, type Data } from "../interfaces";
+import { type Buyer, type Renter, type Data, type MonthlyExpenseBreakdown } from "../interfaces";
 import * as helpers from "./fees";
 import { simulateYear } from "./simulate/simulateYear";
 import Mortgage from "./mortgage";
 import { type MetaState } from "../atoms/metaAtom";
 import { postMessage } from "./postMessage";
+import { collectCarryingCostSeries } from "./carryingCostAggregator";
 
 const SAMPLES = 1000; // default fallback
 
@@ -45,11 +46,20 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 
   const downpaymentAmount = currentHousePrice - originalBalance;
   const cmhc = helpers.cmhc(downpayment, currentHousePrice);
-  // Expenses of the buyer.
+
+  const monthlyExpenseBreakdown: MonthlyExpenseBreakdown = {
+    maintenance: opts.house.maintenance(),
+    propertyTax: opts.house.propertyTax() / 12,
+    insurance: opts.house.insurance(),
+    hoa: 0,
+    other: 0
+  };
   let monthlyExpenses = sum(
-    opts.house.maintenance(),
-    opts.house.propertyTax() / 12, // yearly to monthly
-    opts.house.insurance()
+    monthlyExpenseBreakdown.maintenance,
+    monthlyExpenseBreakdown.propertyTax,
+    monthlyExpenseBreakdown.insurance,
+    monthlyExpenseBreakdown.hoa,
+    monthlyExpenseBreakdown.other
   );
 
   const initialCostsForBuyer = sum(
@@ -83,6 +93,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
         closingAndTax,
         cmhc
       ),
+      carryingCosts: []
     }
   };
   const renter: Renter = {
@@ -105,7 +116,7 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
     province, amortization, term, isFixedRate, downpayment, capitalGainsTaxRate,
     currentHousePrice, currentInterestRate, newHousePrice, closingAndTax,
     originalBalance, mortgage, rent, marketRent, rentalIncome, downpaymentAmount, cmhc,
-    monthlyExpenses, buyer, renter, simulateYears
+    monthlyExpenses, monthlyExpenseBreakdown, buyer, renter, simulateYears
   };
 
   if (emitMetaState) {
@@ -142,8 +153,8 @@ export function run(opts: ParsedInputs<TypedInputs>, emitMetaState: boolean): Da
 
 // Export for web worker.
 if (typeof self !== 'undefined') {
-  self.onmessage = ({data: {inputs, samples}}: { // 'samples' is the potential override
-    data: {inputs: TypedInputs, samples?: number}
+  self.onmessage = ({data: {inputs, samples, runId}}: {
+    data: {inputs: TypedInputs, samples?: number, runId: number}
   }) => {
     const opts = parse(inputs); // Parse the raw inputs received
 
@@ -159,7 +170,16 @@ if (typeof self !== 'undefined') {
     numSamples = Math.max(1, numSamples);
 
     const res = range(numSamples).map((i) => run(opts, !i));
+    const carryingCosts = collectCarryingCostSeries(res);
 
-    postMessage({action: 'res', res});
+    for (const sample of res) {
+      for (const yearEntry of sample) {
+        if (yearEntry?.buyer?.house?.carryingCosts) {
+          delete yearEntry.buyer.house.carryingCosts;
+        }
+      }
+    }
+
+    postMessage({action: 'res', res, carryingCosts, runId});
   };
 }

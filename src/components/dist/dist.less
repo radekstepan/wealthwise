@@ -3,6 +3,7 @@
 
 .distribution {
   margin: 60px 0 50px 0;
+  position: relative;
 
   .svg {
     svg {
@@ -28,4 +29,24 @@
       text-rendering: optimizeLegibility;
     }  
   }
+
+  .dist-skeleton {
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      fade(@buy50, 8%) 0%,
+      fade(@buy50, 14%) 50%,
+      fade(@buy50, 8%) 100%
+    );
+    background-size: 200% 100%;
+    animation: dist-shimmer 1.25s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes dist-shimmer {
+  0% { background-position: 0% 0; }
+  100% { background-position: -200% 0; }
 }

@@ -1,6 +1,6 @@
 import { Random } from "random-js";
 import * as formula from '../formula';
-import { isEvery, range } from "../utils";
+import { isEvery, range, sum } from "../utils";
 import { simulatePaydown } from "./simulatePaydown";
 import { simulateMonth } from "./simulateMonth";
 import { simulateCrash } from "./simulateCrash";
@@ -8,12 +8,15 @@ import { simulateMove } from "./simulateMove";
 import { logYear } from "../logYear";
 import { type TypedInputs } from "../inputs/inputs";
 import { type ParsedInputs } from "../inputs/parse";
+import { type MonthlyExpenseBreakdown, type MonthlyCarryingCost } from "../../interfaces";
 
 export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedInputs>, random: Random) {
   let {
     currentHousePrice, newHousePrice, currentInterestRate,
-    monthlyExpenses, rent, marketRent, rentalIncome
+    monthlyExpenses, monthlyExpenseBreakdown, rent, marketRent, rentalIncome
   } = init;
+
+  let expenseBreakdown: MonthlyExpenseBreakdown = monthlyExpenseBreakdown as MonthlyExpenseBreakdown;
 
   const {
     originalBalance, province, mortgage, buyer, renter
@@ -31,14 +34,19 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
     newHousePrice *= crashDrop;      
   }
 
+  const yearCarryingCosts: Array<MonthlyCarryingCost> = [];
+
   // Simulate each month of the year.
   for (const month of range(12)) {
+    const absoluteMonth = year * 12 + month;
     const nextMonth = simulateMonth({
       month,
+      absoluteMonth,
       mortgage,
       buyer,
       renter,
       monthlyExpenses,
+  monthlyExpenseBreakdown: expenseBreakdown,
       rent,
       rentalIncome,
       housePriceAppreciation,
@@ -52,6 +60,7 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
     currentHousePrice = nextMonth.nextCurrentHousePrice;
     newHousePrice = nextMonth.nextNewHousePrice;
     currentInterestRate = nextMonth.nextCurrentInterestRate;
+    yearCarryingCosts.push(nextMonth.carryingCost);
   }
 
   // Apply anniversary paydown at the end of each year.
@@ -113,11 +122,27 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
     renter,
     buyer,
     province,
-    mortgage
+    mortgage,
+    carryingCosts: yearCarryingCosts
   });
 
   // Update yearly variables.
-  monthlyExpenses *= 1 + opts.rates.house.expenses();
+  const houseExpenseGrowth = 1 + opts.rates.house.expenses();
+  const nextBreakdown: MonthlyExpenseBreakdown = {
+    maintenance: expenseBreakdown.maintenance * houseExpenseGrowth,
+    propertyTax: expenseBreakdown.propertyTax * houseExpenseGrowth,
+    insurance: expenseBreakdown.insurance * houseExpenseGrowth,
+    hoa: expenseBreakdown.hoa * houseExpenseGrowth,
+    other: expenseBreakdown.other * houseExpenseGrowth
+  };
+  expenseBreakdown = nextBreakdown;
+  monthlyExpenses = sum(
+    expenseBreakdown.maintenance,
+    expenseBreakdown.propertyTax,
+    expenseBreakdown.insurance,
+    expenseBreakdown.hoa,
+    expenseBreakdown.other
+  );
   rent *= 1 + opts.rates.rent.controlled();
   marketRent *= 1 + opts.rates.rent.market();
   rentalIncome *= 1 + opts.rates.rent.rentalIncome();
@@ -133,6 +158,7 @@ export function simulateYear(year: number, init: any, opts: ParsedInputs<TypedIn
       buyer,
       renter,
       monthlyExpenses,
+      monthlyExpenseBreakdown: expenseBreakdown,
       rent,
       marketRent,
       rentalIncome

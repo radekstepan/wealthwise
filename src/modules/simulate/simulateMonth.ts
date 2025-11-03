@@ -1,14 +1,23 @@
 import Mortgage from "../mortgage";
 import { isEvery, sum } from "../utils";
 import { type Sample } from "../samplers";
-import { type Buyer, type Renter } from "../../interfaces";
+import { EXPENSE_ONLY_CATEGORIES } from "../carryingCostConfig";
+import {
+  type Buyer,
+  type Renter,
+  type MonthlyExpenseBreakdown,
+  type MonthlyCarryingCost,
+  type MonthlyCarryingCostComponent
+} from "../../interfaces";
 
 export const simulateMonth = ({
   month,
+  absoluteMonth,
   mortgage,
   buyer,
   renter,
   monthlyExpenses,
+  monthlyExpenseBreakdown,
   rent,
   rentalIncome,
   housePriceAppreciation,
@@ -20,10 +29,12 @@ export const simulateMonth = ({
   nextInterestRate
 }: {
   month: number,
+  absoluteMonth: number,
   mortgage: ReturnType<typeof Mortgage>,
   buyer: Buyer,
   renter: Renter,
   monthlyExpenses: number,
+  monthlyExpenseBreakdown: MonthlyExpenseBreakdown,
   rent: number,
   rentalIncome: number,
   housePriceAppreciation: number,
@@ -34,6 +45,8 @@ export const simulateMonth = ({
   isFixedRate: number,
   nextInterestRate: Sample
 }) => {
+  const equityBeforePayment = buyer.house.equity;
+
   // Pay mortgage (handles empty balance).
   const [principal, interest] = mortgage.pay();
 
@@ -79,6 +92,57 @@ export const simulateMonth = ({
     -mortgage.balance, // balance owing
   );
 
+  const appreciationGain = nextCurrentHousePrice - currentHousePrice;
+  const equityDelta = principal + appreciationGain;
+
+  const expenseComponents = EXPENSE_ONLY_CATEGORIES.map(category => {
+    let amount = 0;
+    switch (category) {
+      case 'maintenance':
+        amount = monthlyExpenseBreakdown.maintenance;
+        break;
+      case 'property_tax':
+        amount = monthlyExpenseBreakdown.propertyTax;
+        break;
+      case 'insurance':
+        amount = monthlyExpenseBreakdown.insurance;
+        break;
+      case 'hoa':
+        amount = monthlyExpenseBreakdown.hoa;
+        break;
+      case 'other':
+        amount = monthlyExpenseBreakdown.other;
+        break;
+    }
+    return {category, amount};
+  }).filter((component): component is MonthlyCarryingCostComponent => component.amount !== 0);
+
+  const componentSum = sum(
+    interest,
+    ...expenseComponents.map(component => component.amount)
+  );
+  const gross = componentSum - rentalIncome;
+  const net = gross - equityDelta;
+  const opportunityCost = Math.max(equityBeforePayment, 0) * bondsReturn;
+
+  const carryingCost: MonthlyCarryingCost = {
+    absoluteMonth,
+    year: Math.floor(absoluteMonth / 12),
+    month,
+    gross,
+    net,
+    rent,
+    rentalIncome,
+    principal,
+    appreciation: appreciationGain,
+    equityDelta,
+    opportunityCost,
+    components: [
+      {category: 'interest', amount: interest},
+      ...expenseComponents
+    ].filter((component): component is MonthlyCarryingCostComponent => component.amount !== 0)
+  };
+
   // Monthly portfolio appreciation.
   buyer.portfolio.value *= 1 + bondsReturn;
   renter.portfolio.value *= 1 + bondsReturn;
@@ -97,6 +161,7 @@ export const simulateMonth = ({
   return {
     nextCurrentHousePrice,
     nextNewHousePrice,
-    nextCurrentInterestRate
+    nextCurrentInterestRate,
+    carryingCost
   }
 };

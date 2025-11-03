@@ -3,10 +3,12 @@ import * as d3 from 'd3';
 import numbro from 'numbro';
 import { useAtomValue } from 'jotai';
 import { distAtom } from '../../atoms/distAtom';
+import { simulationLoadingAtom } from '../../atoms/simulationLoadingAtom';
 import './dist.less';
 
 const init = (ref) => {
   const root = d3.select(ref);
+  root.select('svg').remove(); // Clear any previous SVG before re-init
   const wrapper = root.node().getBoundingClientRect();
 
   // Set the dimensions and margins of the graph
@@ -55,13 +57,11 @@ const update = (svg, x, xAxis, y, _yAxis, data) => {
   const { height } = svg.node().getBoundingClientRect();
 
   if (!data) {
-    // Hide the SVG completely if there is no data
-    svg.style('display', 'none');
+    // Clear any existing bars/labels but keep space for skeleton overlay
+    svg.selectAll('rect.bar').remove();
+    svg.selectAll('text.text').remove();
     return;
   }
-
-  // Ensure SVG is visible when there is data
-  svg.style('display', 'block');
 
   // Calculate the domains for the axes
   const [max, sum] = data.reduce(
@@ -82,54 +82,122 @@ const update = (svg, x, xAxis, y, _yAxis, data) => {
   //   .duration(500)
   //   .call(yAxis);
 
-  const dist = svg.selectAll('.bar').data(data);
-
   // Calculate bar width dynamically based on the number of data points
   const barWidth = x.bandwidth();
+  if (barWidth <= 0) {
+    // Container not measurable yet (hidden). Skip drawing to avoid showing labels without bars.
+    return;
+  }
   const maxIndex = data.reduce((maxIdx, curr, idx, arr) =>
     curr[1] > arr[maxIdx][1] ? idx : maxIdx, 0);
 
-  dist
-    .enter()
+  // Bars
+  const bars = svg.selectAll('rect.bar').data(data);
+
+  // Exit stale bars
+  bars.exit()
+    .transition().duration(300)
+    .attr('opacity', 0)
+    .attr('y', height)
+    .attr('height', 0)
+    .remove();
+
+  // Enter new bars
+  const barsEnter = bars.enter()
     .append('rect')
     .attr('class', (_d, i) => (i === maxIndex ? 'bar median' : 'bar'))
-    .merge(dist)
+    .attr('x', (d) => x(d[0]))
+    .attr('y', height)
+    .attr('width', barWidth)
+    .attr('height', 0)
+    .attr('opacity', 0);
+
+  // Merge + update
+  barsEnter.merge(bars)
+    .attr('class', (_d, i) => (i === maxIndex ? 'bar median' : 'bar'))
     .transition()
     .duration(500)
+    .attr('opacity', 1)
     .attr('x', (d) => x(d[0]))
     .attr('y', (d) => y(d[1]))
     .attr('width', barWidth)
     .attr('height', (d) => Math.max(height - y(d[1]), 0));
 
-  const text = svg.selectAll('.text').data(data);
+  // Labels
+  const labels = svg.selectAll('text.text').data(data);
 
-  text
-    .enter()
+  // Exit stale labels
+  labels.exit()
+    .transition().duration(200)
+    .attr('opacity', 0)
+    .remove();
+
+  // Enter new labels
+  const labelsEnter = labels.enter()
     .append('text')
     .attr('class', 'text')
-    .merge(text)
-    .transition()
-    .duration(500)
+    .attr('opacity', 0)
     .attr('x', (d) => x(d[0]) + barWidth / 2)
-    .attr('y', (d) => y(d[1]) - 5)
-    .text((d) => ((d[1] / sum) * 100).toFixed(2) + '%');
+    .attr('y', height - 5)
+    .text((d) => (sum ? ((d[1] / sum) * 100).toFixed(2) : '0.00') + '%');
+
+  // Merge + update with slight delay so bars are visible first
+  labelsEnter.merge(labels)
+    .transition()
+    .delay(520)
+    .duration(400)
+    .attr('opacity', 1)
+    .attr('x', (d) => x(d[0]) + barWidth / 2)
+    .attr('y', (d) => Math.max(y(d[1]) - 5, 10))
+    .tween('text', function(d) {
+      const that = d3.select(this);
+      const from = +that.text().replace('%','') || 0;
+      const to = sum ? ((d[1] / sum) * 100) : 0;
+      const i = d3.interpolateNumber(from, to);
+      return (t) => that.text(i(t).toFixed(2) + '%');
+    });
 };
 
 function Distribution() {
   const el = useRef(null);
   const [graph, setGraph] = useState(null);
   const distState = useAtomValue(distAtom);
+  const simLoading = useAtomValue(simulationLoadingAtom);
+  const latestDataRef = useRef(null);
+  const resizeObsRef = useRef(null);
 
   useEffect(() => {
-    setGraph(init(el.current));
+    if (!el.current) return;
+
+    // Lazy init; will re-init on first measurable size
+    const ro = new ResizeObserver(() => {
+      if (!el.current) return;
+      const rect = el.current.getBoundingClientRect();
+      if (rect.width > 0 && rect.height >= 0) {
+        const g = init(el.current);
+        setGraph(g);
+        if (latestDataRef.current) {
+          update(...g, latestDataRef.current);
+        }
+      }
+    });
+    resizeObsRef.current = ro;
+    ro.observe(el.current);
+
+    return () => {
+      if (resizeObsRef.current && el.current) {
+        resizeObsRef.current.disconnect();
+      }
+    };
   }, []);
 
   useEffect(() => {
     if (graph) {
+      latestDataRef.current = distState;
       if (!distState) {
-        el.current.style.display = 'none';
+        // Clear SVG, skeleton will show via overlay
+        update(...graph, null);
       } else {
-        el.current.style.display = 'block';
         update(...graph, distState);
       }
     }
@@ -137,6 +205,9 @@ function Distribution() {
 
   return (
     <div className="distribution">
+      {(simLoading && !distState) && (
+        <div className="dist-skeleton" aria-hidden />
+      )}
       <div ref={el} className="svg" />
     </div>
   );
