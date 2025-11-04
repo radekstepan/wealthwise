@@ -3,6 +3,7 @@ import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import useCollapse from 'react-collapsed';
 import { useAtomValue } from 'jotai';
 import Field from './Field';
+import MagicRentButton from './MagicRentButton';
 import { formAtom } from '../../atoms/formAtom';
 import './form.less';
 
@@ -154,6 +155,7 @@ export default function Form() {
               label="Rent"
               description="monthly"
               field="rent.current"
+              action={<MagicRentButton />}
             />
             <Field
               label="Rent increases"

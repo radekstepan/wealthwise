@@ -66,29 +66,101 @@
       color: #696f8c;
     }
 
-    .input {
-      border: 1px solid #d8dae5;
-      background: #fff;
-      color: #474d66;
-      padding: 0 6px;
+    .field__input-row {
       margin-top: 4px;
-      line-height: 16px;
-      height: 32px;
-      transition: box-shadow 80ms ease-in-out;
-      border-radius: 4px;
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-  
-      &:focus {
-        box-shadow: 0 0 0 2px #d6e0ff;
-        border-color: #ADC2FF;
+
+      .input {
+        border: 1px solid #d8dae5;
+        background: #fff;
+        color: #474d66;
+        padding: 0 6px;
+        line-height: 16px;
+        height: 32px;
+        transition: box-shadow 80ms ease-in-out;
+        border-radius: 4px;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+    
+        &:focus {
+          box-shadow: 0 0 0 2px #d6e0ff;
+          border-color: #ADC2FF;
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+          background-color: #F4F5F9;
+          color: #696f8c;
+        }
+      }
+    }
+
+    &.field--with-action {
+      .field__input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        .input {
+          flex: 1 1 auto;
+        }
+
+        .field__action {
+          flex: 0 0 auto;
+
+          .magic-rent-button {
+            background: #4257ff;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0 12px;
+            height: 32px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 120ms ease-in-out, transform 120ms ease-in-out, box-shadow 120ms ease-in-out;
+
+            &:hover {
+              background: #2f3fe6;
+            }
+
+            &:active {
+              transform: translateY(1px);
+            }
+
+            &:disabled {
+              cursor: not-allowed;
+              background: #c7cff9;
+              color: #f8f9ff;
+              box-shadow: none;
+            }
+          }
+        }
+      }
+    }
+
+    .field__status {
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #474d66;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &--searching {
+        color: #4257ff;
       }
 
-      &:disabled {
-        cursor: not-allowed;
-        background-color: #F4F5F9;
-        color: #696f8c;
+      &--success {
+        color: #36b37e;
+      }
+
+      &--error {
+        color: #d14343;
       }
     }
   }

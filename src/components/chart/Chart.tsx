@@ -7,6 +7,7 @@ import { metaAtom } from '../../atoms/metaAtom';
 import { distAtom } from '../../atoms/distAtom';
 import { dataAtom } from '../../atoms/dataAtom';
 import { formAtom } from '../../atoms/formAtom';
+import { magicRentAtom } from '../../atoms/magicRentAtom';
 import { cls } from '../../utils/css';
 import Loader from '../loader/Loader'
 import { type Renter, type Buyer } from '../../interfaces';
@@ -263,6 +264,13 @@ export default function Chart({isMini = false}) {
   const [chartData, setData] = useAtom(dataAtom);
   const setMeta = useSetAtom(metaAtom);
   const setDist = useSetAtom(distAtom);
+  const magicRent = useAtomValue(magicRentAtom);
+  // mounted vs visible states allow CSS enter/exit animations
+  const [toastMounted, setToastMounted] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [modalMounted, setModalMounted] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const setMagicRent = useSetAtom(magicRentAtom);
 
   // Initialize graph
   useEffect(() => {
@@ -321,6 +329,42 @@ export default function Chart({isMini = false}) {
     }
   }, [chartData, graph, isMini, hasLoadedOnce]);
 
+  // Show modal while searching; show toast briefly on success/error
+  useEffect(() => {
+    if (isMini) return undefined;
+
+    let t: number | undefined;
+
+    if (magicRent.status === 'searching') {
+      // mount then show for enter animation
+      setModalMounted(true);
+      // small delay to ensure mounted before visible toggle (helps some browsers)
+      setTimeout(() => setModalVisible(true), 12);
+      // hide toast when starting
+      setToastVisible(false);
+    } else {
+      // hide modal with exit animation then unmount
+      setModalVisible(false);
+      // keep mounted long enough for CSS transition (200ms)
+      setTimeout(() => setModalMounted(false), 240);
+
+      if (magicRent.status === 'success' || magicRent.status === 'error') {
+        // mount toast, then show
+        setToastMounted(true);
+        setTimeout(() => setToastVisible(true), 12);
+        // auto-hide after 4s (start hide animation), then unmount
+        t = window.setTimeout(() => {
+          setToastVisible(false);
+          setTimeout(() => setToastMounted(false), 240);
+        }, 4000);
+      }
+    }
+
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [magicRent.status, isMini]);
+
   // Update legend point based on hover (always active now)
   useEffect(() => {
     // Only proceed if data is valid (median exists and has length)
@@ -353,6 +397,42 @@ export default function Chart({isMini = false}) {
       {!isMini && isLoading && (
         <div className="chart-loader-overlay">
           <Loader />
+        </div>
+      )}
+
+      {/* Modal shown during search */}
+      {!isMini && modalMounted && (
+        <div className="magic-modal-overlay">
+          <div className={`magic-modal ${modalVisible ? 'visible' : 'hidden'}`} role="dialog" aria-modal="true">
+            <Loader />
+            <div className="magic-modal-message">{magicRent.message ?? 'Searching for break-even rent…'}</div>
+            <div className="magic-modal-iteration">Iteration {magicRent.iteration || 0}</div>
+            {typeof magicRent.diff === 'number' && (
+              <div className="magic-modal-diff">Δ {magicRent.diff >= 0 ? '+' : ''}{magicRent.diff.toLocaleString()}</div>
+            )}
+            <div className="magic-modal-progress">
+              <div className="magic-modal-progress__bar" style={{width: `${Math.round((magicRent.iteration / (magicRent.total || 12)) * 100)}%`}} />
+            </div>
+            <div className="magic-modal-actions">
+              <button
+                className="magic-modal-cancel"
+                onClick={() => {
+                  try { magicRent.controller?.abort(); } catch (e) {}
+                  setMagicRent({ status: 'idle', message: 'Cancelled', iteration: 0, diff: null, total: null, controller: null });
+                  // start exit animation
+                  setModalVisible(false);
+                  setTimeout(() => setModalMounted(false), 240);
+                }}
+              >Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast on success/error */}
+      {!isMini && toastMounted && magicRent.message && (
+        <div className={`magic-toast ${magicRent.status} ${toastVisible ? 'visible' : 'hidden'}`} role={magicRent.status === 'error' ? 'alert' : 'status'}>
+          {magicRent.message}
         </div>
       )}
 

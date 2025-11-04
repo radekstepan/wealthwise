@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState, type FC} from 'react';
+import React, {useCallback, useEffect, useRef, useState, type FC, type ReactNode} from 'react';
 import MaskedInput from 'react-text-mask';
 import opa from 'object-path';
 import clone from 'clone-deep';
@@ -9,6 +9,7 @@ import clean from '../../modules/inputs/clean';
 import {INPUTS} from '../../const';
 import { formAtom } from '../../atoms/formAtom';
 import { Province } from '../../interfaces';
+import { cls } from '../../utils/css';
 
 interface Props {
   label: string;
@@ -17,6 +18,7 @@ interface Props {
   placeholder?: string;
   focus?: boolean;
   readOnly?: boolean;
+  action?: ReactNode;
 }
 
 // The component uses the value in the form state to set its initial
@@ -30,6 +32,7 @@ const Field: FC<Props> = ({
   field: key,
   focus=false,
   readOnly=false,
+  action,
   ...input
 }) => {
   const [form, setForm] = useAtom(formAtom);
@@ -137,11 +140,20 @@ const Field: FC<Props> = ({
     );
   }
 
+  useEffect(() => {
+    if (formValue !== value) {
+      setValue(formValue);
+    }
+  }, [formValue]);
+
   return (
-    <div className="field">
+    <div className={cls('field', action && 'field--with-action')}>
       <label className="label">{label}</label>
       {description && <div className="legend">{description}</div>}
-      {field}
+      <div className={cls('field__input-row', action && 'field__input-row--with-action')}>
+        {field}
+        {action && <div className="field__action">{action}</div>}
+      </div>
     </div>
   );
 };
