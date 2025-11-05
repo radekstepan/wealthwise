@@ -50,11 +50,8 @@ const MagicRentButton: React.FC = () => {
       }, opts, controller.signal);
 
       const nextForm = clone(snapshot);
-      const rentType = form.rent.current[1];
-      const marketType = form.rent.market[1];
-
-      nextForm.rent.current = [result.formattedRent, rentType];
-      nextForm.rent.market = [result.formattedRent, marketType];
+      nextForm.rent.current[0] = result.formattedRent;
+      nextForm.rent.market[0] = result.formattedRent;
 
       setForm(nextForm);
       setMagicState({
