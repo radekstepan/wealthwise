@@ -10,6 +10,7 @@ import {INPUTS} from '../../const';
 import { formAtom } from '../../atoms/formAtom';
 import { Province } from '../../interfaces';
 import { cls } from '../../utils/css';
+import { unformatValue } from '../../utils/number';
 
 interface Props {
   label: string;
@@ -81,11 +82,23 @@ const Field: FC<Props> = ({
     setForm(obj);
   }, [form, formValue, key, setForm, type, value]);
 
+  const onCopy = useCallback((e: React.ClipboardEvent) => {
+    // Prevent the default copy behavior
+    e.preventDefault();
+    
+    // Get the unformatted value
+    const unformattedValue = unformatValue(value, type);
+    
+    // Set the unformatted value to clipboard
+    e.clipboardData.setData('text/plain', unformattedValue);
+  }, [value, type]);
+
   const props = {
     ref,
     value,
     onBlur,
     onChange,
+    onCopy,
     className: 'input',
     inputMode: 'numeric' as const,
     ...input
