@@ -82,6 +82,10 @@ After all simulations complete, the results are processed to calculate the 5th, 
     ```sh
     yarn test
     ```
+    To run end-to-end tests with Playwright:
+    ```sh
+    yarn test:e2e
+    ```
 
 6.  **Run benchmarks:**
     ```sh

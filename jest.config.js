@@ -3,7 +3,8 @@ module.exports = {
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/__fixtures__/'
+    '/__fixtures__/',
+    '/spec/'
   ],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   coverageDirectory: 'coverage',

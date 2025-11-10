@@ -14,3 +14,7 @@ Thumbs.db
 .env
 .aider*
 repomix-output.xml
+
+# Playwright
+test-results/
+playwright-report/
