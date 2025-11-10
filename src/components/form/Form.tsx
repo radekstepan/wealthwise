@@ -4,6 +4,7 @@ import useCollapse from 'react-collapsed';
 import { useAtomValue } from 'jotai';
 import Field from './Field';
 import MagicRentButton from './MagicRentButton';
+import MagicAppreciationButton from './MagicAppreciationButton';
 import { formAtom } from '../../atoms/formAtom';
 import './form.less';
 
@@ -183,6 +184,7 @@ export default function Form() {
               label="Property appreciation"
               description="% yearly"
               field="rates.house.appreciation"
+              action={<MagicAppreciationButton />}
             />
             <Field
               label="Rental income"

@@ -14,36 +14,6 @@
     padding-right: 140px;
     margin-bottom: 6px;
 
-    .chart-loading-toast {
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: 20;
-      background: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(16,24,56,0.12);
-      font-size: 12px;
-      font-weight: 600;
-      color: #101840;
-      border-left: 4px solid #adb5bd;
-      min-width: 84px;
-      text-align: left;
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity 200ms ease, transform 220ms ease;
-
-      &.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      &.hidden {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
-    }
-
     .title {
       margin: 0;
       font-size: 16px;
@@ -58,6 +28,39 @@
     }
   }
 
+  .chart-loading-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(16,24,56,0.12);
+    font-size: 12px;
+    font-weight: 600;
+    color: #101840;
+    border-left: 4px solid #adb5bd;
+    min-width: 84px;
+    text-align: center;
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-8px);
+    transition: opacity 200ms ease, transform 220ms ease;
+
+    &.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    &.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) translateY(-8px);
+    }
+  }
+
   .svg {
     opacity: 0; // Start transparent
     transition: opacity 0.5s ease-in-out; // Smooth transition for opacity
@@ -69,20 +72,22 @@
     opacity: 1; // Fade in when loaded class is added
   }
 
+  /* Subtle overlay while loading */
   .chart-loader-overlay {
     position: absolute;
-    top: 0; // Position relative to .chart parent
-    left: 0;
-    width: 100%;
-    height: 100%; // Takes full space of the chart area
-    display: flex; // Use flexbox to center the loader
-    align-items: center; // Vertical centering
-    justify-content: center; // Horizontal centering
-    z-index: 10;
-    background-color: rgba(255, 255, 255, 0.85); // Semi-transparent white overlay
-    opacity: 1;
-    transition: opacity 0.2s ease-in-out;
+    inset: 40px 0 0; // start below header for a cleaner look
+    background: rgba(255, 255, 255, 0.78);
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 220ms ease-in-out;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.is-loading .chart-loader-overlay {
+    opacity: 1;
   }
 
   .chart-loader-overlay--magic {
@@ -168,20 +173,6 @@
     }
   }
 
-  /* Magic rent modal overlay */
-  .magic-modal-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    /* Semi-transparent white overlay (less jarring but still shows context) */
-    background: rgba(255,255,255,0.85);
-    /* subtle blur to separate the modal from background content */
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-  }
 
   .magic-modal {
     background: #fff;

@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import { useAtom, useAtomValue } from 'jotai';
 import { sensitivityAtom, type SensitivityResult } from '../../atoms/sensitivityAtom';
 import { formAtom } from '../../atoms/formAtom';
+import { magicRentAtom } from '../../atoms/magicRentAtom';
+import { magicAppreciationAtom } from '../../atoms/magicAppreciationAtom';
 import LoadingDots from '../common/LoadingDots';
 import './keyfactors.less';
 
@@ -262,6 +264,16 @@ const KeyFactors: React.FC<KeyFactorsProps> = ({ isActive }) => {
   const [loadingToastMounted, setLoadingToastMounted] = useState(false);
   const [loadingToastVisible, setLoadingToastVisible] = useState(false);
 
+  const magicRent = useAtomValue(magicRentAtom);
+  const magicAppreciation = useAtomValue(magicAppreciationAtom);
+
+  const activeMagicSearch =
+    magicRent.status === 'searching'
+      ? { ...magicRent, type: 'rent' as const }
+      : magicAppreciation.status === 'searching'
+      ? { ...magicAppreciation, type: 'appreciation' as const }
+      : null;
+
   // Debounced run using the fixed VARIABLES list in the correct order.
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -476,9 +488,14 @@ const KeyFactors: React.FC<KeyFactorsProps> = ({ isActive }) => {
     );
   };
 
+  const isLoading =
+    !!activeMagicSearch ||
+    sensitivityState.status === 'running' ||
+    (sensitivityState.status === 'idle' && !hasLoadedOnce);
+
   return (
     <section
-      className="key-factors-chart"
+      className={`key-factors-chart ${isLoading ? 'is-loading' : ''} ${activeMagicSearch ? 'is-searching' : ''}`}
       aria-label="Key drivers of your simulated net worth"
     >
       <div className="key-factors-chart__header">
@@ -494,11 +511,13 @@ const KeyFactors: React.FC<KeyFactorsProps> = ({ isActive }) => {
       </div>
       <div className="key-factors-chart__container">
         {/* Toast during loading */}
-        {loadingToastMounted && (
-          <div className={`key-factors-chart__toast ${loadingToastVisible ? 'visible' : 'hidden'}`} role="status">
-            <LoadingDots isLoading={sensitivityState.status === 'running'} />
+        {isLoading && (
+          <div className={`key-factors-chart__toast visible`} role="status">
+            <LoadingDots isLoading={true} />
           </div>
         )}
+        {/* Subtle white overlay while loading */}
+        <div className="key-factors-chart__overlay" aria-hidden="true" />
         {renderContent()}
       </div>
     </section>

@@ -4,6 +4,8 @@ import numbro from 'numbro';
 import { useAtomValue } from 'jotai';
 import { distAtom } from '../../atoms/distAtom';
 import { formAtom } from '../../atoms/formAtom';
+import { magicRentAtom } from '../../atoms/magicRentAtom';
+import { magicAppreciationAtom } from '../../atoms/magicAppreciationAtom';
 import LoadingDots from '../common/LoadingDots';
 import './dist.less';
 
@@ -214,7 +216,16 @@ const Distribution: React.FC = () => {
   const [loadingToastVisible, setLoadingToastVisible] = useState(false);
   const distState = useAtomValue(distAtom) as DistState | null;
   const formState = useAtomValue(formAtom);
+  const magicRent = useAtomValue(magicRentAtom);
+  const magicAppreciation = useAtomValue(magicAppreciationAtom);
   const prevFormRef = useRef(formState);
+
+  const activeMagicSearch =
+    magicRent.status === 'searching'
+      ? { ...magicRent, type: 'rent' as const }
+      : magicAppreciation.status === 'searching'
+      ? { ...magicAppreciation, type: 'appreciation' as const }
+      : null;
 
   useEffect(() => {
     if (!graph && containerRef.current) {
@@ -238,7 +249,8 @@ const Distribution: React.FC = () => {
 
     if (hasData) {
       update(graph, containerRef.current, distState);
-      setIsLoading(false);
+      // Stay in loading state while magic search is active so UI matches main chart
+      setIsLoading(!!activeMagicSearch);
       // Hide loading toast when data is ready
       setLoadingToastVisible(false);
       setTimeout(() => {
@@ -253,7 +265,7 @@ const Distribution: React.FC = () => {
       setLoadingToastMounted(true);
       setTimeout(() => setLoadingToastVisible(true), 12);
     }
-  }, [graph, distState, hasLoadedOnce]);
+  }, [graph, distState, hasLoadedOnce, activeMagicSearch]);
 
 
   // Detect form changes to anticipate new simulation runs
@@ -289,25 +301,28 @@ const Distribution: React.FC = () => {
   }, [graph, distState]);
 
   return (
-    <div className={`distribution ${hasLoadedOnce && 'loaded'}`}>
+    <div className={`distribution ${hasLoadedOnce ? 'loaded' : ''} ${isLoading ? 'is-loading' : ''} ${activeMagicSearch ? 'is-searching' : ''}`}>
       <div className="distribution__title">Distribution of Final Net Worth</div>
       <div className="distribution__subtitle">
         How often different net worth outcomes appear across your simulations for both buyers and renters.
       </div>
       
       {/* Toast during loading */}
-      {loadingToastMounted && (
-        <div className={`distribution__toast ${loadingToastVisible ? 'visible' : 'hidden'}`} role="status">
-          <LoadingDots isLoading={isLoading} />
+      {isLoading && (
+        <div className={`distribution__toast visible`} role="status">
+          <LoadingDots isLoading={true} />
         </div>
       )}
 
+      {/* Subtle white overlay while loading */}
+      <div className="distribution__overlay" aria-hidden="true" />
+
       <div ref={containerRef} className="svg" />
-      {!distState ? (
+      {!hasLoadedOnce && !distState && !isLoading && (
         <div className="distribution__placeholder">
           <p className="placeholder-text">Run a simulation to see the distribution.</p>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
