@@ -4,7 +4,7 @@ import { type ChartDataPoint, type ChartData } from '../components/chart/Chart';
 import { type DistState } from '../atoms/distAtom';
 import { type Data, type Renter, type Buyer } from '../interfaces';
 
-const BANDS = 7; // distribution bands
+const BANDS = 10; // distribution bands
 
 export type Samples = Array<Data>; // samples * years
 
@@ -12,36 +12,18 @@ export const processSim = (
   setDist: (next: DistState) => void,
   setData: (data: ChartData) => void
 ) => (samples: Samples) => {
-  // Distribution of end results as a buyer (net worth).
-  const dist = samples
-    .map(s => {
-      const {buyer} = s[s.length - 1]; // last year in this sample
-      return buyer.$;
-    })
-    .sort(d3.ascending);
+  // Distribution of end results (net worth).
+  const buyerOutcomes = samples.map(s => s[s.length - 1].buyer.$);
+  const renterOutcomes = samples.map(s => s[s.length - 1].renter.$);
 
-  const min = d3.quantile(dist, 0.05);
-  const max = d3.quantile(dist, 0.95);
-  const band = (max - min) / BANDS;
-  const bands = [0];
-  let i = 0;
-  let l = min + band;
-  for (const d of dist) {
-    if (d < min || d > max) continue;
-
-    if (d <= l) {
-      bands[i] += 1
-    } else {
-      i += 1;
-      l += band;
-      bands.push(0);
-    }
+  if (buyerOutcomes.length > 1 && renterOutcomes.length > 1) {
+    setDist({
+      buyer: buyerOutcomes,
+      renter: renterOutcomes,
+    });
+  } else {
+    setDist(null);
   }
-
-  setDist(bands.length < BANDS ? null : bands.map((d, i) => [
-    [min + (i * band), min + ((1 + i) * band)],
-    d
-  ]));
 
   const data: ChartData = [[], [], []]; // quantiles
   // For each year.

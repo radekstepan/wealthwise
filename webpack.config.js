@@ -3,7 +3,7 @@ const path = require('path');
 const config = {
   entry: [
     'react-hot-loader/patch',
-    './src/index.js'
+    './src/index.tsx'
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -12,7 +12,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js(x)?$/,
+        test: /\.jsx?$/,
         use: 'babel-loader',
         exclude: /node_modules/
       },

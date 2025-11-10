@@ -1,6 +1,8 @@
 Next
+- [ ] A consistent loading state across all 3 charts on init and when changing parameters
 - [x] Show rental income in the Buyer XLS sheet after column "Rent paid (imputed)" and show the same number in the table as well
 - [x] Expose the `house.closingCosts` field in the UI, Property section right before the Province field
+- [ ] 387.bundle.js:1 Uncaught DataCloneError: Failed to execute 'postMessage' on 'DedicatedWorkerGlobalScope': Data cannot be cloned, out of memory.
 
 Nice to have
 - [ ] show a monthly how much better off you are in terms of net worth

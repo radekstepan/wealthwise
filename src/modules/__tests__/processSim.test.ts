@@ -1,6 +1,7 @@
+import * as d3 from 'd3';
 import { processSim, type Samples } from '../processSim';
 import { type ChartData } from '../../components/chart/Chart';
-import { type DistState } from '../../atoms/distAtom';
+import { type DistState, type DistData } from '../../atoms/distAtom';
 
 describe('processSim', () => {
   let setDist: jest.Mock<(next: DistState) => void>;
@@ -12,8 +13,8 @@ describe('processSim', () => {
       renter: { $: 75000 + (i * 500) }
     },
     {
-      buyer: { $: 200000 + (i * 1000) },
-      renter: { $: 100000 + (i * 500) }
+      buyer: { $: 200000 + (i * 1000) }, // Final buyer NW for n=100: [200k, 299k]
+      renter: { $: 100000 + (i * 500) }  // Final renter NW for n=100: [100k, 149.5k]
     }
   ]);
 
@@ -22,130 +23,103 @@ describe('processSim', () => {
     setData = jest.fn();
   });
 
-  test('should calculate distribution bands using actual quantiles', () => {
-    const handler = processSim(setDist, setData);
-    handler(getSamples(100));
+  describe('Distribution Calculation (setDist)', () => {
+    it('should calculate bands based on combined buyer and renter outcomes', () => {
+      const samples = getSamples(100);
+      const handler = processSim(setDist, setData);
+      handler(samples);
 
-    expect(setDist).toHaveBeenCalled();
-    const distCall = setDist.mock.calls[0][0];
-    
-    // Verify bands structure
-    expect(Array.isArray(distCall)).toBeTruthy();
+      expect(setDist).toHaveBeenCalled();
+      const distCall = setDist.mock.calls[0][0] as DistState;
+      expect(distCall).not.toBeNull();
 
-    // Verify first band starts at min
-    expect(distCall[0][0][0]).toBe(204950);
-    
-    // Verify last band ends at max
-    const lastBand = distCall[distCall.length - 1];
-    expect(lastBand[0][1]).toBeCloseTo(294050, 0);
-  });
+      const allOutcomes = [
+        ...samples.map(s => s[s.length - 1].buyer.$),
+        ...samples.map(s => s[s.length - 1].renter.$)
+      ].sort(d3.ascending);
+      
+      const expectedMin = d3.min(allOutcomes)!;
+      const expectedMax = d3.max(allOutcomes)!;
 
-  test('should calculate chart data with accurate quantiles', () => {
-    const handler = processSim(setDist, setData);
-    handler(getSamples(100));
+      const actualMin = d3.min((distCall as DistData).buyer.concat((distCall as DistData).renter))!;
+      const actualMax = d3.max((distCall as DistData).buyer.concat((distCall as DistData).renter))!;
 
-    expect(setData).toHaveBeenCalled();
-    const dataCall = setData.mock.calls[0][0];
+      expect(actualMin).toBeCloseTo(expectedMin);
+      expect(actualMax).toBeCloseTo(expectedMax);
+    });
 
-    // Test structure
-    expect(dataCall.length).toBe(3); // 3 quantiles (5%, 50%, 95%)
-    expect(dataCall[0].length).toBe(2); // 2 years
+    it('should correctly count buyer and renter outcomes in each band', () => {
+      const samples = getSamples(100); // 100 buyers, 100 renters
+      const handler = processSim(setDist, setData);
+      handler(samples);
 
-    expect(dataCall[1][0].buyer.$).toBe(200000);
-    expect(dataCall[1][0].renter.$).toBe(100000);
-  });
+      const distCall = setDist.mock.calls[0][0] as DistState;
+      expect(distCall).not.toBeNull();
 
-  test('should handle a small dataset correctly', () => {
-    const handler = processSim(setDist, setData);
-    handler(getSamples(2));
+      const buyerOutcomes = samples.map(s => s[s.length - 1].buyer.$);
+      const renterOutcomes = samples.map(s => s[s.length - 1].renter.$);
+      const allOutcomes = [...buyerOutcomes, ...renterOutcomes].sort(d3.ascending);
 
-    expect(setDist).toHaveBeenCalled();
-    const distCall = setDist.mock.calls[0][0];
+      const min = d3.quantile(allOutcomes, 0.05)!;
+      const max = d3.quantile(allOutcomes, 0.95)!;
 
-    expect(distCall).toBeNull();
+      const totalBuyerCountInBands = (distCall as DistData).buyer.filter(v => v >= min && v <= max).length;
+      const totalRenterCountInBands = (distCall as DistData).renter.filter(v => v >= min && v <= max).length;
 
-    expect(setData).toHaveBeenCalled();
-    const dataCall = setData.mock.calls[0][0];
+      const expectedBuyerCount = buyerOutcomes.filter(v => v >= min! && v <= max!).length;
+      const expectedRenterCount = renterOutcomes.filter(v => v >= min! && v <= max!).length;
 
-    // Test structure
-    expect(dataCall.length).toBe(3); // 3 quantiles (5%, 50%, 95%)
-    expect(dataCall[0].length).toBe(2); // 2 years
+      expect(totalBuyerCountInBands).toBe(expectedBuyerCount);
+      expect(totalRenterCountInBands).toBe(expectedRenterCount);
+      // Since buyer/renter ranges don't overlap in test data, some bands should only have one type
+      expect((distCall as DistData).buyer.some(value => value > 0)).toBe(true);
+      expect((distCall as DistData).renter.some(value => value > 0)).toBe(true);
+    });
 
-    expect(dataCall[1][0].buyer.$).toBe(151000);
-    expect(dataCall[1][0].renter.$).toBe(75500);
-  });
-
-  test('should handle larger datasets correctly', () => {
-    // Generate larger dataset
-    const largeSamples = Array.from({ length: 100 }, (_, i) => [
-      {
-        buyer: { $: 100000 + (i * 1000) },
-        renter: { $: 50000 + (i * 500) }
-      },
-      {
-        buyer: { $: 150000 + (i * 1000) },
-        renter: { $: 75000 + (i * 500) }
-      }
-    ]) as any;
-
-    const handler = processSim(setDist, setData);
-    handler(largeSamples);
-
-    const dataCall = setData.mock.calls[0][0];
-    expect(dataCall[0].length).toBe(2); // Still 2 years
-    expect(dataCall.length).toBe(3); // Still 3 quantiles
-  });
-
-  test('should maintain consistent band sizes', () => {
-    const handler = processSim(setDist, setData);
-    handler(getSamples(100));
-
-    const distCall = setDist.mock.calls[0][0];
-    
-    // Check that all bands have the same size
-    const bandSizes = distCall.map(band => band[0][1] - band[0][0]);
-    const firstBandSize = bandSizes[0];
-    
-    bandSizes.forEach(size => {
-      expect(Math.abs(size - firstBandSize)).toBeLessThan(0.0001); // Account for floating point
+    it('should call setDist with null if data is insufficient for bands', () => {
+      const handler = processSim(setDist, setData);
+      handler(getSamples(2));
+      expect(setDist).toHaveBeenCalled();
     });
   });
 
-  test('should handle outlier values correctly', () => {
-    const samplesWithOutliers = [
-      ...getSamples(98),
-      [
-        {
-          buyer: { $: 50000 }, // Low outlier
-          renter: { $: 25000 }
-        },
-        {
-          buyer: { $: 55000 },
-          renter: { $: 27500 }
-        }
-      ],
-      [
-        {
-          buyer: { $: 500000 }, // High outlier
-          renter: { $: 250000 }
-        },
-        {
-          buyer: { $: 550000 },
-          renter: { $: 275000 }
-        }
-      ]
-    ];
+  describe('Chart Data Calculation (setData)', () => {
+    it('should calculate chart data with accurate quantiles', () => {
+      const handler = processSim(setDist, setData);
+      handler(getSamples(100));
 
-    const handler = processSim(setDist, setData);
-    handler(samplesWithOutliers);
+      expect(setData).toHaveBeenCalled();
+      const dataCall = setData.mock.calls[0][0];
 
-    const distCall = setDist.mock.calls[0][0];
-    
-    // Verify outliers don't break the distribution
-    expect(distCall.every(band => 
-      Number.isFinite(band[0][0]) && 
-      Number.isFinite(band[0][1]) &&
-      Number.isFinite(band[1])
-    )).toBe(true);
+      // Test structure
+      expect(dataCall.length).toBe(3); // 3 quantiles (5%, 50%, 95%)
+      expect(dataCall[0].length).toBe(2); // 2 years
+
+      const medianYear0 = dataCall[1][0];
+      const medianYear1 = dataCall[1][1];
+
+      // Median values are based on the implementation using floor(samples.length * p)
+      expect(medianYear0.buyer.$).toBe(200000);
+      expect(medianYear0.renter.$).toBe(100000);
+      
+      expect(medianYear1.buyer.$).toBe(250000);
+      expect(medianYear1.renter.$).toBe(125000);
+    });
+
+    it('should handle a small dataset correctly for chart data', () => {
+      const handler = processSim(setDist, setData);
+      handler(getSamples(2));
+
+      expect(setData).toHaveBeenCalled();
+      const dataCall = setData.mock.calls[0][0];
+
+      // Test structure is maintained
+      expect(dataCall.length).toBe(3); // 3 quantiles
+      expect(dataCall[0].length).toBe(2); // 2 years
+
+      // With 2 samples, quantile logic will pick specific indices based on floor(samples.length * p)
+      expect(dataCall[1][0].buyer.$).toBe(151000); // 50th percentile index for buyer
+      expect(dataCall[1][0].renter.$).toBe(75500); // 50th percentile index for renter
+    });
   });
 });

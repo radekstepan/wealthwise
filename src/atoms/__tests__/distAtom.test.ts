@@ -1,28 +1,27 @@
-import { distAtom, type DistState } from '../distAtom';
+import { distAtom, type DistState, type DistData } from '../distAtom';
 
 describe('distAtom', () => {
-  it('should initialize', () => {
+  it('should initialize with null', () => {
     const initialValue = distAtom.init;
     expect(initialValue).toBeNull();
   });
 
-  it('should match the DistState type structure', () => {
-    const sampleData: DistState = [
-      [[0, 10], 5],
-      [[11, 20], 3],
-      [[21, 30], 7]
-    ];
+  it('should match the new DistState type structure', () => {
+    const sampleData: DistData = {
+      buyer: [1000, 2000, 3000],
+      renter: [1500, 2500, 3500],
+    };
     
-    const atomValue: DistState = sampleData;
-    expect(Array.isArray(atomValue)).toBe(true);
-    
-    atomValue.forEach(band => {
-      const [range, count] = band;
-      expect(Array.isArray(range)).toBe(true);
-      expect(range).toHaveLength(2);
-      expect(typeof range[0]).toBe('number');
-      expect(typeof range[1]).toBe('number');
-      expect(typeof count).toBe('number');
-    });
+    const state: DistState = sampleData;
+
+    expect(state).not.toBeNull();
+    if (state) {
+      expect(state).toHaveProperty('buyer');
+      expect(state).toHaveProperty('renter');
+      expect(Array.isArray(state.buyer)).toBe(true);
+      expect(Array.isArray(state.renter)).toBe(true);
+      expect(state.buyer.length).toBe(3);
+      expect(typeof state.renter[0]).toBe('number');
+    }
   });
 });

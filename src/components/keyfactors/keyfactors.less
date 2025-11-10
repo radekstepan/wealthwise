@@ -1,0 +1,227 @@
+@title: #5777d7;
+@text: #101840;
+@muted: #696f8c;
+@border-soft: #e6e6ec;
+@bg-soft: #f8fafc;
+@shadow-soft: 0 6px 18px rgba(16, 24, 56, 0.06);
+
+@mortgage-color: #5777d7;
+@rent-color: #e6a524;
+@appreciation-color: #22c55e;
+@investment-color: #8b5cf6;
+@cost-color: #9ca3af;
+
+@font-base: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  Roboto, Helvetica, Arial, sans-serif;
+
+.key-factors-chart {
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  font-family: @font-base;
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: @title;
+    letter-spacing: -0.08px;
+  }
+
+  &__subtitle {
+    margin: 1px 0 0;
+    font-size: 11px;
+    color: @muted;
+  }
+
+  &__container {
+    position: relative;
+    margin-top: 4px;
+    height: 220px;
+    border-radius: 5px;
+    background: #ffffff;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  &__loader-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(2px);
+    z-index: 5;
+
+    .main-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: @text;
+      text-align: center;
+    }
+
+    .sub-text {
+      font-size: 10px;
+      color: @muted;
+      text-align: center;
+      max-width: 280px;
+    }
+
+    .kf-progress {
+      width: 180px;
+      height: 5px;
+      border-radius: 999px;
+      background: #edf2ff;
+      overflow: hidden;
+
+      &__bar {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background-color: @title;
+        transition: width 200ms ease-out;
+      }
+    }
+  }
+
+  &__toast {
+    position: absolute;
+    right: 16px;
+    top: 0;
+    z-index: 60;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(16,24,56,0.12);
+    font-weight: 600;
+    color: #101840;
+    font-size: 12px;
+    min-width: 84px;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 200ms ease, transform 220ms ease;
+    border-left: 4px solid #adb5bd;
+
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &.hidden {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  &__placeholder {
+    position: absolute;
+    inset: 0;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    box-sizing: border-box;
+
+    .main-text {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: @text;
+    }
+
+    .sub-text {
+      margin: 0;
+      font-size: 10px;
+      color: @muted;
+      max-width: 360px;
+    }
+
+    &--error {
+      .main-text {
+        color: #d14343;
+      }
+    }
+  }
+
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    font-family: @font-base;
+
+    .kf-grid .grid-line,
+    .grid-line {
+      stroke: #d8dae5;
+      stroke-width: 0.5px;
+      stroke-dasharray: 3, 3;
+      opacity: 0.45;
+    }
+
+    .x-axis-label {
+      font-size: 8px;
+      fill: #9ca3af;
+    }
+
+    .x-axis-caption {
+      font-size: 8px;
+      fill: #9ca3af;
+    }
+
+    .y-axis-label {
+      font-size: 10px;
+      font-weight: 500;
+      fill: #111827;
+    }
+
+    .x-axis .domain,
+    .y-axis .domain,
+    .x-axis .tick line,
+    .y-axis .tick line {
+      display: none;
+    }
+
+    .bar-row {
+      cursor: default;
+
+      &:hover .bar {
+        opacity: 1;
+      }
+
+      &:hover .value-label {
+        opacity: 1;
+      }
+    }
+
+    .bar {
+      shape-rendering: geometricPrecision;
+      opacity: 0.9;
+      transition: opacity 150ms ease;
+    }
+
+    .value-label {
+      font-size: 9px;
+      font-weight: 600;
+      fill: #111827;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+  }
+}

@@ -10,6 +10,7 @@ import { formAtom } from '../../atoms/formAtom';
 import { magicRentAtom } from '../../atoms/magicRentAtom';
 import { cls } from '../../utils/css';
 import Loader from '../loader/Loader'
+import LoadingDots from '../common/LoadingDots';
 import { type Renter, type Buyer } from '../../interfaces';
 import './chart.less';
 
@@ -270,6 +271,12 @@ export default function Chart({isMini = false}) {
   const [toastVisible, setToastVisible] = useState(false);
   const [modalMounted, setModalMounted] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loadingToastMounted, setLoadingToastMounted] = useState(false);
+  const [loadingToastVisible, setLoadingToastVisible] = useState(false);
+  const [ellipsisCount, setEllipsisCount] = useState(0);
+  const ellipsisIntervalRef = useRef<number | null>(null);
+  const loadingToastShowTimeoutRef = useRef<number | null>(null);
+  const loadingToastHideTimeoutRef = useRef<number | null>(null);
   const setMagicRent = useSetAtom(magicRentAtom);
 
   // Initialize graph
@@ -301,6 +308,84 @@ export default function Chart({isMini = false}) {
         simulate(form, setMeta, setDist, setData);
     }
   }, [form, isMini, setMeta, setDist, setData]);
+
+  // Manage loading toast visibility and animated ellipsis for primary chart
+  useEffect(() => {
+    if (isMini) {
+      if (ellipsisIntervalRef.current) {
+        clearInterval(ellipsisIntervalRef.current);
+        ellipsisIntervalRef.current = null;
+      }
+      if (loadingToastShowTimeoutRef.current) {
+        clearTimeout(loadingToastShowTimeoutRef.current);
+        loadingToastShowTimeoutRef.current = null;
+      }
+      if (loadingToastHideTimeoutRef.current) {
+        clearTimeout(loadingToastHideTimeoutRef.current);
+        loadingToastHideTimeoutRef.current = null;
+      }
+      setLoadingToastVisible(false);
+      setLoadingToastMounted(false);
+      setEllipsisCount(0);
+      return undefined;
+    }
+
+    if (isLoading) {
+      if (loadingToastHideTimeoutRef.current) {
+        clearTimeout(loadingToastHideTimeoutRef.current);
+        loadingToastHideTimeoutRef.current = null;
+      }
+      setLoadingToastMounted(true);
+      if (loadingToastShowTimeoutRef.current) {
+        clearTimeout(loadingToastShowTimeoutRef.current);
+      }
+      loadingToastShowTimeoutRef.current = window.setTimeout(() => {
+        setLoadingToastVisible(true);
+        loadingToastShowTimeoutRef.current = null;
+      }, 12);
+
+      if (ellipsisIntervalRef.current) {
+        clearInterval(ellipsisIntervalRef.current);
+      }
+
+      ellipsisIntervalRef.current = window.setInterval(() => {
+        setEllipsisCount(prev => (prev + 1) % 4);
+      }, 400);
+    } else {
+      setLoadingToastVisible(false);
+      if (ellipsisIntervalRef.current) {
+        clearInterval(ellipsisIntervalRef.current);
+        ellipsisIntervalRef.current = null;
+      }
+      if (loadingToastShowTimeoutRef.current) {
+        clearTimeout(loadingToastShowTimeoutRef.current);
+        loadingToastShowTimeoutRef.current = null;
+      }
+      if (loadingToastHideTimeoutRef.current) {
+        clearTimeout(loadingToastHideTimeoutRef.current);
+      }
+      loadingToastHideTimeoutRef.current = window.setTimeout(() => {
+        setLoadingToastMounted(false);
+        loadingToastHideTimeoutRef.current = null;
+      }, 240);
+      setEllipsisCount(0);
+    }
+
+    return () => {
+      if (ellipsisIntervalRef.current) {
+        clearInterval(ellipsisIntervalRef.current);
+        ellipsisIntervalRef.current = null;
+      }
+      if (loadingToastShowTimeoutRef.current) {
+        clearTimeout(loadingToastShowTimeoutRef.current);
+        loadingToastShowTimeoutRef.current = null;
+      }
+      if (loadingToastHideTimeoutRef.current) {
+        clearTimeout(loadingToastHideTimeoutRef.current);
+        loadingToastHideTimeoutRef.current = null;
+      }
+    };
+  }, [isLoading, isMini]);
 
   // Update graph visualization when data or graph instance changes
   useEffect(() => {
@@ -394,9 +479,15 @@ export default function Chart({isMini = false}) {
 
   return (
     <div className={cls("chart", isMini && "mini-chart", hasLoadedOnce && "loaded")}>
-      {!isMini && isLoading && (
-        <div className="chart-loader-overlay">
-          <Loader />
+      {!isMini && (
+        <div className="chart-header">
+          <h3 className="title">Projected net worth over time</h3>
+          <p className="subtitle">Simulated buyer vs renter net worth across your horizon.</p>
+          {loadingToastMounted && (
+            <div className={`chart-loading-toast ${loadingToastVisible ? 'visible' : 'hidden'}`} role="status">
+              <LoadingDots isLoading={isLoading} />
+            </div>
+          )}
         </div>
       )}
 

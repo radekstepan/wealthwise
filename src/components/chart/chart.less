@@ -9,12 +9,60 @@
   position: relative;
   min-height: 500px;
 
+  .chart-header {
+    position: relative;
+    padding-right: 140px;
+    margin-bottom: 6px;
+
+    .chart-loading-toast {
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 20;
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(16,24,56,0.12);
+      font-size: 12px;
+      font-weight: 600;
+      color: #101840;
+      border-left: 4px solid #adb5bd;
+      min-width: 84px;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 200ms ease, transform 220ms ease;
+
+      &.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      &.hidden {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    .title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #5777d7;
+    }
+
+    .subtitle {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: #696f8c;
+    }
+  }
+
   .svg {
     opacity: 0; // Start transparent
     transition: opacity 0.5s ease-in-out; // Smooth transition for opacity
-    // Ensure SVG takes up space even when transparent (height set by parent/CSS)
     width: 100%;
-    height: 100%; // Inherit height from parent or specific CSS
+    height: 100%;
   }
 
   &.loaded .svg {
@@ -58,7 +106,7 @@
     z-index: 5; // Ensure legend is on top
     position: absolute;
     width: 160px;
-    top: 10px;
+    top: 50px;
     box-shadow: 0 0 1px rgb(67 90 111 / 30%), 0 2px 4px -2px rgb(67 90 111 / 47%);
     background: #fff;
     border-radius: 4px;

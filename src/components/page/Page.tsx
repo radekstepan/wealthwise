@@ -7,7 +7,7 @@ import Link from '../link/Link';
 import { Footer } from '../footer/Footer';
 import './page.less';
 
-function Page() {
+function Page(): JSX.Element {
   return (
     <RemountProvider>
       <div className="wrapper">

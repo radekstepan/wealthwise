@@ -1,0 +1,93 @@
+.results-tabs {
+  margin-top: 24px;
+  padding: 14px 14px 16px;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: none;
+  border: 1px solid #e5e7eb;
+
+  &__list {
+    display: inline-flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  &__tab {
+    border: none;
+    background: transparent;
+    padding: 6px 0 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 140ms ease, border-color 140ms ease;
+    color: #6b7280;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, -system-ui, sans-serif;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+  }
+
+  &__tab-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__tab-sub {
+    display: none;
+  }
+
+  &__tab--active {
+    color: #111827;
+    border-bottom-color: #5777d7;
+  }
+
+  &__preview-pill {
+    font-size: 9px;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #6366f1, #22c55e);
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__body {
+    margin-top: 8px;
+  }
+
+  &__panel {
+    position: relative;
+  }
+
+  &__panel--hidden {
+    display: none;
+  }
+
+  &__panel--active {
+    animation: fadeInUp 200ms ease;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

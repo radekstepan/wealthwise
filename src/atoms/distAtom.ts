@@ -1,8 +1,10 @@
 import { atom } from 'jotai';
 
-export type DistState = Array<[ // array of bands
-  range: [min: number, max: number], // band range
-  count: number // results falling into each band
-]> | null;
+export interface DistData {
+  buyer: number[];
+  renter: number[];
+}
 
-export const distAtom = atom<DistState>(null as DistState);
+export type DistState = DistData | null;
+
+export const distAtom = atom(null as DistState);
